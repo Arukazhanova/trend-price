@@ -1,0 +1,56 @@
+.registerContainer {
+    max-width: 500px;
+}
+
+.registerCard {
+    padding: 24px 26px 20px;
+}
+
+.registerForm {
+    gap: 12px;
+}
+
+.authCheckboxField {
+    margin-top: 2px;
+}
+
+.authCheckboxLabel {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.authCheckboxInput {
+    width: 16px;
+    height: 16px;
+    margin: 2px 0 0;
+    accent-color: #009966;
+    flex-shrink: 0;
+}
+
+.authCheckboxText {
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 400;
+    color: #1a202c;
+}
+
+.authCheckboxLink {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.authCheckboxLink:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+    .registerContainer {
+        max-width: 100%;
+    }
+
+    .registerCard {
+        padding: 18px 16px 16px;
+    }
+}

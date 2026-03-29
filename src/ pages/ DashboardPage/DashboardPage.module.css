@@ -1,0 +1,125 @@
+.page {
+    min-height: calc(100svh - 76px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px 64px;
+    background:
+            radial-gradient(circle at 18% 18%, rgba(10, 255, 168, 0.14), transparent 42%),
+            radial-gradient(circle at 84% 18%, rgba(64, 110, 255, 0.16), transparent 42%),
+            radial-gradient(circle at 20% 84%, rgba(140, 150, 255, 0.18), transparent 42%),
+            radial-gradient(circle at 82% 82%, rgba(0, 248, 146, 0.14), transparent 42%),
+            linear-gradient(90deg, #eef8f3 0%, #f1f5ff 50%, #eef8f3 100%);
+}
+
+.card {
+    width: 100%;
+    max-width: 560px;
+    padding: 32px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid #d8dee6;
+    border-radius: 20px;
+    box-shadow:
+            0 18px 40px rgba(16, 24, 40, 0.14),
+            0 4px 10px rgba(16, 24, 40, 0.06);
+    backdrop-filter: blur(10px);
+}
+
+.title {
+    margin: 0 0 8px;
+    font-size: 28px;
+    line-height: 1.2;
+    font-weight: 800;
+    color: #111827;
+}
+
+.subtitle {
+    margin: 0 0 24px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #667085;
+}
+
+.userBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+.userRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.userRow:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.userLabel {
+    font-size: 14px;
+    font-weight: 700;
+    color: #344054;
+}
+
+.userValue {
+    font-size: 14px;
+    font-weight: 600;
+    color: #101828;
+    text-align: right;
+    word-break: break-word;
+}
+
+.logoutButton {
+    width: 100%;
+    height: 42px;
+    border: none;
+    border-radius: 10px;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+            background-color 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.logoutButton:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(220, 38, 38, 0.2);
+}
+
+@media (max-width: 640px) {
+    .page {
+        padding: 24px 14px 32px;
+    }
+
+    .card {
+        padding: 22px 18px 20px;
+        border-radius: 16px;
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .userRow {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .userValue {
+        text-align: left;
+    }
+}
