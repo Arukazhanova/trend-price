@@ -1,0 +1,119 @@
+.footer {
+    background: #061631;
+    color: #ffffff;
+}
+
+.container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 56px 24px 26px;
+}
+
+.top {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 34px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.logo {
+    display: inline-flex;
+    text-decoration: none;
+    font-family: "Museo Sans Cyril", "Manrope", "Inter", Arial, sans-serif;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+}
+
+.logoAccent {
+    color: #009966;
+}
+
+.logoDark {
+    color: #ffffff;
+}
+
+.description {
+    max-width: 250px;
+    margin: 18px 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.title {
+    margin: 0 0 16px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.linksCol {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.link {
+    color: rgba(255, 255, 255, 0.76);
+    text-decoration: none;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.link:hover {
+    color: #ffffff;
+}
+
+.bottom {
+    padding-top: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.bottomLinks {
+    display: flex;
+    gap: 28px;
+}
+
+.bottomLink {
+    color: rgba(255, 255, 255, 0.82);
+    text-decoration: none;
+}
+
+.bottomLink:hover {
+    color: #ffffff;
+}
+
+@media (max-width: 900px) {
+    .top {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding: 40px 16px 20px;
+    }
+
+    .top {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .bottomLinks {
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+}

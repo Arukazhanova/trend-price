@@ -3,12 +3,13 @@ import ProtectedRoute from '../ components/ProtectedRoute.tsx';
 import LoginPage from '../ pages/LoginPage/LoginPage.tsx';
 import RegisterPage from '../ pages/RegisterPage/ RegisterPage.tsx';
 import DashboardPage from '../ pages/ DashboardPage/ DashboardPage.tsx';
+import MainPage from "../ pages/MainPage/MainPage.tsx";
 
 export default function AppRouter() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/" element={<MainPage />} />
 
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
@@ -22,7 +23,7 @@ export default function AppRouter() {
                     }
                 />
 
-                <Route path="*" element={<Navigate to="/login" replace />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>
     );

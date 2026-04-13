@@ -1,0 +1,238 @@
+.header {
+    width: 100%;
+    height: 100px;
+    background: #FFFFFF;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 26px;
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-family: "Museo Sans Cyril", "Manrope", "Inter", Arial, sans-serif;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    flex-shrink: 0;
+}
+
+.logoAccent {
+    color: #009966;
+}
+
+.logoDark {
+    color: #1a202c;
+}
+
+.catalogButton {
+    height: 30px;
+    min-width: 58px;
+    padding: 4px 12px;
+    border: none;
+    border-radius: 8px;
+    background: #009966;
+    color: #ffffff;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 17px;
+    line-height: 1;
+    font-weight: 400;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.searchBlock {
+    flex: 1;
+    max-width: 485px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    border: 1px solid #009966;
+    border-radius: 10px;
+    overflow: hidden;
+    background:#F1F5F2;
+}
+
+.searchInputWrap {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    width: 25px;
+    height: 23px;
+    transform: translateY(-50%);
+    color: #98a2b3;
+    pointer-events: none;
+}
+.searchInput {
+    width: 100%;
+    height: 100%;
+    padding: 0 12px 0 38px;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-weight: 400;
+    color: #1a202c;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 12.58px;
+    line-height: 150%;
+    letter-spacing: -0.03em;
+}
+
+
+.searchButton {
+    width: 68px;
+    height: 100%;
+    border: none;
+    border-radius: 10px 10px 10px 10px;
+    background: #009966;
+    color: #ffffff;
+
+    line-height: 1;
+
+    cursor: pointer;
+    flex-shrink: 0;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-weight: 400;
+    font-size: 12.58px;
+    letter-spacing: -0.03em;
+}
+
+.loginButton {
+    height: 30px;
+    min-width: 54px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #009966;
+    color: #ffffff;
+    text-decoration: none;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 17px;
+    line-height: 1;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+
+
+
+
+.searchInput::placeholder {
+    color: #98a2b3;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 34px;
+    margin-left: auto;
+    margin-right: 44px;
+}
+
+.actionItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #98a2b3;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 12px;
+    line-height: 1.1;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.actionIcon {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    display: block;
+}
+.searchIcon {
+    left: 8px;
+}
+
+
+.catalogButton:hover,
+.searchButton:hover,
+.loginButton:hover {
+    filter: brightness(0.97);
+}
+
+.actionItem:hover {
+    color: #667085;
+}
+
+.actionItem:hover .actionIcon {
+    color: #667085;
+}
+
+@media (max-width: 1100px) {
+    .container {
+        gap: 16px;
+        padding: 0 20px;
+    }
+
+    .actions {
+        gap: 14px;
+    }
+
+    .searchBlock {
+        max-width: 380px;
+    }
+}
+
+@media (max-width: 900px) {
+    .container {
+        height: auto;
+        padding: 14px 16px;
+        flex-wrap: wrap;
+    }
+
+    .searchBlock {
+        order: 3;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .actions {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .logo {
+        font-size: 22px;
+    }
+
+    .actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
