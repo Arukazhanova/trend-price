@@ -1,5 +1,6 @@
 import styles from './ MainCatalogSection.module.css';
-
+import heartIcon from '../../assets/heart.svg';
+import arrowDownIcon from '../../assets/CaretDown.svg';
 const productSections = [
     {
         id: 1,
@@ -95,11 +96,12 @@ const productSections = [
 const cheapestBlock = {
     title: 'Where is it cheaper?',
     selectedCategory: 'Milk',
+    productTitle: 'Milk 3.2% 1L',
     rows: [
-        { id: 1, market: 'Magnum', price: '380₸', stock: 'In stock', difference: '-65₸', status: 'positive' },
-        { id: 2, market: 'Small', price: '445₸', stock: 'In stock', difference: '0₸', status: 'neutral' },
-        { id: 3, market: 'Arbuz', price: '420₸', stock: 'In stock', difference: '-25₸', status: 'positive' },
-        { id: 4, market: 'Galmart', price: '460₸', stock: 'Out of stock', difference: '+15₸', status: 'negative' },
+        { id: 1, market: 'Magnum', price: '380₸', stock: 'In stock', difference: '-65₸', status: 'positive', active: true },
+        { id: 2, market: 'Small', price: '445₸', stock: 'In stock', difference: '0₸', status: 'neutral', active: false },
+        { id: 3, market: 'Arbuz', price: '420₸', stock: 'In stock', difference: '-25₸', status: 'positive', active: false },
+        { id: 4, market: 'Galmart', price: '460₸', stock: 'Out of stock', difference: '+15₸', status: 'negative', active: false },
     ],
 };
 
@@ -116,7 +118,7 @@ export default function MainCatalogSection() {
                         {section.products.map((product) => (
                             <article key={product.id} className={styles.card}>
                                 <button type="button" className={styles.favoriteButton}>
-                                    ♡
+                                    <img src={heartIcon} alt="Add to favourites" className={styles.favoriteIcon} />
                                 </button>
 
                                 <div className={styles.cardImageWrap}>
@@ -166,36 +168,43 @@ export default function MainCatalogSection() {
                     </div>
                 </div>
             ))}
-
             <div className={styles.cheapestSection}>
                 <div className={styles.cheapestHeader}>
-                    <h2 className={styles.sectionTitle}>{cheapestBlock.title}</h2>
+                    <h2 className={styles.cheapestTitle}>{cheapestBlock.title}</h2>
 
-                    <select className={styles.select}>
-                        <option>{cheapestBlock.selectedCategory}</option>
-                    </select>
+                    <div className={styles.selectWrap}>
+                        <select className={styles.select} defaultValue="Milk">
+                            <option value="Milk">Milk</option>
+                        </select>
+
+                        <img
+                            src={arrowDownIcon}
+                            alt=""
+                            aria-hidden="true"
+                            className={styles.selectIcon}
+                        />
+                    </div>
                 </div>
 
                 <div className={styles.cheapestCard}>
-                    <div className={styles.cheapestTopRow}>Milk 3.2% 1L</div>
+                    <h3 className={styles.cheapestProductTitle}>{cheapestBlock.productTitle}</h3>
 
                     <div className={styles.marketList}>
-                        {cheapestBlock.rows.map((row, index) => (
+                        {cheapestBlock.rows.map((row) => (
                             <div
                                 key={row.id}
-                                className={`${styles.marketRow} ${index === 0 ? styles.marketRowActive : ''}`}
+                                className={`${styles.marketRow} ${row.active ? styles.marketRowActive : ''}`}
                             >
                                 <span className={styles.marketName}>{row.market}</span>
                                 <span className={styles.marketPrice}>{row.price}</span>
-                                <span
-                                    className={
-                                        row.stock === 'In stock'
-                                            ? styles.inStock
-                                            : styles.outOfStock
-                                    }
-                                >
+
+                                <span className={row.stock === 'In stock' ? styles.stockOk : styles.stockBad}>
+                        <span className={styles.stockIcon}>
+                            {row.stock === 'In stock' ? '✓' : '✕'}
+                        </span>
                                     {row.stock}
-                                </span>
+                    </span>
+
                                 <span
                                     className={
                                         row.status === 'positive'
@@ -205,8 +214,8 @@ export default function MainCatalogSection() {
                                                 : styles.diffNeutral
                                     }
                                 >
-                                    {row.difference}
-                                </span>
+                        {row.difference}
+                    </span>
                             </div>
                         ))}
                     </div>

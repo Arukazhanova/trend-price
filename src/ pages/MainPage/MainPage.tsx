@@ -10,12 +10,16 @@ export default function MainPage() {
             <MainHeader />
 
             <main className={styles.main}>
-                <HeroSection />
-
-                <section className={styles.catalogArea}>
-                    <MainCatalogSection />
-                </section>
+                <div className={styles.heroWrap}>
+                    <HeroSection />
+                </div>
             </main>
+
+            <section className={styles.catalogSectionBg}>
+                <div className={styles.catalogSectionInner}>
+                    <MainCatalogSection />
+                </div>
+            </section>
 
             <Footer />
         </div>
