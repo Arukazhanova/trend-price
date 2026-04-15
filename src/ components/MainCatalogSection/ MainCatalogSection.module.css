@@ -17,27 +17,28 @@
 
 .sectionTitle {
     margin: 0;
-    color:#454545;
+    color: #454545;
     font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 24px;
     font-weight: 700;
     line-height: 1.2;
 }
 
-
-
 .productsGrid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 28px;
 }
+
 .card {
     position: relative;
-    border: 1px solid #B8B8B8;
+    border: 1px solid #bdbdbd;
     border-radius: 28px;
     background: #ffffff;
     overflow: hidden;
-    min-height: 230px;
+    min-height: 410px;
+    display: flex;
+    flex-direction: column;
 }
 
 .favoriteButton {
@@ -80,7 +81,10 @@
 }
 
 .cardBody {
-    padding: 22px 18px 20px;
+    padding: 16px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .cardTitle {
@@ -128,32 +132,20 @@
 .badgeDown,
 .badgeUp {
     margin-left: auto;
-    min-width: 44px;
-    height: 18px;
-    padding: 0 6px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    font-size: 11px;
-    font-family: "Museo Sans Cyrl", sans-serif;
-}
-.badgeDown,
-.badgeUp {
-    margin-left: auto;
-    min-width: 92px;
+    width: 92px;
     height: 34px;
     padding: 0 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    background: rgba(0, 153, 102, 0.12);
-    color: #009966;
     font-family: "Museo Sans Cyrl", sans-serif;
     font-size: 18px;
     font-weight: 400;
+    line-height: 1;
+    box-sizing: border-box;
 }
+
 .badgeDown {
     background: rgba(0, 153, 102, 0.12);
     color: #009966;
@@ -162,150 +154,6 @@
 .badgeUp {
     background: rgba(255, 77, 79, 0.12);
     color: #ff4d4f;
-}
-
-.cardActions {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.cartButton,
-.analyticsButton {
-    height: 40px;
-    border-radius: 999px;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.cartButton {
-    padding: 0 22px;
-    border: none;
-    background: #009966;
-    color: #ffffff;
-}
-
-.analyticsButton {
-    padding: 0 18px;
-    border: 1px solid #009966;
-    background: #ffffff;
-    color: #009966;
-}
-
-.cheapestSection {
-    margin-top: 18px;
-}
-
-.cheapestHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-}
-
-/*.select {*/
-/*    min-width: 74px;*/
-/*    height: 32px;*/
-/*    padding: 0 12px;*/
-/*    border: 1px solid #d9d9d9;*/
-/*    border-radius: 10px;*/
-/*    background: #ffffff;*/
-/*    font-family: "Plus Jakarta Sans", sans-serif;*/
-/*    font-size: 24px;*/
-/*    color: #454545;*/
-/*}*/
-
-.cheapestCard {
-    width: 100%;
-    max-width: 20px;
-    border: 1px solid #d9d9d9;
-    border-radius: 14px;
-    background: #ffffff;
-    padding: 18px;
-}
-
-.cheapestTopRow {
-    margin-bottom: 14px;
-    color: #313131;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.marketList {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.marketRow {
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr 1fr 0.8fr;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 16px;
-    border-radius: 12px;
-}
-
-.marketRowActive {
-    background: #e9f7f0;
-}
-
-.marketName,
-.marketPrice,
-.inStock,
-.outOfStock,
-.diffPositive,
-.diffNegative,
-.diffNeutral {
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 14px;
-}
-
-.marketName,
-.marketPrice {
-    color: #313131;
-}
-
-.inStock {
-    color: #009966;
-}
-
-.outOfStock {
-    color: #9aa1af;
-}
-
-.diffPositive {
-    color: #009966;
-}
-
-.diffNegative {
-    color: #ff4d4f;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 14px;
-}
-
-.diffNeutral {
-    color: #7a7a7a;
-}
-.card {
-    position: relative;
-    border: 1px solid #bdbdbd;
-    border-radius: 28px;
-    background: #ffffff;
-    overflow: hidden;
-    min-height: 410px;
-    display: flex;
-    flex-direction: column;
-}
-
-.cardBody {
-    padding: 16px 16px 18px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
 }
 
 .cardActions {
@@ -345,6 +193,7 @@
     background: #ffffff;
     color: #009966;
 }
+
 .cheapestSection {
     margin-top: 40px;
 }
@@ -366,10 +215,15 @@
     letter-spacing: -0.03em;
 }
 
+.selectWrap {
+    position: relative;
+    display: inline-block;
+}
+
 .select {
     min-width: 165px;
     height: 48px;
-    padding: 0 18px;
+    padding: 0 48px 0 18px;
     border: 1px solid #cfcfcf;
     border-radius: 18px;
     background: #ffffff;
@@ -380,15 +234,28 @@
     line-height: 1;
     outline: none;
     cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.selectIcon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    display: block;
 }
 
 .cheapestCard {
     width: 100%;
-    max-width: 1120px;
-    border: 1px solid #cfcfcf;
+    border: 1px solid #c9c9c9;
     border-radius: 24px;
     background: #ffffff;
-    padding: 42px 48px 34px;
+    padding: 40px 48px 34px;
     box-sizing: border-box;
 }
 
@@ -403,12 +270,14 @@
 }
 
 .marketList {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
 .marketRow {
+    width: 100%;
     min-height: 48px;
     display: grid;
     grid-template-columns: 1.1fr 0.8fr 1.1fr 0.7fr;
@@ -420,7 +289,8 @@
 
 .marketRowActive {
     min-height: 56px;
-    background: #edf8f2;
+    background: #eaf7f0;
+    border-radius: 20px;
 }
 
 .marketName {
@@ -464,27 +334,24 @@
     justify-content: center;
     font-size: 24px;
     line-height: 1;
-}
-
-.stockOk .stockIcon {
     color: #009966;
 }
 
-.stockBad .stockIcon {
+.stockIconBad {
+    width: 20px;
+    display: inline-flex;
+    justify-content: center;
+    font-size: 24px;
+    line-height: 1;
     color: #ff6b6b;
 }
 
-.diffPositive,
-.diffNegative,
-.diffNeutral {
+.diffNeutral,
+.diffNegative {
     font-family: "Museo Sans Cyrl", sans-serif;
     font-size: 21px;
     font-weight: 400;
     line-height: 1.1;
-}
-
-.diffPositive {
-    color: #4a4a4a;
 }
 
 .diffNeutral {
@@ -494,32 +361,3 @@
 .diffNegative {
     color: #ff6b6b;
 }
-.marketRowActive {
-    min-height: 56px;
-    background: #eaf7f0;
-    border-radius: 20px;
-}
-.cheapestCard {
-    max-width: 1220px;
-    border: 1px solid #c9c9c9;
-    border-radius: 24px;
-    background: #ffffff;
-    padding: 40px 48px 34px;
-}
-.selectWrap {
-    position: relative;
-    display: inline-block;
-}
-
-
-.selectIcon {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    width: 30px;
-    height: 30px;
-    transform: translateY(-50%);
-    pointer-events: none;
-    display: block;
-}
-

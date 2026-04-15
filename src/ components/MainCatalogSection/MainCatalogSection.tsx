@@ -1,6 +1,7 @@
 import styles from './ MainCatalogSection.module.css';
 import heartIcon from '../../assets/heart.svg';
 import arrowDownIcon from '../../assets/CaretDown.svg';
+
 const productSections = [
     {
         id: 1,
@@ -122,11 +123,7 @@ export default function MainCatalogSection() {
                                 </button>
 
                                 <div className={styles.cardImageWrap}>
-                                    <img
-                                        src={product.image}
-                                        alt={product.title}
-                                        className={styles.cardImage}
-                                    />
+                                    <img src={product.image} alt={product.title} className={styles.cardImage} />
                                 </div>
 
                                 <div className={styles.cardBody}>
@@ -168,6 +165,7 @@ export default function MainCatalogSection() {
                     </div>
                 </div>
             ))}
+
             <div className={styles.cheapestSection}>
                 <div className={styles.cheapestHeader}>
                     <h2 className={styles.cheapestTitle}>{cheapestBlock.title}</h2>
@@ -199,23 +197,27 @@ export default function MainCatalogSection() {
                                 <span className={styles.marketPrice}>{row.price}</span>
 
                                 <span className={row.stock === 'In stock' ? styles.stockOk : styles.stockBad}>
-                        <span className={styles.stockIcon}>
-                            {row.stock === 'In stock' ? '✓' : '✕'}
-                        </span>
+                                    <span
+                                        className={
+                                            row.stock === 'In stock'
+                                                ? styles.stockIcon
+                                                : styles.stockIconBad
+                                        }
+                                    >
+                                        {row.stock === 'In stock' ? '✓' : '✕'}
+                                    </span>
                                     {row.stock}
-                    </span>
+                                </span>
 
                                 <span
                                     className={
-                                        row.status === 'positive'
-                                            ? styles.diffPositive
-                                            : row.status === 'negative'
-                                                ? styles.diffNegative
-                                                : styles.diffNeutral
+                                        row.status === 'negative'
+                                            ? styles.diffNegative
+                                            : styles.diffNeutral
                                     }
                                 >
-                        {row.difference}
-                    </span>
+                                    {row.difference}
+                                </span>
                             </div>
                         ))}
                     </div>
