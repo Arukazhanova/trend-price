@@ -3,19 +3,20 @@ import { api } from '../ shared/api';
 import {
     AuthContext,
     type AuthContextValue,
-    type AuthResponse,
+    type LoginResponse,
     type MeResponse,
+    type RegisterResponse,
 } from './AuthContext';
 
 type User = AuthContextValue['user'];
 
 type LoginPayload = {
-    email: string;
+    username: string;
     password: string;
 };
 
 type RegisterPayload = {
-    name: string;
+    username: string;
     email: string;
     password: string;
 };
@@ -34,8 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
 
             try {
-                const { data } = await api.get<MeResponse>('/auth/me');
-                setUser(data.user);
+                const { data } = await api.get<MeResponse>('/users/me/profile');
+                setUser(data);
             } catch {
                 localStorage.removeItem('token');
                 setUser(null);
@@ -48,15 +49,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = async (payload: LoginPayload) => {
-        const { data } = await api.post<AuthResponse>('/auth/login', payload);
+        const { data } = await api.post<LoginResponse>('/auth/login', payload);
         localStorage.setItem('token', data.token);
-        setUser(data.user);
+
+        const me = await api.get<MeResponse>('/users/me/profile');
+        setUser(me.data);
     };
 
     const register = async (payload: RegisterPayload) => {
-        const { data } = await api.post<AuthResponse>('/auth/register', payload);
-        localStorage.setItem('token', data.token);
-        setUser(data.user);
+        const { data } = await api.post<RegisterResponse>('/auth/register', payload);
+        return data;
     };
 
     const logout = () => {

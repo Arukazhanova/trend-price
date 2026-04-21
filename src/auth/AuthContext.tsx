@@ -1,29 +1,37 @@
 import { createContext, useContext } from 'react';
 
 type User = {
-    id: string;
-    name: string;
-    email: string;
+    username: string;
+    email: string | null;
+    roles: string[];
 };
 
 type LoginPayload = {
-    email: string;
+    username: string;
     password: string;
 };
 
 type RegisterPayload = {
-    name: string;
+    username: string;
     email: string;
     password: string;
 };
 
-export type AuthResponse = {
+export type LoginResponse = {
     token: string;
-    user: User;
+    type: string;
+};
+
+export type RegisterResponse = {
+    message: string;
+    verificationToken: string;
+    verificationUrl: string;
 };
 
 export type MeResponse = {
-    user: User;
+    username: string;
+    email: string | null;
+    roles: string[];
 };
 
 export type AuthContextValue = {
@@ -31,7 +39,7 @@ export type AuthContextValue = {
     isAuthenticated: boolean;
     isInitializing: boolean;
     login: (payload: LoginPayload) => Promise<void>;
-    register: (payload: RegisterPayload) => Promise<void>;
+    register: (payload: RegisterPayload) => Promise<RegisterResponse>;
     logout: () => void;
 };
 

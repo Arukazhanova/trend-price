@@ -11,10 +11,13 @@ import Header from '../../ components/Header/Header.tsx';
 import emailIcon from '../../assets/email.png';
 import passwordIcon from '../../assets/password.png';
 import nameIcon from '../../assets/admin.png';
+import { api } from '../../ shared/api';
 export default function RegisterPage() {
     const navigate = useNavigate();
     const { register: registerUser, isAuthenticated, isInitializing } = useAuth();
     const [serverError, setServerError] = useState('');
+    const [verificationToken, setVerificationToken] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     const {
         register,
@@ -24,7 +27,7 @@ export default function RegisterPage() {
         resolver: zodResolver(registerSchema),
         mode: 'onSubmit',
         defaultValues: {
-            name: '',
+            username: '',
             email: '',
             password: '',
             confirmPassword: '',
@@ -36,16 +39,30 @@ export default function RegisterPage() {
         setServerError('');
 
         try {
-            await registerUser({
-                name: data.name,
+            const result = await registerUser({
+                username: data.username,
                 email: data.email,
                 password: data.password,
             });
 
-            navigate('/dashboard');
+            setSuccessMessage(result.message);
+            setVerificationToken(result.verificationToken);
         } catch (error) {
             if (isAxiosError(error)) {
                 setServerError(error.response?.data?.message ?? 'Registration failed');
+                return;
+            }
+
+            setServerError('An unexpected error occurred');
+        }
+    };
+    const handleVerifyEmail = async () => {
+        try {
+            await api.get(`/auth/verify-email?token=${encodeURIComponent(verificationToken)}`);
+            navigate('/login');
+        } catch (error) {
+            if (isAxiosError(error)) {
+                setServerError(error.response?.data?.message ?? 'Email verification failed');
                 return;
             }
 
@@ -103,8 +120,8 @@ export default function RegisterPage() {
                             )}
 
                             <div className={authStyles.authField}>
-                                <label className={authStyles.authLabel} htmlFor="name">
-                                    Full Name
+                                <label className={authStyles.authLabel} htmlFor="username">
+                                    Username
                                 </label>
 
                                 <div className={authStyles.authInputWrap}>
@@ -116,12 +133,12 @@ export default function RegisterPage() {
                                     />
 
                                     <input
-                                        id="name"
+                                        id="username"
                                         type="text"
                                         className={authStyles.authInput}
-                                        placeholder="Enter your full name"
-                                        autoComplete="name"
-                                        {...register('name', {
+                                        placeholder="Enter your username"
+                                        autoComplete="username"
+                                        {...register('username', {
                                             onChange: () => setServerError(''),
                                         })}
                                     />
@@ -241,7 +258,19 @@ export default function RegisterPage() {
                                 {isSubmitting ? 'Creating account...' : 'Sign up'}
                             </button>
                         </form>
+                        {successMessage && (
+                            <p className={authStyles.authSubtitle}>{successMessage}</p>
+                        )}
 
+                        {verificationToken && (
+                            <button
+                                className={authStyles.authSubmit}
+                                type="button"
+                                onClick={handleVerifyEmail}
+                            >
+                                Confirm email
+                            </button>
+                        )}
                         <p className={authStyles.authFooterText}>
                             Already have an account? <Link to="/login">Sign in</Link>
                         </p>

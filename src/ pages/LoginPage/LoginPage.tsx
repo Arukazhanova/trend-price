@@ -22,7 +22,7 @@ export default function LoginPage() {
         resolver: zodResolver(loginSchema),
         mode: 'onBlur',
         defaultValues: {
-            email: '',
+            username: '',
             password: '',
         },
     });
@@ -85,8 +85,8 @@ export default function LoginPage() {
                         )}
 
                         <div className={authStyles.authField}>
-                            <label className={authStyles.authLabel} htmlFor="email">
-                                Email
+                            <label className={authStyles.authLabel} htmlFor="username">
+                                Username
                             </label>
 
                             <div className={authStyles.authInputWrap}>
@@ -98,12 +98,12 @@ export default function LoginPage() {
                                 />
 
                                 <input
-                                    id="email"
-                                    type="email"
+                                    id="username"
+                                    type="text"
                                     className={authStyles.authInput}
-                                    placeholder="Enter your email"
-                                    autoComplete="email"
-                                    {...register('email', {
+                                    placeholder="Enter your username"
+                                    autoComplete="username"
+                                    {...register('username', {
                                         onChange: () => setServerError(''),
                                     })}
                                 />
