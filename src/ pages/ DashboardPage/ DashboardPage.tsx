@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
+import MainHeader from '../../ components/MainHeader/MainHeader';
 import styles from './DashboardPage.module.css';
 
 export default function DashboardPage() {
@@ -12,36 +13,40 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className={styles.page}>
-            <div className={styles.card}>
-                <h1 className={styles.title}>Личный кабинет</h1>
-                <p className={styles.subtitle}>
-                    Добро пожаловать в систему мониторинга и анализа цен и расходов.
-                </p>
+        <>
+            <MainHeader />
 
-                <div className={styles.infoBox}>
-                    <div className={styles.row}>
-                        <span className={styles.label}>Username:</span>
-                        <span className={styles.value}>{user?.username ?? '—'}</span>
+            <div className={styles.page}>
+                <div className={styles.card}>
+                    <h1 className={styles.title}>Личный кабинет</h1>
+                    <p className={styles.subtitle}>
+                        Добро пожаловать в систему мониторинга и анализа цен и расходов.
+                    </p>
+
+                    <div className={styles.infoBox}>
+                        <div className={styles.row}>
+                            <span className={styles.label}>Username:</span>
+                            <span className={styles.value}>{user?.username ?? '—'}</span>
+                        </div>
+
+                        <div className={styles.row}>
+                            <span className={styles.label}>Email:</span>
+                            <span className={styles.value}>{user?.email ?? '—'}</span>
+                        </div>
+
+                        <div className={styles.row}>
+                            <span className={styles.label}>Roles:</span>
+                            <span className={styles.value}>
+                                {user?.roles?.length ? user.roles.join(', ') : '—'}
+                            </span>
+                        </div>
                     </div>
 
-                    <div className={styles.row}>
-                        <span className={styles.label}>Email:</span>
-                        <span className={styles.value}>{user?.email ?? '—'}</span>
-                    </div>
-
-                    <div className={styles.row}>
-                        <span className={styles.label}>Roles:</span>
-                        <span className={styles.value}>
-                            {user?.roles?.length ? user.roles.join(', ') : '—'}
-                        </span>
-                    </div>
+                    <button className={styles.logoutButton} onClick={handleLogout}>
+                        Выйти
+                    </button>
                 </div>
-
-                <button className={styles.logoutButton} onClick={handleLogout}>
-                    Выйти
-                </button>
             </div>
-        </div>
+        </>
     );
 }

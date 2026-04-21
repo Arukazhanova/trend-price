@@ -4,6 +4,7 @@ import LoginPage from '../ pages/LoginPage/LoginPage.tsx';
 import RegisterPage from '../ pages/RegisterPage/ RegisterPage.tsx';
 import DashboardPage from '../ pages/ DashboardPage/ DashboardPage.tsx';
 import MainPage from "../ pages/MainPage/MainPage.tsx";
+import FavouritesPage from "../ pages/FavouritesPage/FavouritesPage.tsx"
 
 export default function AppRouter() {
     return (
@@ -21,6 +22,8 @@ export default function AppRouter() {
                         </ProtectedRoute>
                     }
                 />
+
+                <Route path="/favourites" element={<FavouritesPage />} />
 
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

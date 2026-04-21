@@ -3,8 +3,12 @@ import styles from './MainHeader.module.css';
 import favouritesIcon from '../../assets/Heart.svg';
 import compareIcon from '../../assets/compare-icon 1.svg';
 import purchaseIcon from '../../assets/ShoppingCartSimple.svg';
+import userCircleIcon from '../../assets/UserCircle.svg';
+import { useAuth } from '../../auth/AuthContext';
 
 export default function MainHeader() {
+    const { isAuthenticated } = useAuth();
+
     return (
         <header className={styles.header}>
             <div className={styles.container}>
@@ -54,7 +58,7 @@ export default function MainHeader() {
                 </div>
 
                 <nav className={styles.actions} aria-label="Header actions">
-                    <button type="button" className={styles.actionItem}>
+                    <Link to="/favourites" className={styles.actionItem}>
                         <img
                             src={favouritesIcon}
                             alt=""
@@ -62,8 +66,7 @@ export default function MainHeader() {
                             aria-hidden="true"
                         />
                         <span>Favourites</span>
-                    </button>
-
+                    </Link>
                     <button type="button" className={styles.actionItem}>
                         <img
                             src={compareIcon}
@@ -85,9 +88,23 @@ export default function MainHeader() {
                     </button>
                 </nav>
 
-                <Link to="/login" className={styles.loginButton}>
-                    Log In
-                </Link>
+                {isAuthenticated ? (
+                    <Link
+                        to="/dashboard"
+                        className={styles.profileButton}
+                        aria-label="Profile"
+                    >
+                        <img
+                            src={userCircleIcon}
+                            alt="Profile"
+                            className={styles.profileIcon}
+                        />
+                    </Link>
+                ) : (
+                    <Link to="/login" className={styles.loginButton}>
+                        Log In
+                    </Link>
+                )}
             </div>
         </header>
     );
