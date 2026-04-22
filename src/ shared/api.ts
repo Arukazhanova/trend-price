@@ -11,8 +11,19 @@ export const api = axios.create({
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
+    const url = config.url ?? '';
 
-    if (token) {
+    const isPublicAuthRoute =
+        url.startsWith('/auth/login') ||
+        url.startsWith('/auth/register') ||
+        url.startsWith('/auth/verify-email') ||
+        url.startsWith('/auth/resend-verification') ||
+        url.startsWith('/auth/forgot-password') ||
+        url.startsWith('/auth/reset-password');
+
+    console.log('API request:', url, 'token exists:', !!token, 'public:', isPublicAuthRoute);
+
+    if (token && !isPublicAuthRoute) {
         config.headers.Authorization = `Bearer ${token}`;
     }
 
@@ -22,7 +33,10 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
+        const url = error.config?.url ?? '';
+        const isProtectedRoute = !url.startsWith('/auth/');
+
+        if (error.response?.status === 401 && isProtectedRoute) {
             localStorage.removeItem('token');
         }
 

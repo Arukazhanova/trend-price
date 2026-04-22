@@ -5,7 +5,7 @@ import RegisterPage from '../ pages/RegisterPage/ RegisterPage.tsx';
 import DashboardPage from '../ pages/ DashboardPage/ DashboardPage.tsx';
 import MainPage from "../ pages/MainPage/MainPage.tsx";
 import FavouritesPage from "../ pages/FavouritesPage/FavouritesPage.tsx"
-
+import VerifyEmailPage from "../ pages/VerifyEmailPage/VerifyEmailPage.tsx";
 export default function AppRouter() {
     return (
         <BrowserRouter>
@@ -13,6 +13,7 @@ export default function AppRouter() {
                 <Route path="/" element={<MainPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/verify-email" element={<VerifyEmailPage />} />
 
                 <Route
                     path="/dashboard"
@@ -24,7 +25,6 @@ export default function AppRouter() {
                 />
 
                 <Route path="/favourites" element={<FavouritesPage />} />
-
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>
