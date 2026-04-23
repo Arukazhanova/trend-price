@@ -1,82 +1,62 @@
 import { useEffect, useMemo, useState } from 'react';
 import { isAxiosError } from 'axios';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import Header from '../../ components/Header/Header';
-import { api } from '../../ shared/api';
+import { Link, useSearchParams } from 'react-router-dom';
+import Header from '../../ components/Header/Header.tsx';
 import authStyles from '../../auth/AuthPage.module.css';
+import { api } from '../../ shared/api';
 
 type VerifyStatus = 'loading' | 'success' | 'error';
 
 export default function VerifyEmailPage() {
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
 
     const token = useMemo(() => searchParams.get('token')?.trim() ?? '', [searchParams]);
+    const hasToken = token.length > 0;
 
-    const hasToken = Boolean(token);
-
-    const [status, setStatus] = useState<VerifyStatus>(
-        hasToken ? 'loading' : 'error'
-    );
-
+    const [status, setStatus] = useState<VerifyStatus>(hasToken ? 'loading' : 'error');
     const [message, setMessage] = useState(
         hasToken
             ? 'Verifying your email...'
             : 'Verification token is missing.'
     );
 
-    const [username, setUsername] = useState('');
     useEffect(() => {
-        console.log('VerifyEmailPage mounted');
-        console.log('token =', token);
+        if (!hasToken) {
+            return;
+        }
 
-        if (!token) return;
+        let isMounted = true;
 
         const verifyEmail = async () => {
-            console.log('sending verify request');
-
             try {
-                const response = await api.get(`/auth/verify-email?token=${encodeURIComponent(token)}`);
-                console.log('verify success', response.data);
+                await api.get(`/auth/verify-email?token=${encodeURIComponent(token)}`);
+
+                if (!isMounted) return;
 
                 setStatus('success');
-                setMessage(response.data?.message ?? 'Email verified successfully.');
-                setUsername(response.data?.username ?? '');
-
-                setTimeout(() => {
-                    navigate('/login', { replace: true });
-                }, 1800);
+                setMessage('Your email has been successfully verified. You can now sign in.');
             } catch (error) {
-                console.log('verify error', error);
+                if (!isMounted) return;
 
                 setStatus('error');
 
                 if (isAxiosError(error)) {
-                    const responseStatus = error.response?.status;
-                    const backendMessage = error.response?.data?.message;
-
-                    if (responseStatus === 400) {
-                        setMessage(
-                            backendMessage ?? 'This verification link is invalid, expired, or has already been used.'
-                        );
-                        return;
-                    }
-
-                    if (responseStatus === 404) {
-                        setMessage('Verification token was not found.');
-                        return;
-                    }
-
-                    setMessage(backendMessage ?? 'Email verification failed.');
-                    return;
+                    setMessage(
+                        error.response?.data?.message ??
+                        'Verification failed. The link may be invalid or expired.'
+                    );
+                } else {
+                    setMessage('An unexpected error occurred while verifying your email.');
                 }
-
-                setMessage('An unexpected error occurred.');
             }
         };
 
-        void verifyEmail();
-    }, [token, navigate]);
+        verifyEmail();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [hasToken, token]);
 
     return (
         <>
@@ -91,38 +71,40 @@ export default function VerifyEmailPage() {
                         </div>
 
                         <div className={authStyles.authHeader}>
-                            <h1 className={authStyles.authTitle}>Email verification</h1>
-                            <p className={authStyles.authSubtitle}>
-                                {status === 'loading' && 'Please wait while we verify your email.'}
-                                {status === 'success' && 'Your email has been confirmed successfully.'}
-                                {status === 'error' && 'We could not verify your email.'}
-                            </p>
+                            <h1 className={authStyles.authTitle}>
+                                {status === 'loading' && 'Verifying email'}
+                                {status === 'success' && 'Email verified'}
+                                {status === 'error' && 'Verification failed'}
+                            </h1>
+
+                            <p className={authStyles.authSubtitle}>{message}</p>
                         </div>
 
-                        <div style={{ display: 'grid', gap: '12px' }}>
-                            <p className={status === 'error' ? authStyles.authServerMessage : authStyles.authSubtitle}>
-                                {message}
-                            </p>
+                        {status === 'loading' && (
+                            <button className={authStyles.authSubmit} type="button" disabled>
+                                Verifying...
+                            </button>
+                        )}
 
-                            {status === 'success' && username && (
-                                <p className={authStyles.authSubtitle}>
-                                    Welcome, <strong>{username}</strong>.
-                                </p>
-                            )}
+                        {status === 'success' && (
+                            <div style={{ display: 'grid', gap: '10px' }}>
+                                <Link to="/login" className={authStyles.authSubmit}>
+                                    Go to sign in
+                                </Link>
+                            </div>
+                        )}
 
-                            {status === 'success' && (
-                                <p className={authStyles.authSubtitle}>
-                                    Redirecting to sign in...
-                                </p>
-                            )}
+                        {status === 'error' && (
+                            <div style={{ display: 'grid', gap: '10px' }}>
+                                <Link to="/register" className={authStyles.authSubmit}>
+                                    Go to sign up
+                                </Link>
 
-                            {status === 'error' && (
-                                <p className={authStyles.authFooterText}>
-                                    You can go back to <Link to="/register">Sign up</Link> or{' '}
-                                    <Link to="/login">Sign in</Link>.
-                                </p>
-                            )}
-                        </div>
+                                <Link to="/login" className={authStyles.authForgotLink}>
+                                    Back to sign in
+                                </Link>
+                            </div>
+                        )}
                     </section>
                 </div>
             </div>

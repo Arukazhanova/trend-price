@@ -18,12 +18,11 @@ export default function LoginPage() {
     const [serverError, setServerError] = useState('');
     const [infoMessage, setInfoMessage] = useState('');
     const [isResending, setIsResending] = useState(false);
-    const [lastUsername, setLastUsername] = useState('');
+    const [emailForResend, setEmailForResend] = useState('');
 
     const {
         register,
         handleSubmit,
-        getValues,
         formState: { isSubmitting },
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -46,7 +45,6 @@ export default function LoginPage() {
     const onSubmit = async (data: LoginFormData) => {
         setServerError('');
         setInfoMessage('');
-        setLastUsername(data.username);
 
         try {
             await login(data);
@@ -65,29 +63,23 @@ export default function LoginPage() {
         setServerError('');
         setInfoMessage('');
 
-        const username = lastUsername || getValues('username');
+        const email = emailForResend.trim();
 
-        if (!username) {
-            setServerError('Enter your username or go to register again with your email.');
+        if (!email) {
+            setServerError('Enter your email to resend verification.');
             return;
         }
 
         setIsResending(true);
 
         try {
-            /**
-             * Если у тебя backend resend принимает EMAIL,
-             * то здесь лучше потом заменить на email.
-             * Пока оставляю текущую точку расширения.
-             */
-            await api.post('/auth/resend-verification', {
-                email: username
-            });
-
+            await api.post('/auth/resend-verification', { email });
             setInfoMessage('Verification email sent. Please check your inbox.');
         } catch (error) {
             if (isAxiosError(error)) {
-                setServerError(error.response?.data?.message ?? 'Failed to resend verification email');
+                setServerError(
+                    error.response?.data?.message ?? 'Failed to resend verification email'
+                );
             } else {
                 setServerError('An unexpected error occurred');
             }
@@ -212,6 +204,14 @@ export default function LoginPage() {
 
                         {canResendVerification && (
                             <div style={{ marginTop: '12px', display: 'grid', gap: '10px' }}>
+                                <input
+                                    type="email"
+                                    className={authStyles.authInput}
+                                    placeholder="Enter your email"
+                                    value={emailForResend}
+                                    onChange={(e) => setEmailForResend(e.target.value)}
+                                />
+
                                 <button
                                     className={authStyles.authSubmit}
                                     type="button"
