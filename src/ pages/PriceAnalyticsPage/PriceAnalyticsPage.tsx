@@ -40,11 +40,11 @@ const topIncreases = [
 ];
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-
+const periods = ["7D", "1M", "3M", "6M", "1Y"];
 export default function PriceAnalyticsPage() {
     const [search, setSearch] = useState("");
     const [selected, setSelected] = useState(products[0]);
-
+    const [activePeriod, setActivePeriod] = useState("6M");
     const filteredProducts = products.filter((item) =>
         item.title.toLowerCase().includes(search.toLowerCase())
     );
@@ -132,11 +132,16 @@ export default function PriceAnalyticsPage() {
                                     </div>
 
                                     <div className={styles.periods}>
-                                        <button>7D</button>
-                                        <button>1M</button>
-                                        <button>3M</button>
-                                        <button className={styles.activePeriod}>6M</button>
-                                        <button>1Y</button>
+                                        {periods.map((period) => (
+                                            <button
+                                                key={period}
+                                                type="button"
+                                                onClick={() => setActivePeriod(period)}
+                                                className={activePeriod === period ? styles.activePeriod : ""}
+                                            >
+                                                {period}
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
 

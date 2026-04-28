@@ -247,7 +247,10 @@
     flex-shrink: 0;
     text-decoration: none;
 }
-
+.actionItem {
+    text-decoration: none;
+    color: inherit;
+}
 .profileIcon {
     width: 24px;
     height: 24px;

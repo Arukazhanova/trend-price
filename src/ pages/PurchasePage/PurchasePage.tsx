@@ -5,6 +5,13 @@ import boxIcon from "../../assets/Package.svg";
 import arrowLeftIcon from "../../assets/ArrowLeftWhite.svg";
 import styles from "./PurchasePage.module.css";
 import { useCart } from "../../cart/useCart";
+import minusIcon from "../../assets/Minus.svg";
+import plusIcon from "../../assets/Plus.svg";
+import trashIcon from "../../assets/Trash.svg";
+
+function getNumberFromPrice(price: string) {
+    return Number(price.replace(/[^\d]/g, ""));
+}
 
 export default function PurchasePage() {
     const {
@@ -15,6 +22,10 @@ export default function PurchasePage() {
     } = useCart();
 
     const isCartEmpty = cartItems.length === 0;
+
+    const totalCurrent = cartItems.reduce((sum, item) => {
+        return sum + getNumberFromPrice(item.price) * item.quantity;
+    }, 0);
 
     return (
         <>
@@ -29,7 +40,6 @@ export default function PurchasePage() {
                             </div>
 
                             <h1>Your cart is empty</h1>
-
                             <p>Add some products to your cart to see them here</p>
 
                             <Link to="/" className={styles.button}>
@@ -40,7 +50,8 @@ export default function PurchasePage() {
                     ) : (
                         <>
                             <Link to="/" className={styles.backLink}>
-                                ← Continue Shopping
+                            <img src={arrowLeftIcon} alt="" />
+                            <span>Continue Shopping</span>
                             </Link>
 
                             <h1 className={styles.title}>Purchase</h1>
@@ -55,35 +66,55 @@ export default function PurchasePage() {
                                         <div className={styles.cardInfo}>
                                             <h2>{item.title}</h2>
                                             <p>{item.subtitle}</p>
-
-                                            <div className={styles.quantity}>
-                                                <button onClick={() => decreaseQuantity(item.id)}>
-                                                    −
-                                                </button>
-
-                                                <span>{item.quantity}</span>
-
-                                                <button onClick={() => increaseQuantity(item.id)}>
-                                                    +
-                                                </button>
-                                            </div>
                                         </div>
 
                                         <button
                                             className={styles.deleteButton}
                                             onClick={() => removeFromCart(item.id)}
+                                            type="button"
                                         >
-                                            🗑
+                                            <img src={trashIcon} alt="" />
                                         </button>
+
+                                        <div className={styles.quantity}>
+                                            <button type="button" onClick={() => decreaseQuantity(item.id)}>
+                                                <img src={minusIcon} alt="" />
+                                            </button>
+
+                                            <span>{item.quantity}</span>
+
+                                            <button type="button" onClick={() => increaseQuantity(item.id)}>
+                                                <img src={plusIcon} alt="" />
+                                            </button>
+                                        </div>
 
                                         <div className={styles.priceBlock}>
                                             <b>{item.price}</b>
-
                                             {item.oldPrice && <span>{item.oldPrice}</span>}
                                         </div>
                                     </article>
                                 ))}
                             </div>
+
+                            <section className={styles.summary}>
+                                <div className={styles.summaryHeader}>
+                                    <span>Magnum</span>
+                                    <span>27.02.26</span>
+                                    <span>Discount</span>
+                                    <span>Total</span>
+                                    <b>{totalCurrent}₸</b>
+                                </div>
+
+                                {cartItems.map((item) => (
+                                    <div key={item.id} className={styles.summaryRow}>
+                                        <span>{item.title}</span>
+                                        <span>{item.subtitle.split(" ")[0]}</span>
+                                        <span>{item.price}</span>
+                                        <span></span>
+                                        <span>{item.oldPrice || item.price}</span>
+                                    </div>
+                                ))}
+                            </section>
                         </>
                     )}
                 </div>

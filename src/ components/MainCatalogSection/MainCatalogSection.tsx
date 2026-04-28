@@ -140,13 +140,15 @@ export default function MainCatalogSection() {
 
                             return (
                                 <article key={product.id} className={styles.card}>
-                                    <Link to={`/products/${product.id}`} className={styles.cardLink}>
                                     <button
                                         type="button"
                                         className={`${styles.favoriteButton} ${
-                                            favourite ? styles.favoriteButtonActive : ''
+                                            favourite ? styles.favoriteButtonActive : ""
                                         }`}
-                                        onClick={() =>
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+
                                             toggleFavourite({
                                                 id: product.id,
                                                 title: product.title,
@@ -154,75 +156,72 @@ export default function MainCatalogSection() {
                                                 price: product.price,
                                                 oldPrice: product.oldPrice,
                                                 discount: product.discount,
-                                            })
-                                        }
+                                            });
+                                        }}
                                     >
-                                        <img
-                                            src={heartIcon}
-                                            alt=""
-                                            className={styles.favoriteIcon}
-                                        />
+                                        <img src={heartIcon} alt="" className={styles.favoriteIcon} />
                                     </button>
 
-                                    <div className={styles.cardImageWrap}>
-                                        <div className={styles.productPlaceholder}>
-                                            <span>{product.title}</span>
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.cardBody}>
-                                        <h3 className={styles.cardTitle}>{product.title}</h3>
-                                        <p className={styles.cardSubtitle}>{product.subtitle}</p>
-
-                                        <div className={styles.priceRow}>
-                                            <span className={styles.price}>{product.price}</span>
-
-                                            {product.oldPrice && (
-                                                <span className={styles.oldPrice}>
-                                                    {product.oldPrice}
-                                                </span>
-                                            )}
-
-                                            {product.discount && (
-                                                <span
-                                                    className={
-                                                        product.discount.startsWith('+')
-                                                            ? styles.badgeUp
-                                                            : styles.badgeDown
-                                                    }
-                                                >
-                                                    {product.discount}
-                                                </span>
-                                            )}
+                                    <Link to={`/products/${product.id}`} className={styles.cardLink}>
+                                        <div className={styles.cardImageWrap}>
+                                            <div className={styles.productPlaceholder}>
+                                                <span>{product.title}</span>
+                                            </div>
                                         </div>
 
-                                        <div className={styles.cardActions}>
-                                            <button
-                                                type="button"
-                                                className={styles.cartButton}
-                                                onClick={() =>
-                                                    addToCart({
-                                                        id: product.id,
-                                                        title: product.title,
-                                                        subtitle: product.subtitle,
-                                                        price: product.price,
-                                                        oldPrice: product.oldPrice,
-                                                        discount: product.discount,
-                                                    })
-                                                }
-                                            >
-                                                Add to cart
-                                            </button>
+                                        <div className={styles.cardBody}>
+                                            <h3 className={styles.cardTitle}>{product.title}</h3>
+                                            <p className={styles.cardSubtitle}>{product.subtitle}</p>
 
-                                            <Link
-                                                to={`/products/${product.id}/analytics`}
-                                                className={styles.analyticsButton}
-                                            >
-                                                Price analytics
-                                            </Link>
+                                            <div className={styles.priceRow}>
+                                                <span className={styles.price}>{product.price}</span>
+
+                                                {product.oldPrice && (
+                                                    <span className={styles.oldPrice}>
+                                {product.oldPrice}
+                            </span>
+                                                )}
+
+                                                {product.discount && (
+                                                    <span
+                                                        className={
+                                                            product.discount.startsWith("+")
+                                                                ? styles.badgeUp
+                                                                : styles.badgeDown
+                                                        }
+                                                    >
+                                {product.discount}
+                            </span>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
                                     </Link>
+
+                                    <div className={styles.cardActions}>
+                                        <button
+                                            type="button"
+                                            className={styles.cartButton}
+                                            onClick={() =>
+                                                addToCart({
+                                                    id: product.id,
+                                                    title: product.title,
+                                                    subtitle: product.subtitle,
+                                                    price: product.price,
+                                                    oldPrice: product.oldPrice,
+                                                    discount: product.discount,
+                                                })
+                                            }
+                                        >
+                                            Add to cart
+                                        </button>
+
+                                        <Link
+                                            to={`/products/${product.id}/analytics`}
+                                            className={styles.analyticsButton}
+                                        >
+                                            Price analytics
+                                        </Link>
+                                    </div>
                                 </article>
                             );
                         })}

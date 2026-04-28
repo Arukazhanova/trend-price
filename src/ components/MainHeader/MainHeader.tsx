@@ -67,7 +67,7 @@ export default function MainHeader() {
                         />
                         <span>Favourites</span>
                     </Link>
-                    <button type="button" className={styles.actionItem}>
+                    <Link to="/products/1/analytics" className={styles.actionItem}>
                         <img
                             src={compareIcon}
                             alt=""
@@ -75,7 +75,7 @@ export default function MainHeader() {
                             aria-hidden="true"
                         />
                         <span>Compare</span>
-                    </button>
+                    </Link>
 
                     <Link to="/purchase" className={styles.actionItem}>
                         <img
