@@ -1,7 +1,8 @@
 import styles from "./MainCatalogSection.module.css";
 import heartIcon from '../../assets/Heart.svg';
 import { useFavourites } from '../../favourites/useFavourites';
-
+import { useCart } from "../../cart/useCart";
+import { Link } from "react-router-dom";
 const productSections = [
     {
         id: 1,
@@ -124,7 +125,7 @@ const cheapestBlock = {
 
 export default function MainCatalogSection() {
     const { toggleFavourite, isFavourite } = useFavourites();
-
+    const { addToCart } = useCart();
     return (
         <section className={styles.wrapper}>
             {productSections.map((section) => (
@@ -139,6 +140,7 @@ export default function MainCatalogSection() {
 
                             return (
                                 <article key={product.id} className={styles.card}>
+                                    <Link to={`/products/${product.id}`} className={styles.cardLink}>
                                     <button
                                         type="button"
                                         className={`${styles.favoriteButton} ${
@@ -198,18 +200,29 @@ export default function MainCatalogSection() {
                                             <button
                                                 type="button"
                                                 className={styles.cartButton}
+                                                onClick={() =>
+                                                    addToCart({
+                                                        id: product.id,
+                                                        title: product.title,
+                                                        subtitle: product.subtitle,
+                                                        price: product.price,
+                                                        oldPrice: product.oldPrice,
+                                                        discount: product.discount,
+                                                    })
+                                                }
                                             >
                                                 Add to cart
                                             </button>
 
-                                            <button
-                                                type="button"
+                                            <Link
+                                                to={`/products/${product.id}/analytics`}
                                                 className={styles.analyticsButton}
                                             >
                                                 Price analytics
-                                            </button>
+                                            </Link>
                                         </div>
                                     </div>
+                                    </Link>
                                 </article>
                             );
                         })}

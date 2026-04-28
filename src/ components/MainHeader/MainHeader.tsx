@@ -77,7 +77,7 @@ export default function MainHeader() {
                         <span>Compare</span>
                     </button>
 
-                    <button type="button" className={styles.actionItem}>
+                    <Link to="/purchase" className={styles.actionItem}>
                         <img
                             src={purchaseIcon}
                             alt=""
@@ -85,7 +85,7 @@ export default function MainHeader() {
                             aria-hidden="true"
                         />
                         <span>Purchase</span>
-                    </button>
+                    </Link>
                 </nav>
 
                 {isAuthenticated ? (

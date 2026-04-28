@@ -1,0 +1,135 @@
+.notFound {
+    min-height: 620px;
+    background: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 20px;
+}
+
+.receipt {
+    width: 900px;
+    min-height: 480px;
+    padding: 55px 70px 45px;
+    text-align: center;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+
+    filter:
+            drop-shadow(0 8px 10px rgba(0, 0, 0, 0.12))
+            drop-shadow(0 20px 35px rgba(0, 0, 0, 0.20));
+}
+
+.decor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+}
+
+.decor h1 {
+    margin: 0;
+    font-size: 96px;
+    line-height: 1;
+    color: #2b2d31;
+    font-weight: 800;
+    text-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.leftLines,
+.rightLines {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.leftLines span,
+.rightLines span {
+    width: 34px;
+    height: 3px;
+    background: #00a76f;
+    border-radius: 20px;
+}
+
+.leftLines span:nth-child(1) {
+    transform: rotate(17deg);
+}
+
+.leftLines span:nth-child(2) {
+    transform: rotate(-2deg);
+}
+
+.leftLines span:nth-child(3) {
+    transform: rotate(-17deg);
+}
+
+.rightLines span:nth-child(1) {
+    transform: rotate(-17deg);
+}
+
+.rightLines span:nth-child(2) {
+    transform: rotate(2deg);
+}
+
+.rightLines span:nth-child(3) {
+    transform: rotate(17deg);
+}
+
+.receipt h2 {
+    margin: 10px 0 4px;
+    font-size: 24px;
+    color: #333333;
+}
+
+.receipt p {
+    margin: 0 0 22px;
+    font-size: 20px;
+    color: #9ba4b2;
+}
+
+.info {
+    border-top: 1px dashed #b8b8b8;
+    border-bottom: 1px dashed #b8b8b8;
+    padding: 18px 0;
+    margin-bottom: 22px;
+}
+
+.info div {
+    width: 380px;
+    margin: 0 auto 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    font-size: 16px;
+}
+
+.info div:last-child {
+    margin-bottom: 0;
+}
+
+.brand {
+    color: #2b2d31;
+    font-weight: 700;
+}
+
+.brand span {
+    color: #009966;
+}
+
+.homeButton {
+    display: block;
+    width: 290px;
+    margin: 0 auto;
+    padding: 13px 0;
+    background: #009966;
+    color: #ffffff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.homeButton:hover {
+    background: #007f55;
+}
