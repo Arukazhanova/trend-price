@@ -4,6 +4,10 @@ type User = {
     username: string;
     email: string | null;
     roles: string[];
+    firstName?: string | null;
+    lastName?: string | null;
+    phoneNumber?: string | null;
+    dateOfBirth?: string | null;
 };
 
 type LoginPayload = {
@@ -32,6 +36,10 @@ export type MeResponse = {
     username: string;
     email: string | null;
     roles: string[];
+    firstName?: string | null;
+    lastName?: string | null;
+    phoneNumber?: string | null;
+    dateOfBirth?: string | null;
 };
 
 export type AuthContextValue = {

@@ -141,7 +141,18 @@
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 0 0 4px rgba(8, 181, 111, 0.1);
 }
+.authCheckbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #667085;
+    font-size: 14px;
+}
 
+.authCheckbox input {
+    width: 16px;
+    height: 16px;
+}
 .authSubmit {
     width: 100%;
     height: 40px;

@@ -28,10 +28,11 @@ export default function RegisterPage() {
         resolver: zodResolver(registerSchema),
         mode: 'onBlur',
         defaultValues: {
-            username: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            acceptTerms: false,
         },
     });
 
@@ -39,31 +40,40 @@ export default function RegisterPage() {
         if (serverError) setServerError('');
         if (successMessage) setSuccessMessage('');
     };
-
     const onSubmit = async (data: RegisterFormData) => {
-        setServerError('');
-        setSuccessMessage('');
+        console.log("REGISTER DATA:", data);
+
+        setServerError("");
+        setSuccessMessage("");
 
         try {
-            await api.post('/auth/register', {
+            const response = await api.post("/auth/register", {
                 username: data.username,
                 email: data.email,
                 password: data.password,
             });
 
-            setRegisteredEmail(data.email);
-            setSuccessMessage(
-                'Your account has been created. We sent a verification link to your email. Please verify your email before signing in.'
-            );
+            console.log("REGISTER RESPONSE:", response.data);
 
+            setRegisteredEmail(data.email);
+            setSuccessMessage("Account created successfully. You can now sign in.");
             reset();
         } catch (error) {
+            console.log("FULL REGISTER ERROR:", error);
+
             if (isAxiosError(error)) {
-                setServerError(error.response?.data?.message ?? 'Registration failed');
+                console.log("STATUS:", error.response?.status);
+                console.log("DATA:", error.response?.data);
+
+                setServerError(
+                    typeof error.response?.data === "string"
+                        ? error.response.data
+                        : error.response?.data?.message ?? "Registration failed"
+                );
                 return;
             }
 
-            setServerError('An unexpected error occurred');
+            setServerError("An unexpected error occurred");
         }
     };
 
@@ -128,7 +138,16 @@ export default function RegisterPage() {
                         )}
 
                         {!successMessage && (
-                            <form className={authStyles.authForm} onSubmit={handleSubmit(onSubmit)} noValidate>
+                            <form
+                                className={authStyles.authForm}
+                                onSubmit={handleSubmit(
+                                    onSubmit,
+                                    (errors) => {
+                                        console.log("FORM VALIDATION ERRORS:", errors);
+                                    }
+                                )}
+                                noValidate
+                            >
                                 <div className={authStyles.authField}>
                                     <label className={authStyles.authLabel} htmlFor="username">
                                         Username
@@ -257,9 +276,28 @@ export default function RegisterPage() {
                                     )}
                                 </div>
 
-                                <button className={authStyles.authSubmit} type="submit" disabled={isSubmitting}>
-                                    {isSubmitting ? 'Creating account...' : 'Sign up'}
+                                <button
+                                    className={authStyles.authSubmit}
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? "Creating account..." : "Sign up"}
                                 </button>
+                                <label className={authStyles.authCheckbox}>
+                                    <input
+                                        type="checkbox"
+                                        {...register("acceptTerms", {
+                                            onChange: clearMessages,
+                                        })}
+                                    />
+                                    <span>I agree to the terms and conditions</span>
+                                </label>
+
+                                {errors.acceptTerms && (
+                                    <p className={authStyles.authServerMessage}>
+                                        {errors.acceptTerms.message}
+                                    </p>
+                                )}
                             </form>
                         )}
 

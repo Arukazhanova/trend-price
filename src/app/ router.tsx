@@ -10,6 +10,9 @@ import NotFoundPage from "../ pages/NotFoundPage/NotFoundPage.tsx";
 import ProductPage from "../ pages/ProductPage/ProductPage.tsx";
 import PriceAnalyticsPage from "../ pages/PriceAnalyticsPage/PriceAnalyticsPage.tsx";
 import PurchasePage from "../ pages/PurchasePage/PurchasePage.tsx";
+import ReceiptsPage from "../ pages/ReceiptsPage/ReceiptsPage";
+import NotificationsPage from "../ pages/NotificationsPage/NotificationsPage";
+import SettingsPage from "../ pages/SettingsPage/SettingsPage";
 export default function AppRouter() {
     return (
         <BrowserRouter>
@@ -32,7 +35,32 @@ export default function AppRouter() {
                 <Route path="/products/:id" element={<ProductPage />} />
                 <Route path="/products/:id/analytics" element={<PriceAnalyticsPage />} />
                 <Route path="/purchase" element={<PurchasePage />} />
+                <Route
+                    path="/receipts"
+                    element={
+                        <ProtectedRoute>
+                            <ReceiptsPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/notifications"
+                    element={
+                        <ProtectedRoute>
+                            <NotificationsPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/settings"
+                    element={
+                        <ProtectedRoute>
+                            <SettingsPage />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route path="*" element={<NotFoundPage />} />
+
 
             </Routes>
         </BrowserRouter>
