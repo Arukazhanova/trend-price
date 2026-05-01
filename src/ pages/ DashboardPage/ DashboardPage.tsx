@@ -1,12 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { api } from "../../ shared/api";
 import { useAuth } from "../../auth/AuthContext";
 import MainHeader from "../../ components/MainHeader/MainHeader";
 import styles from "./DashboardPage.module.css";
 import profileIcon from "../../assets/User.svg";
 import arrowLeftIcon from "../../assets/ArrowLeft.svg";
-import profileMenuIcon from "../../assets/UserCircle.svg";
+import profileMenuIcon from "../../assets/UserCircleGrey.svg";
 import receiptIcon from "../../assets/Package.svg";
 import notificationIcon from "../../assets/BellRinging.svg";
 import settingsIcon from "../../assets/Gear.svg";
@@ -18,9 +17,8 @@ import phoneIcon from "../../assets/Phone.svg";
 import calendarIcon from "../../assets/CalendarDots.svg";
 
 export default function DashboardPage() {
-    const { user, logout } = useAuth();
+    const { user, logout, updateProfile } = useAuth();
     const navigate = useNavigate();
-
     const fullName =
         `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() ||
         user?.username ||
@@ -38,15 +36,24 @@ export default function DashboardPage() {
     });
 
     const handleChange = (field: keyof typeof formData, value: string) => {
+        let newValue = value;
+
+        if (field === "phoneNumber") {
+            newValue = value.replace(/[^\d+]/g, "");
+
+            if (newValue.includes("+")) {
+                newValue = "+" + newValue.replace(/\+/g, "");
+            }
+        }
+
         setFormData((prev) => ({
             ...prev,
-            [field]: value,
+            [field]: newValue,
         }));
     };
-
     const handleSave = async () => {
         try {
-            await api.put("/users/me/profile", formData);
+            await updateProfile(formData);
             setIsEditing(false);
         } catch (error) {
             console.log(error);
@@ -209,23 +216,27 @@ export default function DashboardPage() {
                             </label>
 
                             <label className={styles.fullField}>
-                               <span className={styles.fieldLabel}>
-                                    <img src={phoneIcon} alt="" />
-                                    Phone Number
-                               </span>
+    <span className={styles.fieldLabel}>
+        <img src={phoneIcon} alt="" />
+        Phone Number
+    </span>
+
                                 <input
+                                    type="tel"
+                                    inputMode="tel"
+                                    placeholder=" "
                                     value={formData.phoneNumber}
                                     readOnly={!isEditing}
                                     onChange={(e) => handleChange("phoneNumber", e.target.value)}
                                 />
                             </label>
-
                             <label className={styles.fullField}>
                                 <span className={styles.fieldLabel}>
                                     <img src={calendarIcon} alt="" />
                                         Date of Birth
                                 </span>
                                 <input
+                                    type="date"
                                     value={formData.dateOfBirth}
                                     readOnly={!isEditing}
                                     onChange={(e) => handleChange("dateOfBirth", e.target.value)}

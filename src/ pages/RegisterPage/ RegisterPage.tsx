@@ -3,11 +3,17 @@ import { isAxiosError } from 'axios';
 import { Link, Navigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+
 import Header from '../../ components/Header/Header.tsx';
 import authStyles from '../../auth/AuthPage.module.css';
+import registerStyles from './RegisterPage.module.css';
+
 import emailIcon from '../../assets/email.png';
-import passwordIcon from '../../assets/password.png';
+import passwordIcon from '../../assets/LockKey.svg';
 import userIcon from '../../assets/admin.png';
+import eyeIcon from '../../assets/eye.svg';
+import eyeClosedIcon from '../../assets/eye-crossed.svg';
+
 import { api } from '../../ shared/api';
 import { useAuth } from '../../auth/AuthContext.tsx';
 import { registerSchema, type RegisterFormData } from '../../auth/ schemas.ts';
@@ -19,6 +25,9 @@ export default function RegisterPage() {
     const [successMessage, setSuccessMessage] = useState('');
     const [registeredEmail, setRegisteredEmail] = useState('');
 
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -28,10 +37,10 @@ export default function RegisterPage() {
         resolver: zodResolver(registerSchema),
         mode: 'onBlur',
         defaultValues: {
-            username: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
+            username: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
             acceptTerms: false,
         },
     });
@@ -40,40 +49,36 @@ export default function RegisterPage() {
         if (serverError) setServerError('');
         if (successMessage) setSuccessMessage('');
     };
-    const onSubmit = async (data: RegisterFormData) => {
-        console.log("REGISTER DATA:", data);
 
-        setServerError("");
-        setSuccessMessage("");
+    const onSubmit = async (data: RegisterFormData) => {
+        setServerError('');
+        setSuccessMessage('');
 
         try {
-            const response = await api.post("/auth/register", {
+            const response = await api.post('/auth/register', {
                 username: data.username,
                 email: data.email,
                 password: data.password,
             });
 
-            console.log("REGISTER RESPONSE:", response.data);
+            console.log('REGISTER RESPONSE:', response.data);
 
             setRegisteredEmail(data.email);
-            setSuccessMessage("Account created successfully. You can now sign in.");
+            setSuccessMessage('Account created successfully. You can now sign in.');
             reset();
         } catch (error) {
-            console.log("FULL REGISTER ERROR:", error);
+            console.log('FULL REGISTER ERROR:', error);
 
             if (isAxiosError(error)) {
-                console.log("STATUS:", error.response?.status);
-                console.log("DATA:", error.response?.data);
-
                 setServerError(
-                    typeof error.response?.data === "string"
+                    typeof error.response?.data === 'string'
                         ? error.response.data
-                        : error.response?.data?.message ?? "Registration failed"
+                        : error.response?.data?.message ?? 'Registration failed'
                 );
                 return;
             }
 
-            setServerError("An unexpected error occurred");
+            setServerError('An unexpected error occurred');
         }
     };
 
@@ -101,8 +106,8 @@ export default function RegisterPage() {
             <Header />
 
             <div className={authStyles.authPageSection}>
-                <div className={authStyles.authPageContainer}>
-                    <section className={authStyles.authCardSimple}>
+                <div className={`${authStyles.authPageContainer} ${registerStyles.registerContainer}`}>
+                    <section className={`${authStyles.authCardSimple} ${registerStyles.registerCard}`}>
                         <div className={authStyles.authBrand} aria-label="TrendPrice">
                             <span className={authStyles.authBrandAccent}>Trend</span>
                             <span className={authStyles.authBrandDark}>Price</span>
@@ -116,9 +121,7 @@ export default function RegisterPage() {
                         </div>
 
                         {serverError && (
-                            <p className={authStyles.authServerMessage}>
-                                {serverError}
-                            </p>
+                            <p className={authStyles.authServerMessage}>{serverError}</p>
                         )}
 
                         {successMessage && (
@@ -139,13 +142,8 @@ export default function RegisterPage() {
 
                         {!successMessage && (
                             <form
-                                className={authStyles.authForm}
-                                onSubmit={handleSubmit(
-                                    onSubmit,
-                                    (errors) => {
-                                        console.log("FORM VALIDATION ERRORS:", errors);
-                                    }
-                                )}
+                                className={`${authStyles.authForm} ${registerStyles.registerForm}`}
+                                onSubmit={handleSubmit(onSubmit)}
                                 noValidate
                             >
                                 <div className={authStyles.authField}>
@@ -227,14 +225,25 @@ export default function RegisterPage() {
 
                                         <input
                                             id="password"
-                                            type="password"
+                                            type={showPassword ? "text" : "password"}
                                             className={authStyles.authInput}
                                             placeholder="Create a password"
                                             autoComplete="new-password"
-                                            {...register('password', {
+                                            {...register("password", {
                                                 onChange: clearMessages,
                                             })}
                                         />
+
+                                        <button
+                                            type="button"
+                                            className={authStyles.passwordEyeButton}
+                                            onClick={() => setShowPassword((prev) => !prev)}
+                                        >
+                                            <img
+                                                src={showPassword ? eyeIcon : eyeClosedIcon}
+                                                alt=""
+                                            />
+                                        </button>
                                     </div>
 
                                     {errors.password && (
@@ -259,14 +268,25 @@ export default function RegisterPage() {
 
                                         <input
                                             id="confirmPassword"
-                                            type="password"
+                                            type={showConfirmPassword ? "text" : "password"}
                                             className={authStyles.authInput}
                                             placeholder="Repeat your password"
                                             autoComplete="new-password"
-                                            {...register('confirmPassword', {
+                                            {...register("confirmPassword", {
                                                 onChange: clearMessages,
                                             })}
                                         />
+
+                                        <button
+                                            type="button"
+                                            className={authStyles.passwordEyeButton}
+                                            onClick={() => setShowConfirmPassword((prev) => !prev)}
+                                        >
+                                            <img
+                                                src={showConfirmPassword ? eyeIcon : eyeClosedIcon}
+                                                alt=""
+                                            />
+                                        </button>
                                     </div>
 
                                     {errors.confirmPassword && (
@@ -281,16 +301,20 @@ export default function RegisterPage() {
                                     type="submit"
                                     disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? "Creating account..." : "Sign up"}
+                                    {isSubmitting ? 'Creating account...' : 'Sign up'}
                                 </button>
-                                <label className={authStyles.authCheckbox}>
+
+                                <label className={registerStyles.authCheckboxLabel}>
                                     <input
                                         type="checkbox"
-                                        {...register("acceptTerms", {
+                                        className={registerStyles.authCheckboxInput}
+                                        {...register('acceptTerms', {
                                             onChange: clearMessages,
                                         })}
                                     />
-                                    <span>I agree to the terms and conditions</span>
+                                    <span className={registerStyles.authCheckboxText}>
+                                        I agree to the terms and conditions
+                                    </span>
                                 </label>
 
                                 {errors.acceptTerms && (

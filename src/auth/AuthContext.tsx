@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-type User = {
+export type User = {
     username: string;
     email: string | null;
     roles: string[];
@@ -32,15 +32,7 @@ export type RegisterResponse = {
     verificationUrl: string;
 };
 
-export type MeResponse = {
-    username: string;
-    email: string | null;
-    roles: string[];
-    firstName?: string | null;
-    lastName?: string | null;
-    phoneNumber?: string | null;
-    dateOfBirth?: string | null;
-};
+export type MeResponse = User;
 
 export type AuthContextValue = {
     user: User | null;
@@ -49,6 +41,7 @@ export type AuthContextValue = {
     login: (payload: LoginPayload) => Promise<void>;
     register: (payload: RegisterPayload) => Promise<RegisterResponse>;
     logout: () => void;
+    updateProfile: (payload: Partial<User>) => Promise<User>;
 };
 
 export const AuthContext = createContext<AuthContextValue | null>(null);

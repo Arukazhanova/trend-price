@@ -5,7 +5,7 @@ import styles from "../ DashboardPage/DashboardPage.module.css";
 
 import profileIcon from "../../assets/User.svg";
 import arrowLeftIcon from "../../assets/ArrowLeft.svg";
-import profileMenuIcon from "../../assets/UserCircle.svg";
+import profileMenuIcon from "../../assets/UserCircleGrey.svg";
 import receiptIcon from "../../assets/Package.svg";
 import notificationIcon from "../../assets/BellRinging.svg";
 import settingsIcon from "../../assets/Gear.svg";

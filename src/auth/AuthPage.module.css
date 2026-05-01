@@ -306,3 +306,87 @@
         font-size: 13px;
     }
 }
+.passwordField {
+    position: relative;
+    width: 100%;
+}
+
+.passwordField input {
+    padding-right: 55px;
+}
+
+.eyeButton {
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+
+.eyeButton img {
+    width: 22px;
+    height: 22px;
+}
+.authInputWrap {
+    position: relative;
+}
+
+.authInput {
+    padding-right: 56px;
+}
+
+.eyeButton {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+
+.eyeButton img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+.authInputWrap {
+    position: relative;
+}
+
+.authInput {
+    padding-right: 58px !important;
+}
+
+.passwordEyeButton {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+
+    width: 28px;
+    height: 28px;
+
+    border: none;
+    background: transparent;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+.passwordEyeButton img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}

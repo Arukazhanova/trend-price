@@ -10,7 +10,8 @@ import Header from '../../ components/Header/Header.tsx';
 import emailIcon from '../../assets/email.png';
 import passwordIcon from '../../assets/password.png';
 import { api } from '../../ shared/api';
-
+import eyeIcon from '../../assets/eye.svg';
+import eyeClosedIcon from '../../assets/eye-crossed.svg';
 export default function LoginPage() {
     const navigate = useNavigate();
     const { login, isAuthenticated, isInitializing } = useAuth();
@@ -19,7 +20,7 @@ export default function LoginPage() {
     const [infoMessage, setInfoMessage] = useState('');
     const [isResending, setIsResending] = useState(false);
     const [emailForResend, setEmailForResend] = useState('');
-
+    const [showPassword, setShowPassword] = useState(false);
     const {
         register,
         handleSubmit,
@@ -184,16 +185,26 @@ export default function LoginPage() {
                                         aria-hidden="true"
                                     />
 
-                                    <input
-                                        id="password"
-                                        type="password"
-                                        className={authStyles.authInput}
-                                        placeholder="Enter your password"
-                                        autoComplete="current-password"
-                                        {...register('password', {
-                                            onChange: clearMessages,
-                                        })}
-                                    />
+                                    <div className={authStyles.passwordField}>
+                                        <input
+                                            id="password"
+                                            type={showPassword ? "text" : "password"}
+                                            className={authStyles.authInput}
+                                            placeholder="Enter your password"
+                                            autoComplete="current-password"
+                                            {...register('password', {
+                                                onChange: clearMessages,
+                                            })}
+                                        />
+
+                                        <button
+                                            type="button"
+                                            className={authStyles.eyeButton}
+                                            onClick={() => setShowPassword(!showPassword)}
+                                        >
+                                            <img src={showPassword ? eyeIcon : eyeClosedIcon} alt="" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

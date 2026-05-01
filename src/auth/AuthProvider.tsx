@@ -24,6 +24,11 @@ type RegisterPayload = {
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User>(null);
     const [isInitializing, setIsInitializing] = useState(true);
+    const updateProfile = async (payload: Partial<User>) => {
+        const response = await api.put("/users/me/profile", payload);
+        setUser(response.data);
+        return response.data;
+    };
 
     useEffect(() => {
         const initializeAuth = async () => {
@@ -73,6 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             isInitializing,
             login,
             register,
+            updateProfile,
             logout,
         }),
         [user, isInitializing]

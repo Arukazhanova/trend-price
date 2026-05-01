@@ -234,13 +234,13 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 48px;
+    margin-bottom: 50px;
 }
 
 .cardHeader h2 {
     margin: 0 0 8px;
     color: #111827;
-    font-family: "Plus Jakarta Sans", sans-serif;
+    font-family: "Museo Sans Cyril", sans-serif;
     font-size: 34px;
     font-weight: 700;
 }
@@ -797,4 +797,41 @@
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
+}
+
+
+.phoneRow select {
+    width: 180px;
+}
+
+.phoneRow input {
+    flex: 1;
+}
+.deleteAccountBox {
+    margin-top: 12px;
+}
+.passwordField {
+    position: relative;
+    width: 100%;
+}
+
+.passwordField input {
+    padding-right: 70px;
+}
+
+.eyeButton {
+    position: absolute;
+    top: 50%;
+    right: 22px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+
+.eyeButton img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
