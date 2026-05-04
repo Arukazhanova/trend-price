@@ -237,3 +237,14 @@
     height: 100%;
     background: #f3f4f4;
 }
+.searchResultText {
+    margin: 0 0 18px;
+    font-size: 16px;
+    color: #475467;
+}
+
+.emptyText {
+    margin: 20px 0;
+    font-size: 16px;
+    color: #667085;
+}

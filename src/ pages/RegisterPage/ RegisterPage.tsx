@@ -10,7 +10,7 @@ import registerStyles from './RegisterPage.module.css';
 
 import emailIcon from '../../assets/email.png';
 import passwordIcon from '../../assets/LockKey.svg';
-import userIcon from '../../assets/admin.png';
+import userIcon from '../../assets/User-Grey.svg';
 import eyeIcon from '../../assets/eye.svg';
 import eyeClosedIcon from '../../assets/eye-crossed.svg';
 
@@ -121,12 +121,16 @@ export default function RegisterPage() {
                         </div>
 
                         {serverError && (
-                            <p className={authStyles.authServerMessage}>{serverError}</p>
+                            <p className={authStyles.authServerMessage}>
+                                {serverError}
+                            </p>
                         )}
 
                         {successMessage && (
                             <div style={{ display: 'grid', gap: '8px' }}>
-                                <p className={authStyles.authSubtitle}>{successMessage}</p>
+                                <p className={authStyles.authSubtitle}>
+                                    {successMessage}
+                                </p>
 
                                 {registeredEmail && (
                                     <p className={authStyles.authSubtitle}>
@@ -225,18 +229,18 @@ export default function RegisterPage() {
 
                                         <input
                                             id="password"
-                                            type={showPassword ? "text" : "password"}
+                                            type={showPassword ? 'text' : 'password'}
                                             className={authStyles.authInput}
                                             placeholder="Create a password"
                                             autoComplete="new-password"
-                                            {...register("password", {
+                                            {...register('password', {
                                                 onChange: clearMessages,
                                             })}
                                         />
 
                                         <button
                                             type="button"
-                                            className={authStyles.passwordEyeButton}
+                                            className={authStyles.eyeButton}
                                             onClick={() => setShowPassword((prev) => !prev)}
                                         >
                                             <img
@@ -268,18 +272,18 @@ export default function RegisterPage() {
 
                                         <input
                                             id="confirmPassword"
-                                            type={showConfirmPassword ? "text" : "password"}
+                                            type={showConfirmPassword ? 'text' : 'password'}
                                             className={authStyles.authInput}
                                             placeholder="Repeat your password"
                                             autoComplete="new-password"
-                                            {...register("confirmPassword", {
+                                            {...register('confirmPassword', {
                                                 onChange: clearMessages,
                                             })}
                                         />
 
                                         <button
                                             type="button"
-                                            className={authStyles.passwordEyeButton}
+                                            className={authStyles.eyeButton}
                                             onClick={() => setShowConfirmPassword((prev) => !prev)}
                                         >
                                             <img
@@ -312,9 +316,18 @@ export default function RegisterPage() {
                                             onChange: clearMessages,
                                         })}
                                     />
+
                                     <span className={registerStyles.authCheckboxText}>
-                                        I agree to the terms and conditions
-                                    </span>
+    I agree to the{' '}
+                                        <Link to="/user-agreement" className={registerStyles.authCheckboxLink}>
+        User Agreement
+    </Link>{' '}
+                                        and the{' '}
+                                        <Link to="/privacy-policy" className={registerStyles.authCheckboxLink}>
+        Privacy Policy
+    </Link>
+    .
+</span>
                                 </label>
 
                                 {errors.acceptTerms && (

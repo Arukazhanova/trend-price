@@ -1,5 +1,7 @@
-import { Link } from 'react-router-dom';
+import { FormEvent, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './MainHeader.module.css';
+
 import favouritesIcon from '../../assets/Heart.svg';
 import compareIcon from '../../assets/compare-icon 1.svg';
 import purchaseIcon from '../../assets/ShoppingCartSimple.svg';
@@ -8,6 +10,21 @@ import { useAuth } from '../../auth/AuthContext';
 
 export default function MainHeader() {
     const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+    const [searchValue, setSearchValue] = useState('');
+
+    const handleSearch = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const query = searchValue.trim();
+
+        if (!query) {
+            navigate('/catalog');
+            return;
+        }
+
+        navigate(`/catalog?search=${encodeURIComponent(query)}`);
+    };
 
     return (
         <header className={styles.header}>
@@ -21,7 +38,7 @@ export default function MainHeader() {
                     Catalog
                 </Link>
 
-                <div className={styles.searchBlock}>
+                <form className={styles.searchBlock} onSubmit={handleSearch}>
                     <div className={styles.searchInputWrap}>
                         <svg
                             className={styles.searchIcon}
@@ -49,13 +66,15 @@ export default function MainHeader() {
                             type="text"
                             className={styles.searchInput}
                             placeholder="I want to find"
+                            value={searchValue}
+                            onChange={(event) => setSearchValue(event.target.value)}
                         />
                     </div>
 
-                    <button type="button" className={styles.searchButton}>
+                    <button type="submit" className={styles.searchButton}>
                         Search
                     </button>
-                </div>
+                </form>
 
                 <nav className={styles.actions} aria-label="Header actions">
                     <Link to="/favourites" className={styles.actionItem}>
@@ -67,6 +86,7 @@ export default function MainHeader() {
                         />
                         <span>Favourites</span>
                     </Link>
+
                     <Link to="/products/1/analytics" className={styles.actionItem}>
                         <img
                             src={compareIcon}

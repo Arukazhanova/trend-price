@@ -1,4 +1,5 @@
-// src/api/userApi.ts
 import { createApi } from './createApi';
 
-export const userApi = createApi('/user-service/api');
+const API_URL = `${import.meta.env.VITE_USER_SERVICE_URL}/user-service/api`;
+
+export const userApi = createApi(API_URL);

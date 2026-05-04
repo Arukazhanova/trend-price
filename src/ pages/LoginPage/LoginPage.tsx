@@ -7,14 +7,14 @@ import { useAuth } from '../../auth/AuthContext.tsx';
 import { loginSchema, type LoginFormData } from '../../auth/ schemas.ts';
 import authStyles from '../../auth/AuthPage.module.css';
 import Header from '../../ components/Header/Header.tsx';
-import emailIcon from '../../assets/email.png';
-import passwordIcon from '../../assets/password.png';
+import userIcon from '../../assets/User-Grey.svg';
+import passwordIcon from '../../assets/LockKey.svg';
 import { api } from '../../ shared/api';
 import eyeIcon from '../../assets/eye.svg';
 import eyeClosedIcon from '../../assets/eye-crossed.svg';
 export default function LoginPage() {
     const navigate = useNavigate();
-    const { login, isAuthenticated, isInitializing } = useAuth();
+    const {login, isAuthenticated, isInitializing} = useAuth();
 
     const [serverError, setServerError] = useState('');
     const [infoMessage, setInfoMessage] = useState('');
@@ -24,7 +24,7 @@ export default function LoginPage() {
     const {
         register,
         handleSubmit,
-        formState: { isSubmitting },
+        formState: {isSubmitting},
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         mode: 'onBlur',
@@ -81,7 +81,7 @@ export default function LoginPage() {
         setIsResending(true);
 
         try {
-            await api.post('/auth/resend-verification', { email });
+            await api.post('/auth/resend-verification', {email});
             setInfoMessage('Verification email sent. Please check your inbox.');
         } catch (error) {
             if (isAxiosError(error)) {
@@ -99,7 +99,7 @@ export default function LoginPage() {
     if (isInitializing) {
         return (
             <>
-                <Header />
+                <Header/>
                 <div className={authStyles.authPageSection}>
                     <div className={authStyles.authPageContainer}>
                         <section className={authStyles.authCardSimple}>
@@ -112,12 +112,12 @@ export default function LoginPage() {
     }
 
     if (isAuthenticated) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/dashboard" replace/>;
     }
 
     return (
         <>
-            <Header />
+            <Header/>
 
             <div className={authStyles.authPageSection}>
                 <div className={authStyles.authPageContainer}>
@@ -146,7 +146,11 @@ export default function LoginPage() {
                             </p>
                         )}
 
-                        <form className={authStyles.authForm} onSubmit={handleSubmit(onSubmit)} noValidate>
+                        <form
+                            className={authStyles.authForm}
+                            onSubmit={handleSubmit(onSubmit)}
+                            noValidate
+                        >
                             <div className={authStyles.authField}>
                                 <label className={authStyles.authLabel} htmlFor="username">
                                     Username
@@ -154,7 +158,7 @@ export default function LoginPage() {
 
                                 <div className={authStyles.authInputWrap}>
                                     <img
-                                        src={emailIcon}
+                                        src={userIcon}
                                         alt=""
                                         className={authStyles.authInputIcon}
                                         aria-hidden="true"
@@ -179,23 +183,26 @@ export default function LoginPage() {
                                         Password
                                     </label>
 
-                                    <Link to="/forgot-password" className={authStyles.authForgotLink}>
+                                    <Link
+                                        to="/forgot-password"
+                                        className={authStyles.authForgotLink}
+                                    >
                                         Forgot password?
                                     </Link>
                                 </div>
 
                                 <div className={authStyles.authInputWrap}>
-                                    <img
-                                        src={passwordIcon}
-                                        alt=""
-                                        className={authStyles.authInputIcon}
-                                        aria-hidden="true"
-                                    />
-
                                     <div className={authStyles.passwordField}>
+                                        <img
+                                            src={passwordIcon}
+                                            alt=""
+                                            className={authStyles.authInputIcon}
+                                            aria-hidden="true"
+                                        />
+
                                         <input
                                             id="password"
-                                            type={showPassword ? "text" : "password"}
+                                            type={showPassword ? 'text' : 'password'}
                                             className={authStyles.authInput}
                                             placeholder="Enter your password"
                                             autoComplete="current-password"
@@ -209,19 +216,26 @@ export default function LoginPage() {
                                             className={authStyles.eyeButton}
                                             onClick={() => setShowPassword(!showPassword)}
                                         >
-                                            <img src={showPassword ? eyeIcon : eyeClosedIcon} alt="" />
+                                            <img
+                                                src={showPassword ? eyeIcon : eyeClosedIcon}
+                                                alt=""
+                                            />
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
-                            <button className={authStyles.authSubmit} type="submit" disabled={isSubmitting}>
+                            <button
+                                className={authStyles.authSubmit}
+                                type="submit"
+                                disabled={isSubmitting}
+                            >
                                 {isSubmitting ? 'Signing in...' : 'Sign in'}
                             </button>
                         </form>
 
                         {canResendVerification && (
-                            <div style={{ marginTop: '12px', display: 'grid', gap: '10px' }}>
+                            <div style={{marginTop: '12px', display: 'grid', gap: '10px'}}>
                                 <input
                                     type="email"
                                     className={authStyles.authInput}

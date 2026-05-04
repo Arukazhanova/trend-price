@@ -1,4 +1,3 @@
-// src/api/createApi.ts
 import axios from 'axios';
 
 export const createApi = (baseURL: string) => {
