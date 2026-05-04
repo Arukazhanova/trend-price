@@ -1,0 +1,172 @@
+.adminPage {
+    min-height: 100vh;
+    display: flex;
+    background: #f5f8f7;
+    color: #222;
+}
+
+.content {
+    flex: 1;
+}
+
+.pageContent {
+    padding: 24px 28px 40px;
+}
+
+.titleRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.titleRow h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.titleRow p {
+    margin: 6px 0 0;
+    color: #555;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 56px;
+    margin-bottom: 26px;
+}
+
+.statCard {
+    height: 80px;
+    background: white;
+    border: 1px solid #dce3e2;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.statIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #d9fff0;
+}
+
+.statCard p {
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+}
+
+.statCard h3 {
+    margin: 3px 0 0;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.tableCard {
+    background: white;
+    border: 1px solid #dce3e2;
+    border-radius: 10px;
+    padding: 20px 24px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    text-align: left;
+    padding: 12px 10px;
+    border-bottom: 1px solid #e4eaea;
+    font-size: 13px;
+}
+
+.table th {
+    color: #555;
+    font-weight: 500;
+}
+
+.userCell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.userCell strong {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.userCell span {
+    font-size: 12px;
+    color: #555;
+}
+
+.role,
+.status {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.adminRole {
+    background: #dceeff;
+    color: #2f6dcc;
+}
+
+.managerRole {
+    background: #dcfff0;
+    color: #009966;
+}
+
+.userRole {
+    background: #eeeeee;
+    color: #555;
+}
+
+.activeStatus {
+    background: #dcfff0;
+    color: #009966;
+}
+
+.blockedStatus {
+    background: #ffe1e1;
+    color: #ff3b3b;
+}
+
+.pendingStatus {
+    background: #fff3cd;
+    color: #d89b00;
+}
+
+.actions {
+    font-weight: 700;
+    color: #555;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    font-size: 13px;
+}
+
+.pagination button {
+    border: 1px solid #d0d8d7;
+    background: white;
+    border-radius: 14px;
+    padding: 6px 14px;
+    margin-left: 8px;
+    cursor: pointer;
+}

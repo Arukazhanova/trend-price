@@ -17,9 +17,9 @@ export default function MainHeader() {
                     <span className={styles.logoDark}>Price</span>
                 </Link>
 
-                <button type="button" className={styles.catalogButton}>
+                <Link to="/catalog" className={styles.catalogButton}>
                     Catalog
-                </button>
+                </Link>
 
                 <div className={styles.searchBlock}>
                     <div className={styles.searchInputWrap}>

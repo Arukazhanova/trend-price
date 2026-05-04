@@ -1,13 +1,11 @@
-import { AuthProvider } from "./auth/AuthProvider.tsx";
 import { CartProvider } from "./cart/CartProvider";
 import AppRouter from "./app/ router.tsx";
-
+import FloatingAIButton from "./ components/FloatingAIButton/FloatingAIButton";
 export default function App() {
     return (
-        <AuthProvider>
-            <CartProvider>
-                <AppRouter />
-            </CartProvider>
-        </AuthProvider>
+        <CartProvider>
+            <AppRouter />
+            <FloatingAIButton />
+        </CartProvider>
     );
 }

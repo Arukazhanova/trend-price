@@ -1,0 +1,30 @@
+<svg width="1139" height="555" viewBox="0 0 1139 555" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1139" height="555" rx="24" fill="url(#bgGradient)"/>
+
+    <g opacity="0.28">
+        <path d="M100 0V555" stroke="white"/>
+        <path d="M200 0V555" stroke="white"/>
+        <path d="M300 0V555" stroke="white"/>
+        <path d="M400 0V555" stroke="white"/>
+        <path d="M500 0V555" stroke="white"/>
+        <path d="M600 0V555" stroke="white"/>
+        <path d="M700 0V555" stroke="white"/>
+        <path d="M800 0V555" stroke="white"/>
+        <path d="M900 0V555" stroke="white"/>
+        <path d="M1000 0V555" stroke="white"/>
+
+        <path d="M0 100H1139" stroke="white"/>
+        <path d="M0 200H1139" stroke="white"/>
+        <path d="M0 300H1139" stroke="white"/>
+        <path d="M0 400H1139" stroke="white"/>
+        <path d="M0 500H1139" stroke="white"/>
+    </g>
+
+    <defs>
+        <linearGradient id="bgGradient" x1="0" y1="0" x2="1139" y2="555" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#003F35"/>
+            <stop offset="0.45" stop-color="#00695C"/>
+            <stop offset="1" stop-color="#38D99A"/>
+        </linearGradient>
+    </defs>
+</svg>

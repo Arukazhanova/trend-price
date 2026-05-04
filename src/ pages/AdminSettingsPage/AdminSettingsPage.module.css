@@ -1,0 +1,173 @@
+.adminPage {
+    min-height: 100vh;
+    display: flex;
+    background: #f5f8f7;
+    color: #222;
+}
+
+.content {
+    flex: 1;
+}
+
+.pageContent {
+    padding: 24px 28px 40px;
+}
+
+.titleBlock {
+    margin-bottom: 18px;
+}
+
+.titleBlock h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.titleBlock p {
+    margin: 6px 0 0;
+    color: #555;
+}
+
+.card {
+    max-width: 1180px;
+    background: #ffffff;
+    border: 1px solid #dce3e2;
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.cardSubtitle {
+    margin: 5px 0 28px;
+    color: #555;
+    font-size: 13px;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    margin-bottom: 24px;
+}
+
+.formGrid label,
+.fullField,
+.halfField {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.formGrid span,
+.fullField span,
+.halfField span {
+    font-size: 13px;
+    color: #333;
+}
+
+input,
+select,
+textarea {
+    border: 1px solid #aeb9c5;
+    border-radius: 7px;
+    background: #ffffff;
+    padding: 0 14px;
+    outline: none;
+    font-size: 13px;
+    color: #333;
+}
+
+input,
+select {
+    height: 34px;
+}
+
+textarea {
+    min-height: 58px;
+    padding-top: 12px;
+    resize: none;
+}
+
+.fullField {
+    margin-bottom: 24px;
+}
+
+.halfField {
+    width: calc(50% - 28px);
+    margin-bottom: 24px;
+}
+
+.divider {
+    height: 1px;
+    background: #dce3e2;
+    margin: 8px 0 24px;
+}
+
+.features h3 {
+    margin: 0 0 18px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.settingRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.settingRow h4 {
+    margin: 0 0 5px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.settingRow p {
+    margin: 0;
+    color: #555;
+    font-size: 12px;
+}
+
+.switch {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    display: none;
+}
+
+.switch span {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: #aeb9c5;
+    cursor: pointer;
+}
+
+.switch span::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 2px;
+    top: 2px;
+    border-radius: 50%;
+    background: white;
+    transition: 0.2s;
+}
+
+.switch input:checked + span {
+    background: #009966;
+}
+
+.switch input:checked + span::before {
+    transform: translateX(16px);
+}

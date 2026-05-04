@@ -48,8 +48,15 @@ export default function LoginPage() {
         setInfoMessage('');
 
         try {
-            await login(data);
-            navigate('/dashboard');
+            const loggedUser = await login(data);
+
+            const roles = loggedUser?.roles ?? [];
+
+            if (roles.includes('ADMIN')) {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (error) {
             if (isAxiosError(error)) {
                 setServerError(error.response?.data?.message ?? 'Sign in failed');
