@@ -1,14 +1,14 @@
 .page {
     min-height: 100vh;
-    background: #f7f8fa;
+    background: #FFFFFF;
     padding: 0 0 70px;
 }
 
 .container {
-    width: calc(100% - 96px);
+    width: 100%;
     max-width: 1220px;
     margin: 0 auto;
-    padding: 34px 0 0;
+    padding: 30px 0 0;
 }
 
 .categories {
@@ -17,32 +17,30 @@
     gap: 12px;
     flex-wrap: wrap;
     margin-bottom: 28px;
-    max-width: 100%;
 }
 
 .categoryChip {
-    height: 38px;
-    padding: 0 18px;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    background: #eef1ef;
+    height: 28px;
+    padding: 0 13px;
+    border: none;
+    border-radius: 6px;
+    background: #f1f3f2;
     color: #454545;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.categoryChip:hover {
-    background: #e2f4ed;
-    color: #009966;
 }
 
 .activeChip {
     background: #009966;
     color: #ffffff;
 }
+.categoryChip:hover {
+    background: #e2f4ed;
+    color: #009966;
+}
+
 
 .noCategoriesText {
     color: #98a2b3;
@@ -52,7 +50,7 @@
 
 .backLink {
     display: inline-flex;
-    margin-bottom: 26px;
+    margin-bottom: 28px;
     color: #98a2b3;
     font-family: "Museo Sans Cyrl", sans-serif;
     font-size: 18px;
@@ -72,30 +70,32 @@
 }
 
 .search {
-    width: 520px;
-    height: 38px;
-    padding: 0 14px;
+    width: 505px;
+    height: 31px;
+    padding: 0 12px;
     border: 1px solid #98a2b3;
-    border-radius: 10px;
+    border-radius: 8px;
     background: #ffffff;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 9px;
 }
 
 .search img {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     opacity: 0.65;
-    flex-shrink: 0;
 }
 
 .search input {
+    flex: 1;
     width: 100%;
+    height: 100%;
     border: none;
     outline: none;
     background: transparent;
-    color: #99A1AF;
+    padding: 0;
+    color: #454545;
     font-family: "Museo Sans Cyrl", sans-serif;
     font-size: 16px;
 }
@@ -110,22 +110,20 @@
 }
 
 .filterButton {
-    height: 38px;
-    padding: 0 18px;
+    height: 31px;
+    padding: 0 13px;
     border: 1px solid #98a2b3;
-    border-radius: 10px;
+    border-radius: 8px;
     background: #ffffff;
     color: #454545;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 7px;
+    cursor: pointer;
 }
 .filterButton img {
     width: 20px;
@@ -326,19 +324,16 @@
 }
 
 .categoryTitle {
-    margin: 0 0 28px;
+    margin: 0;
     color: #98a2b3;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 400;
     line-height: 1.2;
 }
 
 .totalText {
-    color: #98a2b3;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 15px;
-    white-space: nowrap;
+    display: none;
 }
 
 .searchResultText {
@@ -367,7 +362,7 @@
 .productCard {
     position: relative;
     width: 262px;
-    height: 369px;
+    height: 349px;
     border: 1px solid #bdbdbd;
     border-radius: 24px;
     background: #ffffff;
@@ -422,14 +417,21 @@
 }
 
 .imageBlock {
-    height: 199px;
+    height: 178px;
     background: #f4f4f4;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
 }
-
+.productImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    padding: 0;
+    display: block;
+}
 .imagePlaceholder {
     width: 100%;
     height: 100%;
@@ -452,18 +454,17 @@
 }
 
 .productInfo {
-    height: 170px;
-    padding: 18px 20px 58px;
+    height: 171px;
+    padding: 16px 18px 54px;
     display: flex;
     flex-direction: column;
     background: #ffffff;
 }
-
 .productInfo h2 {
     margin: 0 0 7px;
     color: #454545;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     line-height: 1.08;
     letter-spacing: -0.03em;
@@ -472,8 +473,8 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 39px;
-    max-height: 39px;
+    min-height: 35px;
+    max-height: 35px;
 }
 
 .productInfo p {
@@ -499,7 +500,7 @@
 .price {
     color: #454545;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 24px;
+    font-size: 21px;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.04em;
@@ -564,9 +565,9 @@
 
 .actions {
     position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -574,7 +575,7 @@
 
 .cartButton,
 .analyticsButton {
-    height: 31px;
+    height: 28px;
     border-radius: 999px;
     font-family: "Museo Sans Cyrl", sans-serif;
     font-size: 12px;

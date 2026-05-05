@@ -1,4 +1,6 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import type { FormEvent } from 'react';
+import { imageService } from '../../services/imageService';
 import { Link, useSearchParams } from 'react-router-dom';
 import MainHeader from '../../ components/MainHeader/MainHeader';
 import styles from './CatalogPage.module.css';
@@ -696,6 +698,7 @@ export default function CatalogPage() {
                             <div className={styles.productsGrid}>
                                 {products.map((product) => {
                                     const bestPrice = product.bestPrice;
+                                    const imageUrl = imageService.getProductImageUrl(product.id);
 
                                     const currentPrice = getPriceValue(bestPrice);
                                     const oldPrice = getOldPriceValue(bestPrice);
@@ -725,15 +728,16 @@ export default function CatalogPage() {
                                                 className={styles.cardLink}
                                             >
                                                 <div className={styles.imageBlock}>
-                                                    <div
-                                                        className={
-                                                            styles.imagePlaceholder
-                                                        }
-                                                    >
-                                                        {product.title}
-                                                    </div>
+                                                    <img
+                                                        className={styles.productImage}
+                                                        src={imageUrl}
+                                                        alt={product.title}
+                                                        loading="lazy"
+                                                        onError={(event) => {
+                                                            event.currentTarget.style.display = 'none';
+                                                        }}
+                                                    />
                                                 </div>
-
                                                 <div className={styles.productInfo}>
                                                     <h2>{product.title}</h2>
 
