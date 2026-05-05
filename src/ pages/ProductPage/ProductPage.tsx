@@ -1,81 +1,165 @@
-import { Link, useParams } from "react-router-dom";
-import MainHeader from "../../ components/MainHeader/MainHeader";
-import Footer from "../../ components/Footer/Footer";
-import starIcon from "../../assets/Star.svg";
-import arrowLeftIcon from "../../assets/ArrowLeft.svg";
-import heartIcon from "../../assets/Heart.svg";
-import styles from "./ProductPage.module.css";
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import MainHeader from '../../ components/MainHeader/MainHeader';
+import Footer from '../../ components/Footer/Footer';
+import starIcon from '../../assets/Star.svg';
+import arrowLeftIcon from '../../assets/ArrowLeft.svg';
+import styles from './ProductPage.module.css';
+import { catalogService } from '../../services/catalogService';
+import type { Price, ProductPriceViewWithCategory } from '../../types/api';
 
-const products = [
-    {
-        id: 6,
-        title: "Bananas, kg",
-        category: "Vegetables, fruits, greens",
-        subcategory: "Fruit",
-        price: "799₸",
-        oldPrice: "1099₸",
-        discount: "-27%",
-        rating: "4,9",
-        ratingsCount: "1250",
-        image: "",
-        description:
-            "Bananas from Ecuador are ripe, fragrant fruits with soft creamy flesh and a pleasant sweet taste. They are characterized by stable quality and dense texture. They are suitable for fresh consumption, making desserts, pastries, smoothies and porridges. They are convenient as a quick and nutritious snack.",
-        nutrition: [
-            { value: "89", label: "calories" },
-            { value: "1,1", label: "squirrels" },
-            { value: "0,3", label: "fats" },
-            { value: "22,8", label: "carbohydrates" },
-        ],
-        relatedProducts: [
-            {
-                id: 11,
-                title: "Premium bananas",
-                subtitle: "1 kg Magnum",
-                price: "1545₸",
-                color: "#fbffc8",
-            },
-            {
-                id: 12,
-                title: "Blueberry",
-                subtitle: "125 g Arbuz",
-                price: "2380₸",
-                color: "#c9cff8",
-            },
-            {
-                id: 13,
-                title: "Oranges",
-                subtitle: "0.8 kg Magnum",
-                price: "1240₸",
-                oldPrice: "1550₸",
-                discount: "-20%",
-                color: "#fff0d1",
-            },
-            {
-                id: 14,
-                title: "Grape",
-                subtitle: "0.5 kg Small",
-                price: "1330₸",
-                oldPrice: "2660₸",
-                discount: "-50%",
-                color: "#563d78",
-            },
-        ],
-    },
-];
+const getPriceValue = (price?: Price | null) => {
+    if (!price) {
+        return 0;
+    }
+
+    return Number(price.finalPrice ?? price.pricePerUnit ?? 0);
+};
+
+const formatPrice = (value: number, currency = '₸') => {
+    if (!value) {
+        return 'No price yet';
+    }
+
+    return `${Math.round(value)}${currency}`;
+};
+
+const getOldPriceValue = (price?: Price | null) => {
+    if (!price) {
+        return 0;
+    }
+
+    const finalPrice = Number(price.finalPrice ?? 0);
+    const pricePerUnit = Number(price.pricePerUnit ?? 0);
+
+    if (pricePerUnit > finalPrice && finalPrice > 0) {
+        return pricePerUnit;
+    }
+
+    return 0;
+};
+
+const getDiscountText = (price?: Price | null) => {
+    if (!price) {
+        return '';
+    }
+
+    const discount = Number(price.discount ?? 0);
+
+    if (discount > 0 && discount < 1) {
+        return `-${Math.round(discount * 100)}%`;
+    }
+
+    if (discount >= 1) {
+        return `-${Math.round(discount)}%`;
+    }
+
+    const oldPrice = getOldPriceValue(price);
+    const finalPrice = getPriceValue(price);
+
+    if (oldPrice > finalPrice && finalPrice > 0) {
+        const percent = Math.round(((oldPrice - finalPrice) / oldPrice) * 100);
+        return `-${percent}%`;
+    }
+
+    return '';
+};
+
+const formatDate = (value?: string) => {
+    if (!value) {
+        return '—';
+    }
+
+    return new Date(value).toLocaleDateString('ru-RU');
+};
 
 export default function ProductPage() {
     const { id } = useParams();
 
-    const product = products.find((item) => item.id === Number(id));
+    const [productData, setProductData] =
+        useState<ProductPriceViewWithCategory | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    if (!product) {
+    useEffect(() => {
+        const fetchProduct = async () => {
+            if (!id) {
+                setError('Product id is missing');
+                return;
+            }
+
+            setIsLoading(true);
+            setError('');
+
+            try {
+                const data = await catalogService.getProductPrice(id, 1);
+                setProductData(data);
+            } catch (error) {
+                console.log('PRODUCT DETAILS LOAD ERROR:', error);
+                setError('Failed to load product from backend');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchProduct();
+    }, [id]);
+
+    const product = productData?.product;
+    const bestPrice = productData?.bestPrice;
+
+    const categoryText = useMemo(() => {
+        if (productData?.categories?.length) {
+            return productData.categories
+                .map((category) => category.title)
+                .join(', ');
+        }
+
+        if (product?.categories?.length) {
+            return product.categories
+                .map((category) => category.title)
+                .join(', ');
+        }
+
+        return 'No category';
+    }, [productData, product]);
+
+    const brandTitle =
+        typeof product?.brand === 'string' ? product.brand : product?.brand?.title;
+
+    const currentPrice = getPriceValue(bestPrice);
+    const oldPrice = getOldPriceValue(bestPrice);
+    const discountText = getDiscountText(bestPrice);
+    const currency = bestPrice?.currency || '₸';
+
+    if (isLoading) {
         return (
             <>
                 <MainHeader />
                 <main className={styles.page}>
                     <div className={styles.container}>
-                        <h1>Product not found</h1>
-                        <Link to="/">Back to home</Link>
+                        <p className={styles.stateText}>Loading product...</p>
+                    </div>
+                </main>
+                <Footer />
+            </>
+        );
+    }
+
+    if (error || !product) {
+        return (
+            <>
+                <MainHeader />
+                <main className={styles.page}>
+                    <div className={styles.container}>
+                        <p className={styles.stateText}>
+                            {error || 'Product not found'}
+                        </p>
+
+                        <Link to="/catalog" className={styles.backLink}>
+                            <img src={arrowLeftIcon} alt="" />
+                            <span>Back to catalog</span>
+                        </Link>
                     </div>
                 </main>
                 <Footer />
@@ -89,26 +173,31 @@ export default function ProductPage() {
 
             <main className={styles.page}>
                 <div className={styles.container}>
-                    <Link to="/" className={styles.backLink}>
+                    <Link to="/catalog" className={styles.backLink}>
                         <img src={arrowLeftIcon} alt="" />
-                        <span>Home</span>
+                        <span>Catalog</span>
                     </Link>
 
                     <p className={styles.breadcrumbs}>
-                        {product.category} &gt; {product.subcategory} &gt; {product.title}
+                        {categoryText} &gt; {product.title}
                     </p>
 
                     <section className={styles.productCard}>
                         <div className={styles.leftColumn}>
                             <div className={styles.imageBox}>
-                                {product.image ? (
-                                    <img src={product.image} alt={product.title} />
-                                ) : (
-                                    <span>{product.title}</span>
-                                )}
+                                <span>{product.title}</span>
                             </div>
 
-                            <p className={styles.description}>{product.description}</p>
+                            <div className={styles.description}>
+                                <h2>Description</h2>
+                                <p>
+                                    {product.title}
+                                    {brandTitle ? ` by ${brandTitle}` : ''}. This
+                                    product is available in the TrendPrice catalog.
+                                    You can compare prices, check best offer and open
+                                    price analytics.
+                                </p>
+                            </div>
                         </div>
 
                         <div className={styles.rightColumn}>
@@ -117,101 +206,87 @@ export default function ProductPage() {
 
                                 <div className={styles.ratingSmall}>
                                     <img src={starIcon} alt="" />
-                                    <span>{product.rating} ratings</span>
+                                    <span>4.9 ratings</span>
                                 </div>
 
-                                <div className={styles.oldPrice}>{product.oldPrice}</div>
+                                {brandTitle && (
+                                    <p className={styles.metaText}>Brand: {brandTitle}</p>
+                                )}
+
+                                <p className={styles.metaText}>Category: {categoryText}</p>
+
+                                {oldPrice > 0 && (
+                                    <div className={styles.oldPrice}>
+                                        {formatPrice(oldPrice, currency)}
+                                    </div>
+                                )}
 
                                 <div className={styles.priceLine}>
-                                    <span className={styles.price}>{product.price}</span>
-                                    <span className={styles.discount}>{product.discount}</span>
+                                    <span className={styles.price}>
+                                        {formatPrice(currentPrice, currency)}
+                                    </span>
+
+                                    {discountText && (
+                                        <span className={styles.discount}>
+                                            {discountText}
+                                        </span>
+                                    )}
                                 </div>
 
-                                <button className={styles.cartButton}>Add to cart</button>
+                                <Link
+                                    to={`/products/${product.id}/analytics`}
+                                    className={styles.analyticsButton}
+                                >
+                                    Price analytics
+                                </Link>
                             </div>
 
                             <div className={styles.infoBlock}>
-                                <h2>Nutritional value</h2>
-                                <p>In 100 grams of product</p>
+                                <h2>Best offer</h2>
 
-                                <div className={styles.nutritionList}>
-                                    {product.nutrition.map((item) => (
-                                        <div key={item.label}>
-                                            <b>{item.value}</b>
-                                            <span>{item.label}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                {bestPrice ? (
+                                    <>
+                                        <p>City: {bestPrice.city || '—'}</p>
+                                        <p>Store ID: {bestPrice.storeId || '—'}</p>
+                                        <p>
+                                            Unit:{' '}
+                                            {bestPrice.unitAmount
+                                                ? `${bestPrice.unitAmount} `
+                                                : ''}
+                                            {bestPrice.unit || '—'}
+                                        </p>
+                                        <p>Updated: {formatDate(bestPrice.time)}</p>
+                                    </>
+                                ) : (
+                                    <p>No price information yet.</p>
+                                )}
                             </div>
 
                             <div className={styles.divider} />
 
                             <div className={styles.infoBlock}>
-                                <h2>Storage conditions</h2>
-                                <p>Store at a temperature of +12°C to +18°C in a dry place.</p>
+                                <h2>Product information</h2>
+                                <p>Barcode: {product.barcode || '—'}</p>
+                                <p>Type: {product.type || '—'}</p>
+                                <p>Created: {formatDate(product.createdAt)}</p>
                             </div>
 
                             <div className={styles.divider} />
 
                             <div className={styles.infoBlock}>
-                                <h2>Rating</h2>
+                                <h2>Recent prices</h2>
 
-                                <div className={styles.ratingBig}>
-                                    <span>{product.rating}</span>
-                                    <div>
-                                        {Array.from({ length: 5 }).map((_, index) => (
-                                            <img key={index} src={starIcon} alt="" />
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <p>{product.ratingsCount} ratings</p>
+                                {productData?.prices?.length ? (
+                                    productData.prices.slice(0, 5).map((price) => (
+                                        <p key={price.id}>
+                                            {formatPrice(getPriceValue(price), price.currency)} ·{' '}
+                                            {price.city || '—'} · {formatDate(price.time)}
+                                        </p>
+                                    ))
+                                ) : (
+                                    <p>No recent prices yet.</p>
+                                )}
                             </div>
-                        </div>
-                    </section>
-
-                    <section className={styles.relatedSection}>
-                        <h2>Related products</h2>
-
-                        <div className={styles.relatedGrid}>
-                            {product.relatedProducts.map((item) => (
-                                <article key={item.id} className={styles.relatedCard}>
-                                    <button className={styles.favoriteButton}>
-                                        <img src={heartIcon} alt="" />
-                                    </button>
-
-                                    <div
-                                        className={styles.relatedImage}
-                                        style={{ backgroundColor: item.color }}
-                                    />
-
-                                    <div className={styles.relatedBody}>
-                                        <h3>{item.title}</h3>
-                                        <p>{item.subtitle}</p>
-
-                                        <div className={styles.relatedPriceRow}>
-                                            <span className={styles.relatedPrice}>{item.price}</span>
-
-                                            {item.oldPrice && (
-                                                <span className={styles.relatedOldPrice}>
-                          {item.oldPrice}
-                        </span>
-                                            )}
-
-                                            {item.discount && (
-                                                <span className={styles.relatedDiscount}>
-                          ▼ {item.discount}
-                        </span>
-                                            )}
-                                        </div>
-
-                                        <div className={styles.relatedActions}>
-                                            <button>Add to cart</button>
-                                            <button>Price analytics</button>
-                                        </div>
-                                    </div>
-                                </article>
-                            ))}
                         </div>
                     </section>
                 </div>
