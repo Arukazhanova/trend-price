@@ -1,0 +1,163 @@
+.avatarBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.avatarBlockSmall {
+    width: 58px;
+}
+
+.avatarBlockLarge {
+    width: 105px;
+    gap: 10px;
+}
+
+.avatar {
+    position: relative;
+    border: none;
+    border-radius: 50%;
+    background: #e8f8f1;
+    color: #009966;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-weight: 700;
+    overflow: visible;
+    cursor: pointer;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.avatar span {
+    line-height: 1;
+}
+
+.avatarSmall {
+    width: 58px;
+    height: 58px;
+    font-size: 22px;
+}
+
+.avatarLarge {
+    width: 105px;
+    height: 105px;
+    font-size: 44px;
+}
+
+.overlay {
+    position: absolute;
+    right: -2px;
+    bottom: 0px;
+    border-radius: 50%;
+    background: #009966;
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 500;
+    z-index: 5;
+}
+
+.overlaySmall {
+    width: 19px;
+    height: 19px;
+    font-size: 14px;
+    right: -3px;
+    bottom: 4px;
+}
+
+.overlayLarge {
+    width: 34px;
+    height: 34px;
+    font-size: 22px;
+    right: -4px;
+    bottom: 0px;
+}
+
+.fileInput {
+    display: none;
+}
+
+.deleteButton {
+    border: none;
+    background: transparent;
+    color:#009966;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.avatarBlockActionsOnly {
+    width: auto;
+    align-items: flex-end;
+}
+
+.avatarActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.changeButton,
+.removeButton {
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 999px;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.changeButton {
+    border: none;
+    background: linear-gradient(135deg, #20C18B, #1ED0D9);
+    color: #ffffff;
+}
+
+.changeButton:hover {
+    background: #007f55;
+}
+
+.removeButton {
+    border: 1px solid #ff3b30;
+    background: #ffffff;
+    color: #ff3b30;
+}
+
+.removeButton:hover {
+    background: #fff4f4;
+}
+.changeButton:disabled,
+.removeButton:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.changeButton:disabled:hover {
+    background: #009966;
+}
+
+.removeButton:disabled:hover {
+    background: #ffffff;
+}
+
+

@@ -1,39 +1,104 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../auth/AuthContext";
-import MainHeader from "../../ components/MainHeader/MainHeader";
-import styles from "../ DashboardPage/DashboardPage.module.css";
+import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import profileIcon from "../../assets/User.svg";
-import arrowLeftIcon from "../../assets/ArrowLeft.svg";
-import profileMenuIcon from "../../assets/UserCircleGrey.svg";
-import receiptIcon from "../../assets/Package.svg";
-import notificationIcon from "../../assets/BellRinging.svg";
-import settingsIcon from "../../assets/Gear.svg";
-import signOutIcon from "../../assets/SignOut.svg";
-import arrowRightIcon from "../../assets/CaretRight.svg";
-import filterIcon from "../../assets/Funnel.svg";
+import MainHeader from '../../ components/MainHeader/MainHeader';
+import AccountSidebar from '../../ components/AccountSidebar/AccountSidebar';
 
-const receipts = [
-    { date: "10.04.26", quantity: 4, sum: 2590 },
-    { date: "25.03.26", quantity: 2, sum: 840 },
-    { date: "9.02.26", quantity: 6, sum: 3240 },
-];
+import styles from '../ DashboardPage/DashboardPage.module.css';
+
+import arrowLeftIcon from '../../assets/ArrowLeft.svg';
+import receiptIcon from '../../assets/Package.svg';
+import filterIcon from '../../assets/Funnel.svg';
+
+type ReceiptItem = {
+    id: string;
+    title: string;
+    price: number;
+    currency: string;
+    quantity: number;
+    subtitle?: string;
+    oldPrice?: number;
+    image?: string;
+};
+
+type SavedReceipt = {
+    id: string;
+    createdAt: string;
+    items: ReceiptItem[];
+    totalQuantity: number;
+    total: number;
+    currency: string;
+};
+
+const RECEIPTS_STORAGE_KEY = 'trend-price-receipts';
+
+const formatPrice = (value: number, currency = '₸') => {
+    if (!value) {
+        return 'No price';
+    }
+
+    return `${Math.round(value)}${currency}`;
+};
+
+const formatDate = (value: string) => {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return date.toLocaleDateString('ru-RU');
+};
+
+const readReceiptsFromStorage = (): SavedReceipt[] => {
+    try {
+        const rawReceipts = localStorage.getItem(RECEIPTS_STORAGE_KEY);
+
+        if (!rawReceipts) {
+            return [];
+        }
+
+        const parsedReceipts = JSON.parse(rawReceipts);
+
+        if (!Array.isArray(parsedReceipts)) {
+            return [];
+        }
+
+        return parsedReceipts;
+    } catch (error) {
+        console.log('RECEIPTS READ ERROR:', error);
+        return [];
+    }
+};
 
 export default function ReceiptsPage() {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
+    const [receipts, setReceipts] = useState<SavedReceipt[]>(
+        readReceiptsFromStorage
+    );
+    const [openedReceiptId, setOpenedReceiptId] = useState<string | null>(null);
 
-    const firstName = user?.firstName ?? user?.username ?? "";
-    const fullName =
-        `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() ||
-        user?.username ||
-        "User";
+    const totalSavedProducts = useMemo(() => {
+        return receipts.reduce((sum, receipt) => {
+            return sum + receipt.totalQuantity;
+        }, 0);
+    }, [receipts]);
 
-    const role = user?.roles?.length ? user.roles.join(", ") : "Customer";
+    const handleDeleteReceipt = (receiptId: string) => {
+        const nextReceipts = receipts.filter(
+            (receipt) => receipt.id !== receiptId
+        );
 
-    const handleLogout = () => {
-        logout();
-        navigate("/login");
+        setReceipts(nextReceipts);
+        localStorage.setItem(
+            RECEIPTS_STORAGE_KEY,
+            JSON.stringify(nextReceipts)
+        );
+    };
+
+    const handleClearReceipts = () => {
+        setReceipts([]);
+        localStorage.setItem(RECEIPTS_STORAGE_KEY, JSON.stringify([]));
+        setOpenedReceiptId(null);
     };
 
     return (
@@ -49,76 +114,21 @@ export default function ReceiptsPage() {
 
                     <section className={styles.hero}>
                         <div className={styles.heroIcon}>
-                            <img src={profileIcon} alt="" />
+                            <img src={receiptIcon} alt="" />
                         </div>
 
                         <div>
-                            <h1>My Account</h1>
-                            <p>Manage your profile and preferences</p>
+                            <h1>My receipts</h1>
+                            <p>Keep track of your receipts in one place</p>
                         </div>
                     </section>
 
                     <div className={styles.layout}>
-                        <aside className={styles.sidebar}>
-                            <div className={styles.profileTop}>
-                                <div className={styles.avatar}>
-                                    {firstName?.[0]?.toUpperCase() || "U"}
-                                </div>
-
-                                <div>
-                                    <h2>{fullName}</h2>
-                                    <p>{role}</p>
-                                </div>
-                            </div>
-
-                            <div className={styles.stats}>
-                                <div>
-                                    <b>12</b>
-                                    <span>Order</span>
-                                </div>
-
-                                <div>
-                                    <b>2</b>
-                                    <span>Saved</span>
-                                </div>
-                            </div>
-
-                            <nav className={styles.menu}>
-                                <Link to="/dashboard" className={styles.menuItem}>
-                                    <img src={profileMenuIcon} alt="" />
-                                    <span>Profile</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/receipts" className={`${styles.menuItem} ${styles.activeItem}`}>
-                                    <img src={receiptIcon} alt="" />
-                                    <span>My receipts</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/notifications" className={styles.menuItem}>
-                                    <img src={notificationIcon} alt="" />
-                                    <span>Notifications</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/settings" className={styles.menuItem}>
-                                    <img src={settingsIcon} alt="" />
-                                    <span>Settings</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <button
-                                    type="button"
-                                    onClick={handleLogout}
-                                    className={`${styles.menuItem} ${styles.signOutItem}`}
-                                >
-                                    <img src={signOutIcon} alt="" />
-                                    <span>Sign out</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </button>
-                            </nav>
-                        </aside>
+                        <AccountSidebar
+                            activePage="receipts"
+                            receiptsCount={receipts.length}
+                            productsCount={totalSavedProducts}
+                        />
 
                         <section className={styles.receiptsCard}>
                             <div className={styles.receiptsHeader}>
@@ -127,21 +137,151 @@ export default function ReceiptsPage() {
                                     <p>Keep track of your receipts in one place</p>
                                 </div>
 
-                                <button type="button" className={styles.filterButton}>
-                                    <img src={filterIcon} alt="" />
-                                    <span>Filter</span>
-                                </button>
+                                <div className={styles.receiptsActions}>
+                                    {receipts.length > 0 && (
+                                        <button
+                                            type="button"
+                                            className={styles.clearReceiptsButton}
+                                            onClick={handleClearReceipts}
+                                        >
+                                            Clear all
+                                        </button>
+                                    )}
+
+                                    <button
+                                        type="button"
+                                        className={styles.filterButton}
+                                    >
+                                        <img src={filterIcon} alt="" />
+                                        <span>Filter</span>
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className={styles.receiptList}>
-                                {receipts.map((item) => (
-                                    <div key={item.date} className={styles.receiptRow}>
-                                        <span>Date:{item.date}</span>
-                                        <span>Quantity: {item.quantity}</span>
-                                        <span>Sum:{item.sum}</span>
-                                    </div>
-                                ))}
-                            </div>
+                            {receipts.length === 0 ? (
+                                <div className={styles.emptyReceipts}>
+                                    <img src={receiptIcon} alt="" />
+                                    <h3>No receipts yet</h3>
+                                    <p>
+                                        Save a receipt from Purchase and it will
+                                        appear here.
+                                    </p>
+
+                                    <Link
+                                        to="/catalog"
+                                        className={styles.receiptsCatalogButton}
+                                    >
+                                        Go to catalog
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className={styles.receiptList}>
+                                    {receipts.map((receipt) => {
+                                        const isOpen =
+                                            openedReceiptId === receipt.id;
+
+                                        return (
+                                            <article
+                                                key={receipt.id}
+                                                className={styles.receiptItem}
+                                            >
+                                                <button
+                                                    type="button"
+                                                    className={styles.receiptRow}
+                                                    onClick={() =>
+                                                        setOpenedReceiptId(
+                                                            isOpen
+                                                                ? null
+                                                                : receipt.id
+                                                        )
+                                                    }
+                                                >
+                                                    <span>
+                                                        Date:{' '}
+                                                        {formatDate(
+                                                            receipt.createdAt
+                                                        )}
+                                                    </span>
+
+                                                    <span>
+                                                        Quantity:{' '}
+                                                        {receipt.totalQuantity}
+                                                    </span>
+
+                                                    <span>
+                                                        Sum:{' '}
+                                                        {formatPrice(
+                                                            receipt.total,
+                                                            receipt.currency
+                                                        )}
+                                                    </span>
+                                                </button>
+
+                                                {isOpen && (
+                                                    <div
+                                                        className={
+                                                            styles.receiptDetails
+                                                        }
+                                                    >
+                                                        {receipt.items.map(
+                                                            (item) => (
+                                                                <div
+                                                                    key={item.id}
+                                                                    className={
+                                                                        styles.receiptProductRow
+                                                                    }
+                                                                >
+                                                                    <span>
+                                                                        {item.title}
+                                                                    </span>
+                                                                    <span>
+                                                                        x
+                                                                        {
+                                                                            item.quantity
+                                                                        }
+                                                                    </span>
+                                                                    <span>
+                                                                        {formatPrice(
+                                                                            item.price *
+                                                                            item.quantity,
+                                                                            item.currency
+                                                                        )}
+                                                                    </span>
+                                                                </div>
+                                                            )
+                                                        )}
+
+                                                        <div
+                                                            className={
+                                                                styles.receiptDetailsFooter
+                                                            }
+                                                        >
+                                                            <b>
+                                                                Total:{' '}
+                                                                {formatPrice(
+                                                                    receipt.total,
+                                                                    receipt.currency
+                                                                )}
+                                                            </b>
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    handleDeleteReceipt(
+                                                                        receipt.id
+                                                                    )
+                                                                }
+                                                            >
+                                                                Delete receipt
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </article>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </section>
                     </div>
                 </div>

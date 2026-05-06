@@ -1,106 +1,69 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+
 import MainHeader from '../../ components/MainHeader/MainHeader';
 import Footer from '../../ components/Footer/Footer';
+
 import boxIcon from '../../assets/Package.svg';
 import arrowLeftIcon from '../../assets/ArrowLeftWhite.svg';
 import minusIcon from '../../assets/Minus.svg';
 import plusIcon from '../../assets/Plus.svg';
 import trashIcon from '../../assets/Trash.svg';
+
+import { useCart } from '../../cart/useCart';
+
 import styles from './PurchasePage.module.css';
-
-interface CartItem {
-    id: string;
-    title: string;
-    price: number;
-    currency: string;
-    quantity: number;
-    subtitle?: string;
-    oldPrice?: number;
-    image?: string;
-}
-
-const CART_STORAGE_KEY = 'trend-price-cart';
 
 const formatPrice = (value: number, currency = '₸') => {
     return `${Math.round(value)}${currency}`;
 };
 
-const readCartFromStorage = (): CartItem[] => {
-    try {
-        const rawCart = localStorage.getItem(CART_STORAGE_KEY);
-
-        if (!rawCart) {
-            return [];
-        }
-
-        const parsedCart = JSON.parse(rawCart);
-
-        if (!Array.isArray(parsedCart)) {
-            return [];
-        }
-
-        return parsedCart;
-    } catch (error) {
-        console.log('CART READ ERROR:', error);
-        return [];
-    }
-};
-
 export default function PurchasePage() {
-    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const {
+        cartItems,
+        removeFromCart,
+        increaseQuantity,
+        decreaseQuantity,
+        clearCart,
+    } = useCart();
 
-    useEffect(() => {
-        setCartItems(readCartFromStorage());
-    }, []);
-
-    const saveCart = (nextCart: CartItem[]) => {
-        setCartItems(nextCart);
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(nextCart));
-    };
-
-    const removeFromCart = (id: string) => {
-        const nextCart = cartItems.filter((item) => item.id !== id);
-        saveCart(nextCart);
-    };
-
-    const increaseQuantity = (id: string) => {
-        const nextCart = cartItems.map((item) =>
-            item.id === id
-                ? {
-                    ...item,
-                    quantity: item.quantity + 1,
-                }
-                : item
-        );
-
-        saveCart(nextCart);
-    };
-
-    const decreaseQuantity = (id: string) => {
-        const nextCart = cartItems
-            .map((item) =>
-                item.id === id
-                    ? {
-                        ...item,
-                        quantity: item.quantity - 1,
-                    }
-                    : item
-            )
-            .filter((item) => item.quantity > 0);
-
-        saveCart(nextCart);
-    };
+    const [isReceiptSaved, setIsReceiptSaved] = useState(false);
 
     const isCartEmpty = cartItems.length === 0;
 
-    const totalCurrent = useMemo(() => {
-        return cartItems.reduce((sum, item) => {
-            return sum + item.price * item.quantity;
-        }, 0);
-    }, [cartItems]);
+    const totalCurrent = cartItems.reduce((sum, item) => {
+        return sum + item.price * item.quantity;
+    }, 0);
+
+    const totalQuantity = cartItems.reduce((sum, item) => {
+        return sum + item.quantity;
+    }, 0);
 
     const currency = cartItems[0]?.currency || '₸';
+
+    const handleSaveReceipt = () => {
+        const savedReceiptsRaw = localStorage.getItem('trend-price-receipts');
+        const savedReceipts = savedReceiptsRaw
+            ? JSON.parse(savedReceiptsRaw)
+            : [];
+
+        const newReceipt = {
+            id: crypto.randomUUID(),
+            createdAt: new Date().toISOString(),
+            items: cartItems,
+            totalQuantity,
+            total: totalCurrent,
+            currency,
+        };
+
+        localStorage.setItem(
+            'trend-price-receipts',
+            JSON.stringify([newReceipt, ...savedReceipts])
+        );
+
+        clearCart();
+        setIsReceiptSaved(true);
+    };
 
     return (
         <>
@@ -108,7 +71,29 @@ export default function PurchasePage() {
 
             <main className={styles.page}>
                 <div className={styles.container}>
-                    {isCartEmpty ? (
+                    {isReceiptSaved ? (
+                        <section className={styles.savedReceipt}>
+                            <div className={styles.iconCircle}>
+                                <img src={boxIcon} alt="" />
+                            </div>
+
+                            <h1>Receipt saved</h1>
+                            <p>
+                                Your receipt has been saved. Later it will appear
+                                in the Checks tab.
+                            </p>
+
+                            <div className={styles.savedActions}>
+                                <Link to="/receipts" className={styles.button}>
+                                    <span>Go to My receipts</span>
+                                </Link>
+
+                                <Link to="/catalog" className={styles.secondaryButton}>
+                                    <span>Back to catalog</span>
+                                </Link>
+                            </div>
+                        </section>
+                    ) : isCartEmpty ? (
                         <section className={styles.emptyCart}>
                             <div className={styles.iconCircle}>
                                 <img src={boxIcon} alt="" />
@@ -124,32 +109,74 @@ export default function PurchasePage() {
                         </section>
                     ) : (
                         <>
-                            <Link to="/catalog" className={styles.backLink}>
-                                <img src={arrowLeftIcon} alt="" />
-                                <span>Continue Shopping</span>
-                            </Link>
+                            <div className={styles.topRow}>
+                                <Link to="/catalog" className={styles.backLink}>
+                                    <img src={arrowLeftIcon} alt="" />
+                                    <span>Continue Shopping</span>
+                                </Link>
+
+                                <button
+                                    type="button"
+                                    className={styles.clearButton}
+                                    onClick={clearCart}
+                                >
+                                    Clear cart
+                                </button>
+                            </div>
 
                             <h1 className={styles.title}>Purchase</h1>
 
                             <div className={styles.cartList}>
                                 {cartItems.map((item) => (
-                                    <article key={item.id} className={styles.cartCard}>
+                                    <article
+                                        key={item.id}
+                                        className={styles.cartCard}
+                                    >
                                         <div className={styles.imageBox}>
                                             {item.image ? (
-                                                <img src={item.image} alt={item.title} />
-                                            ) : (
-                                                <span>{item.title}</span>
-                                            )}
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    onError={(event) => {
+                                                        event.currentTarget.style.display =
+                                                            'none';
+
+                                                        const fallback =
+                                                            event.currentTarget
+                                                                .nextElementSibling as HTMLSpanElement | null;
+
+                                                        if (fallback) {
+                                                            fallback.style.display =
+                                                                'flex';
+                                                        }
+                                                    }}
+                                                />
+                                            ) : null}
+
+                                            <span
+                                                style={{
+                                                    display: item.image
+                                                        ? 'none'
+                                                        : 'flex',
+                                                }}
+                                            >
+                                                {item.title}
+                                            </span>
                                         </div>
 
                                         <div className={styles.cardInfo}>
                                             <h2>{item.title}</h2>
-                                            <p>{item.subtitle || 'No description'}</p>
+                                            <p>
+                                                {item.subtitle ||
+                                                    'No description'}
+                                            </p>
                                         </div>
 
                                         <button
                                             className={styles.deleteButton}
-                                            onClick={() => removeFromCart(item.id)}
+                                            onClick={() =>
+                                                removeFromCart(item.id)
+                                            }
                                             type="button"
                                             aria-label="Remove item"
                                         >
@@ -159,7 +186,9 @@ export default function PurchasePage() {
                                         <div className={styles.quantity}>
                                             <button
                                                 type="button"
-                                                onClick={() => decreaseQuantity(item.id)}
+                                                onClick={() =>
+                                                    decreaseQuantity(item.id)
+                                                }
                                                 aria-label="Decrease quantity"
                                             >
                                                 <img src={minusIcon} alt="" />
@@ -169,7 +198,9 @@ export default function PurchasePage() {
 
                                             <button
                                                 type="button"
-                                                onClick={() => increaseQuantity(item.id)}
+                                                onClick={() =>
+                                                    increaseQuantity(item.id)
+                                                }
                                                 aria-label="Increase quantity"
                                             >
                                                 <img src={plusIcon} alt="" />
@@ -177,8 +208,15 @@ export default function PurchasePage() {
                                         </div>
 
                                         <div className={styles.priceBlock}>
-                                            <b>{formatPrice(item.price, item.currency)}</b>
+                                            <b>
+                                                {formatPrice(
+                                                    item.price,
+                                                    item.currency
+                                                )}
+                                            </b>
+
                                             <span>
+                                                Total:{' '}
                                                 {formatPrice(
                                                     item.price * item.quantity,
                                                     item.currency
@@ -189,21 +227,48 @@ export default function PurchasePage() {
                                 ))}
                             </div>
 
-                            <section className={styles.summary}>
-                                <div className={styles.summaryHeader}>
-                                    <span>Magnum</span>
-                                    <span>{new Date().toLocaleDateString('ru-RU')}</span>
-                                    <span>Discount</span>
+                            <section className={styles.receipt}>
+                                <div className={styles.receiptTop}>
+                                    <div>
+                                        <h2>Receipt</h2>
+                                        <p>
+                                            {new Date().toLocaleDateString(
+                                                'ru-RU'
+                                            )}
+                                        </p>
+                                    </div>
+
+                                    <div className={styles.receiptTotal}>
+                                        <span>Total</span>
+                                        <b>
+                                            {formatPrice(
+                                                totalCurrent,
+                                                currency
+                                            )}
+                                        </b>
+                                    </div>
+                                </div>
+
+                                <div className={styles.receiptHeader}>
+                                    <span>Product</span>
+                                    <span>Qty</span>
+                                    <span>Price</span>
                                     <span>Total</span>
-                                    <b>{formatPrice(totalCurrent, currency)}</b>
                                 </div>
 
                                 {cartItems.map((item) => (
-                                    <div key={item.id} className={styles.summaryRow}>
+                                    <div
+                                        key={item.id}
+                                        className={styles.receiptRow}
+                                    >
                                         <span>{item.title}</span>
-                                        <span>{item.quantity} pcs</span>
-                                        <span>{formatPrice(item.price, item.currency)}</span>
-                                        <span>—</span>
+                                        <span>{item.quantity}</span>
+                                        <span>
+                                            {formatPrice(
+                                                item.price,
+                                                item.currency
+                                            )}
+                                        </span>
                                         <span>
                                             {formatPrice(
                                                 item.price * item.quantity,
@@ -212,6 +277,14 @@ export default function PurchasePage() {
                                         </span>
                                     </div>
                                 ))}
+
+                                <button
+                                    type="button"
+                                    className={styles.saveButton}
+                                    onClick={handleSaveReceipt}
+                                >
+                                    Save receipt
+                                </button>
                             </section>
                         </>
                     )}

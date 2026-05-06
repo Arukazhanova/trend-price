@@ -1,67 +1,74 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { api } from "../../ shared/api";
-import { useAuth } from "../../auth/AuthContext";
-import MainHeader from "../../ components/MainHeader/MainHeader";
-import styles from "../ DashboardPage/DashboardPage.module.css";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import profileIcon from "../../assets/User.svg";
-import arrowLeftIcon from "../../assets/ArrowLeft.svg";
-import profileMenuIcon from "../../assets/UserCircleGrey.svg";
-import receiptIcon from "../../assets/Package.svg";
-import notificationIcon from "../../assets/BellRinging.svg";
-import settingsIcon from "../../assets/Gear.svg";
-import signOutIcon from "../../assets/SignOut.svg";
-import arrowRightIcon from "../../assets/CaretRight.svg";
-import eyeIcon from "../../assets/eye.svg";
-import eyeClosedIcon from "../../assets/eye-crossed.svg";
+import MainHeader from '../../ components/MainHeader/MainHeader';
+import AccountSidebar from '../../ components/AccountSidebar/AccountSidebar';
 
-export default function SettingsPage() {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
+import styles from '../ DashboardPage/DashboardPage.module.css';
 
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+import arrowLeftIcon from '../../assets/ArrowLeft.svg';
+import notificationIcon from '../../assets/BellRinging.svg';
+import chartIcon from '../../assets/ChartLine.svg';
+import starIcon from '../../assets/Star.svg';
+import packageIcon from '../../assets/Package.svg';
+import emailIcon from '../../assets/Envelope.svg';
 
-    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-    const [showNewPassword, setShowNewPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+type NotificationItem = {
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    enabled: boolean;
+    variant: 'green' | 'yellow' | 'pink' | 'gray';
+};
 
-    const firstName = user?.firstName ?? user?.username ?? "";
-    const fullName =
-        `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() ||
-        user?.username ||
-        "User";
+export default function NotificationsPage() {
+    const [notifications, setNotifications] = useState<NotificationItem[]>([
+        {
+            id: 'price-drop',
+            title: 'Price Drop Alerts',
+            description: 'Get notified when prices drop on your favourites',
+            icon: chartIcon,
+            enabled: true,
+            variant: 'green',
+        },
+        {
+            id: 'promotions',
+            title: 'Promotions & Deals',
+            description: 'Special offers and exclusive discounts',
+            icon: starIcon,
+            enabled: true,
+            variant: 'yellow',
+        },
+        {
+            id: 'new-products',
+            title: 'New Products',
+            description: 'Be the first to know about new arrivals',
+            icon: packageIcon,
+            enabled: true,
+            variant: 'pink',
+        },
+        {
+            id: 'newsletter',
+            title: 'Newsletter',
+            description: 'Weekly tips on saving money on groceries',
+            icon: emailIcon,
+            enabled: false,
+            variant: 'gray',
+        },
+    ]);
 
-    const role = user?.roles?.length ? user.roles.join(", ") : "Customer";
-
-    const handleLogout = () => {
-        logout();
-        navigate("/login");
-    };
-
-    const handleUpdatePassword = async () => {
-        if (newPassword !== confirmPassword) {
-            alert("Passwords do not match");
-            return;
-        }
-
-        try {
-            await api.put("/users/me/password", {
-                currentPassword,
-                newPassword,
-            });
-
-            alert("Password changed successfully");
-
-            setCurrentPassword("");
-            setNewPassword("");
-            setConfirmPassword("");
-        } catch (error) {
-            console.log(error);
-            alert("Password change failed");
-        }
+    const toggleNotification = (id: string) => {
+        setNotifications((current) =>
+            current.map((item) =>
+                item.id === id
+                    ? {
+                        ...item,
+                        enabled: !item.enabled,
+                    }
+                    : item
+            )
+        );
     };
 
     return (
@@ -77,171 +84,61 @@ export default function SettingsPage() {
 
                     <section className={styles.hero}>
                         <div className={styles.heroIcon}>
-                            <img src={profileIcon} alt="" />
+                            <img src={notificationIcon} alt="" />
                         </div>
 
                         <div>
-                            <h1>My Account</h1>
-                            <p>Manage your profile and preferences</p>
+                            <h1>Notifications</h1>
+                            <p>Manage your notification preferences</p>
                         </div>
                     </section>
 
                     <div className={styles.layout}>
-                        <aside className={styles.sidebar}>
-                            <div className={styles.profileTop}>
-                                <div className={styles.avatar}>
-                                    {firstName?.[0]?.toUpperCase() || "U"}
-                                </div>
+                        <AccountSidebar activePage="notifications" />
 
+                        <section className={styles.preferencesCard}>
+                            <div className={styles.cardHeader}>
                                 <div>
-                                    <h2>{fullName}</h2>
-                                    <p>{role}</p>
+                                    <h2>Notification Preferences</h2>
+                                    <p>Choose what updates you want to receive</p>
                                 </div>
                             </div>
 
-                            <div className={styles.stats}>
-                                <div>
-                                    <b>12</b>
-                                    <span>Order</span>
-                                </div>
+                            <div className={styles.preferenceList}>
+                                {notifications.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        className={styles.preferenceItem}
+                                    >
+                                        <div
+                                            className={`${styles.preferenceIcon} ${
+                                                styles[item.variant]
+                                            }`}
+                                        >
+                                            <img src={item.icon} alt="" />
+                                        </div>
 
-                                <div>
-                                    <b>2</b>
-                                    <span>Saved</span>
-                                </div>
-                            </div>
-
-                            <nav className={styles.menu}>
-                                <Link to="/dashboard" className={styles.menuItem}>
-                                    <img src={profileMenuIcon} alt="" />
-                                    <span>Profile</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/receipts" className={styles.menuItem}>
-                                    <img src={receiptIcon} alt="" />
-                                    <span>My receipts</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/notifications" className={styles.menuItem}>
-                                    <img src={notificationIcon} alt="" />
-                                    <span>Notifications</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/settings" className={`${styles.menuItem} ${styles.activeItem}`}>
-                                    <img src={settingsIcon} alt="" />
-                                    <span>Settings</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <button
-                                    type="button"
-                                    onClick={handleLogout}
-                                    className={`${styles.menuItem} ${styles.signOutItem}`}
-                                >
-                                    <img src={signOutIcon} alt="" />
-                                    <span>Sign out</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </button>
-                            </nav>
-                        </aside>
-
-                        <section className={styles.securityCard}>
-                            <div className={styles.securityHeader}>
-                                <h2>Security</h2>
-                                <p>Manage your password and security settings</p>
-                            </div>
-
-                            <form className={styles.securityForm}>
-                                <label>
-                                    <span>Current Password</span>
-                                    <div className={styles.passwordField}>
-                                        <input
-                                            type={showCurrentPassword ? "text" : "password"}
-                                            placeholder="Enter current password"
-                                            value={currentPassword}
-                                            onChange={(e) => setCurrentPassword(e.target.value)}
-                                        />
+                                        <div className={styles.preferenceText}>
+                                            <h3>{item.title}</h3>
+                                            <p>{item.description}</p>
+                                        </div>
 
                                         <button
                                             type="button"
-                                            onClick={() => setShowCurrentPassword((prev) => !prev)}
-                                            className={styles.eyeButton}
+                                            className={`${styles.toggle} ${
+                                                item.enabled
+                                                    ? styles.toggleActive
+                                                    : ''
+                                            }`}
+                                            onClick={() =>
+                                                toggleNotification(item.id)
+                                            }
+                                            aria-label={`Toggle ${item.title}`}
                                         >
-                                            <img
-                                                src={showCurrentPassword ? eyeIcon : eyeClosedIcon}
-                                                alt=""
-                                            />
+                                            <span />
                                         </button>
                                     </div>
-                                </label>
-
-                                <label>
-                                    <span>New Password</span>
-                                    <div className={styles.passwordField}>
-                                        <input
-                                            type={showNewPassword ? "text" : "password"}
-                                            placeholder="Enter new password"
-                                            value={newPassword}
-                                            onChange={(e) => setNewPassword(e.target.value)}
-                                        />
-
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowNewPassword((prev) => !prev)}
-                                            className={styles.eyeButton}
-                                        >
-                                            <img
-                                                src={showNewPassword ? eyeIcon : eyeClosedIcon}
-                                                alt=""
-                                            />
-                                        </button>
-                                    </div>
-                                </label>
-
-                                <label>
-                                    <span>Confirm New Password</span>
-                                    <div className={styles.passwordField}>
-                                        <input
-                                            type={showConfirmPassword ? "text" : "password"}
-                                            placeholder="Confirm new password"
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                        />
-
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowConfirmPassword((prev) => !prev)}
-                                            className={styles.eyeButton}
-                                        >
-                                            <img
-                                                src={showConfirmPassword ? eyeIcon : eyeClosedIcon}
-                                                alt=""
-                                            />
-                                        </button>
-                                    </div>
-                                </label>
-
-                                <button
-                                    type="button"
-                                    onClick={handleUpdatePassword}
-                                    className={styles.updatePasswordButton}
-                                >
-                                    Update Password
-                                </button>
-                            </form>
-
-                            <div className={styles.deleteAccountBox}>
-                                <div>
-                                    <h3>Delete Account</h3>
-                                    <p>Permanently delete your account and all data</p>
-                                </div>
-
-                                <button type="button" className={styles.deleteAccountButton}>
-                                    Delete Account
-                                </button>
+                                ))}
                             </div>
                         </section>
                     </div>

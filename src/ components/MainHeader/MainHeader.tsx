@@ -8,12 +8,12 @@ import compareIcon from '../../assets/compare-icon 1.svg';
 import purchaseIcon from '../../assets/ShoppingCartSimple.svg';
 import userCircleIcon from '../../assets/UserCircle.svg';
 import { useAuth } from '../../auth/AuthContext';
-
+import { useCart } from '../../cart/useCart';
 export default function MainHeader() {
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [searchValue, setSearchValue] = useState('');
-
+    const { totalQuantity } = useCart();
     const handleSearch = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -99,12 +99,21 @@ export default function MainHeader() {
                     </Link>
 
                     <Link to="/purchase" className={styles.actionItem}>
-                        <img
-                            src={purchaseIcon}
-                            alt=""
-                            className={styles.actionIcon}
-                            aria-hidden="true"
-                        />
+    <span className={styles.cartIconWrap}>
+        <img
+            src={purchaseIcon}
+            alt=""
+            className={styles.actionIcon}
+            aria-hidden="true"
+        />
+
+        {totalQuantity > 0 && (
+            <span className={styles.cartBadge}>
+                {totalQuantity > 99 ? '99+' : totalQuantity}
+            </span>
+        )}
+    </span>
+
                         <span>Purchase</span>
                     </Link>
                 </nav>

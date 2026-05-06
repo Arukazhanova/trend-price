@@ -1,6 +1,9 @@
 import { createContext, useContext } from 'react';
 
 export type User = {
+    id?: string | null;
+    userId?: string | null;
+    uuid?: string | null;
     username: string;
     email: string | null;
     roles: string[];
@@ -9,7 +12,6 @@ export type User = {
     phoneNumber?: string | null;
     dateOfBirth?: string | null;
 };
-
 type LoginPayload = {
     username: string;
     password: string;

@@ -1,48 +1,57 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useAuth } from "../../auth/AuthContext";
-import MainHeader from "../../ components/MainHeader/MainHeader";
-import styles from "./DashboardPage.module.css";
-import profileIcon from "../../assets/User.svg";
-import arrowLeftIcon from "../../assets/ArrowLeft.svg";
-import profileMenuIcon from "../../assets/UserCircleGrey.svg";
-import receiptIcon from "../../assets/Package.svg";
-import notificationIcon from "../../assets/BellRinging.svg";
-import settingsIcon from "../../assets/Gear.svg";
-import signOutIcon from "../../assets/SignOut.svg";
-import arrowRightIcon from "../../assets/CaretRight.svg";
-import editIcon from "../../assets/PencilSimpleLine.svg";
-import emailIcon from "../../assets/Envelope.svg";
-import phoneIcon from "../../assets/Phone.svg";
-import calendarIcon from "../../assets/CalendarDots.svg";
+import { Link } from 'react-router-dom';
+import { useState } from 'react';
+
+import { useAuth } from '../../auth/AuthContext';
+import { getUserIdFromToken } from '../../auth/getUserIdFromToken';
+
+import MainHeader from '../../ components/MainHeader/MainHeader';
+import AccountSidebar from '../../ components/AccountSidebar/AccountSidebar';
+import UserAvatarView from '../../ components/UserAvatarView/UserAvatarView';
+
+import styles from './DashboardPage.module.css';
+
+import arrowLeftIcon from '../../assets/ArrowLeft.svg';
+import editIcon from '../../assets/PencilSimpleLine.svg';
+import emailIcon from '../../assets/Envelope.svg';
+import phoneIcon from '../../assets/Phone.svg';
+import calendarIcon from '../../assets/CalendarDots.svg';
+import UserAvatarUpload from "../../ components/UserAvatarUpload/UserAvatarUpload.tsx";
 
 export default function DashboardPage() {
-    const { user, logout, updateProfile } = useAuth();
-    const navigate = useNavigate();
-    const fullName =
-        `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() ||
-        user?.username ||
-        "User";
-    const firstName = user?.firstName ?? user?.username ?? "";
+    const { user, updateProfile } = useAuth();
 
-    const email = user?.email ?? "";
-    const role = user?.roles?.length ? user.roles.join(", ") : "Customer";
+    const fullName =
+        `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() ||
+        user?.username ||
+        'User';
+
+    const firstName = user?.firstName ?? user?.username ?? '';
+
+    const userId =
+        user?.id ??
+        user?.userId ??
+        user?.uuid ??
+        getUserIdFromToken();
+
+    const email = user?.email ?? '';
+    const role = user?.roles?.length ? user.roles.join(', ') : 'Customer';
+
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
-        firstName: user?.firstName ?? user?.username ?? "",
-        lastName: user?.lastName ?? "",
-        phoneNumber: user?.phoneNumber ?? "",
-        dateOfBirth: user?.dateOfBirth ?? "",
+        firstName: user?.firstName ?? user?.username ?? '',
+        lastName: user?.lastName ?? '',
+        phoneNumber: user?.phoneNumber ?? '',
+        dateOfBirth: user?.dateOfBirth ?? '',
     });
 
     const handleChange = (field: keyof typeof formData, value: string) => {
         let newValue = value;
 
-        if (field === "phoneNumber") {
-            newValue = value.replace(/[^\d+]/g, "");
+        if (field === 'phoneNumber') {
+            newValue = value.replace(/[^\d+]/g, '');
 
-            if (newValue.includes("+")) {
-                newValue = "+" + newValue.replace(/\+/g, "");
+            if (newValue.includes('+')) {
+                newValue = '+' + newValue.replace(/\+/g, '');
             }
         }
 
@@ -51,6 +60,7 @@ export default function DashboardPage() {
             [field]: newValue,
         }));
     };
+
     const handleSave = async () => {
         try {
             await updateProfile(formData);
@@ -62,16 +72,12 @@ export default function DashboardPage() {
 
     const handleCancel = () => {
         setFormData({
-            firstName: user?.firstName ?? user?.username ?? "",
-            lastName: user?.lastName ?? "",
-            phoneNumber: user?.phoneNumber ?? "",
-            dateOfBirth: user?.dateOfBirth ?? "",
+            firstName: user?.firstName ?? user?.username ?? '',
+            lastName: user?.lastName ?? '',
+            phoneNumber: user?.phoneNumber ?? '',
+            dateOfBirth: user?.dateOfBirth ?? '',
         });
         setIsEditing(false);
-    };
-    const handleLogout = () => {
-        logout();
-        navigate("/login");
     };
 
     return (
@@ -86,77 +92,16 @@ export default function DashboardPage() {
                     </Link>
 
                     <section className={styles.hero}>
-                        <div className={styles.heroIcon}>
-                            <img src={profileIcon} alt="" />
-                        </div>
+                        <UserAvatarView userId={userId} firstName={firstName} />
 
                         <div>
-                            <h1>My Account</h1>
-                            <p>Manage your profile and preferences</p>
+                            <h1>{fullName}</h1>
+                            <p>{role}</p>
                         </div>
                     </section>
 
                     <div className={styles.layout}>
-                        <aside className={styles.sidebar}>
-                            <div className={styles.profileTop}>
-                                <div className={styles.avatar}>
-                                    {firstName?.[0]?.toUpperCase() || "U"}
-                                </div>
-
-                                <div>
-                                    <h2>{fullName}</h2>
-                                    <p>{role}</p>
-                                </div>
-                            </div>
-
-                            <div className={styles.stats}>
-                                <div>
-                                    <b>12</b>
-                                    <span>Order</span>
-                                </div>
-
-                                <div>
-                                    <b>2</b>
-                                    <span>Saved</span>
-                                </div>
-                            </div>
-
-                            <nav className={styles.menu}>
-                                <Link to="/dashboard" className={`${styles.menuItem} ${styles.activeItem}`}>
-                                    <img src={profileMenuIcon} alt="" />
-                                    <span>Profile</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/receipts" className={styles.menuItem}>
-                                    <img src={receiptIcon} alt="" />
-                                    <span>My receipts</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/notifications" className={styles.menuItem}>
-                                    <img src={notificationIcon} alt="" />
-                                    <span>Notifications</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/settings" className={styles.menuItem}>
-                                    <img src={settingsIcon} alt="" />
-                                    <span>Settings</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <button
-                                    type="button"
-                                    onClick={handleLogout}
-                                    className={`${styles.menuItem} ${styles.signOutItem}`}
-                                >
-                                    <img src={signOutIcon} alt="" />
-                                    <span>Sign out</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </button>
-                            </nav>
-                        </aside>
+                        <AccountSidebar activePage="profile" />
 
                         <section className={styles.infoCard}>
                             <div className={styles.cardHeader}>
@@ -167,11 +112,19 @@ export default function DashboardPage() {
 
                                 {isEditing ? (
                                     <div className={styles.editActions}>
-                                        <button type="button" onClick={handleSave} className={styles.saveButton}>
+                                        <button
+                                            type="button"
+                                            onClick={handleSave}
+                                            className={styles.saveButton}
+                                        >
                                             Save
                                         </button>
 
-                                        <button type="button" onClick={handleCancel} className={styles.cancelButton}>
+                                        <button
+                                            type="button"
+                                            onClick={handleCancel}
+                                            className={styles.cancelButton}
+                                        >
                                             Cancel
                                         </button>
                                     </div>
@@ -186,6 +139,20 @@ export default function DashboardPage() {
                                     </button>
                                 )}
                             </div>
+                            <div className={styles.photoSettings}>
+                                <UserAvatarUpload
+                                    userId={userId}
+                                    firstName={firstName}
+                                    size="large"
+                                    showPreview={false}
+                                    disabled={!isEditing}
+                                />
+
+                                <div className={styles.photoSettingsText}>
+                                    <h3>Profile photo</h3>
+                                    <p>Change or remove your account photo</p>
+                                </div>
+                            </div>
 
                             <div className={styles.formGrid}>
                                 <label>
@@ -193,7 +160,12 @@ export default function DashboardPage() {
                                     <input
                                         value={formData.firstName}
                                         readOnly={!isEditing}
-                                        onChange={(e) => handleChange("firstName", e.target.value)}
+                                        onChange={(event) =>
+                                            handleChange(
+                                                'firstName',
+                                                event.target.value
+                                            )
+                                        }
                                     />
                                 </label>
 
@@ -202,7 +174,12 @@ export default function DashboardPage() {
                                     <input
                                         value={formData.lastName}
                                         readOnly={!isEditing}
-                                        onChange={(e) => handleChange("lastName", e.target.value)}
+                                        onChange={(event) =>
+                                            handleChange(
+                                                'lastName',
+                                                event.target.value
+                                            )
+                                        }
                                     />
                                 </label>
                             </div>
@@ -216,10 +193,10 @@ export default function DashboardPage() {
                             </label>
 
                             <label className={styles.fullField}>
-    <span className={styles.fieldLabel}>
-        <img src={phoneIcon} alt="" />
-        Phone Number
-    </span>
+                                <span className={styles.fieldLabel}>
+                                    <img src={phoneIcon} alt="" />
+                                    Phone Number
+                                </span>
 
                                 <input
                                     type="tel"
@@ -227,19 +204,30 @@ export default function DashboardPage() {
                                     placeholder=" "
                                     value={formData.phoneNumber}
                                     readOnly={!isEditing}
-                                    onChange={(e) => handleChange("phoneNumber", e.target.value)}
+                                    onChange={(event) =>
+                                        handleChange(
+                                            'phoneNumber',
+                                            event.target.value
+                                        )
+                                    }
                                 />
                             </label>
+
                             <label className={styles.fullField}>
                                 <span className={styles.fieldLabel}>
                                     <img src={calendarIcon} alt="" />
-                                        Date of Birth
+                                    Date of Birth
                                 </span>
                                 <input
                                     type="date"
                                     value={formData.dateOfBirth}
                                     readOnly={!isEditing}
-                                    onChange={(e) => handleChange("dateOfBirth", e.target.value)}
+                                    onChange={(event) =>
+                                        handleChange(
+                                            'dateOfBirth',
+                                            event.target.value
+                                        )
+                                    }
                                 />
                             </label>
                         </section>

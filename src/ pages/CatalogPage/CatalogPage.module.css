@@ -1,6 +1,6 @@
 .page {
     min-height: 100vh;
-    background: #FFFFFF;
+    background: #ffffff;
     padding: 0 0 70px;
 }
 
@@ -32,15 +32,15 @@
     cursor: pointer;
 }
 
-.activeChip {
-    background: #009966;
-    color: #ffffff;
-}
 .categoryChip:hover {
     background: #e2f4ed;
     color: #009966;
 }
 
+.activeChip {
+    background: #009966;
+    color: #ffffff;
+}
 
 .noCategoriesText {
     color: #98a2b3;
@@ -71,7 +71,7 @@
 
 .search {
     width: 505px;
-    height: 31px;
+    height: 34px;
     padding: 0 12px;
     border: 1px solid #98a2b3;
     border-radius: 8px;
@@ -97,7 +97,7 @@
     padding: 0;
     color: #454545;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .search input::placeholder {
@@ -110,14 +110,14 @@
 }
 
 .filterButton {
-    height: 31px;
-    padding: 0 13px;
+    height: 34px;
+    padding: 0 15px;
     border: 1px solid #98a2b3;
     border-radius: 8px;
     background: #ffffff;
     color: #454545;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
     display: inline-flex;
     align-items: center;
@@ -125,9 +125,10 @@
     gap: 7px;
     cursor: pointer;
 }
+
 .filterButton img {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     object-fit: contain;
     flex-shrink: 0;
 }
@@ -135,6 +136,7 @@
 .filterButton span {
     line-height: 1;
 }
+
 .filterButton:hover {
     border-color: #009966;
     color: #009966;
@@ -203,6 +205,26 @@
     font-weight: 700;
 }
 
+.filterSearch {
+    width: 100%;
+    height: 32px;
+    margin-bottom: 9px;
+    padding: 0 10px;
+    border: 1px solid #d0d5dd;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #454545;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.filterSearch:focus {
+    border-color: #009966;
+    box-shadow: 0 0 0 3px rgba(0, 153, 102, 0.1);
+}
+
 .filterList {
     max-height: 160px;
     overflow-y: auto;
@@ -257,6 +279,13 @@
     height: 15px;
     accent-color: #009966;
     cursor: pointer;
+}
+
+.filterEmpty {
+    margin: 4px 0 0;
+    color: #98a2b3;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 13px;
 }
 
 .applyFilterButton {
@@ -361,10 +390,10 @@
 
 .productCard {
     position: relative;
-    width: 262px;
-    height: 349px;
+    width: 272px;
+    height: 374px;
     border: 1px solid #bdbdbd;
-    border-radius: 24px;
+    border-radius: 20px;
     background: #ffffff;
     overflow: hidden;
     display: flex;
@@ -417,7 +446,7 @@
 }
 
 .imageBlock {
-    height: 178px;
+    height: 194px;
     background: #f4f4f4;
     display: flex;
     align-items: center;
@@ -425,6 +454,7 @@
     flex-shrink: 0;
     overflow: hidden;
 }
+
 .productImage {
     width: 100%;
     height: 100%;
@@ -432,39 +462,36 @@
     padding: 0;
     display: block;
 }
+
 .imagePlaceholder {
     width: 100%;
     height: 100%;
     padding: 18px 28px;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: #98a2b3;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 700;
     line-height: 1.18;
     letter-spacing: -0.02em;
-
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
 }
 
 .productInfo {
-    height: 171px;
-    padding: 16px 18px 54px;
+    height: 180px;
+    padding: 16px 16px 62px;
     display: flex;
     flex-direction: column;
     background: #ffffff;
 }
+
 .productInfo h2 {
     margin: 0 0 7px;
     color: #454545;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     line-height: 1.08;
     letter-spacing: -0.03em;
@@ -473,15 +500,15 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 35px;
-    max-height: 35px;
+    min-height: 39px;
+    max-height: 39px;
 }
 
 .productInfo p {
     margin: 0 0 8px;
     color: #98a2b3;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 400;
     line-height: 1.15;
 
@@ -497,18 +524,20 @@
     margin: 0;
     min-height: 30px;
 }
+
 .price {
     color: #454545;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 21px;
+    font-size: 23px;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.04em;
 }
+
 .oldPrice {
     color: #98a2b3;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 700;
     text-decoration: line-through;
     line-height: 1;
@@ -518,16 +547,16 @@
 .badgeDown,
 .badgeUp {
     margin-left: auto;
-    min-width: 78px;
-    height: 28px;
-    padding: 0 11px;
+    min-width: 70px;
+    height: 24px;
+    padding: 0 9px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 5px;
     border-radius: 999px;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     line-height: 1;
     box-sizing: border-box;
@@ -552,21 +581,20 @@
 }
 
 .badgeArrowDown {
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 10px solid #009966;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 8px solid #009966;
 }
 
 .badgeArrowUp {
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-bottom: 10px solid #ff3b30;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 8px solid #ff3b30;
 }
-
 .actions {
     position: absolute;
-    left: 14px;
-    right: 14px;
+    left: 12px;
+    right: 12px;
     bottom: 14px;
     display: flex;
     align-items: center;
@@ -575,12 +603,12 @@
 
 .cartButton,
 .analyticsButton {
-    height: 28px;
+    height: 36px;
     border-radius: 999px;
     font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -589,12 +617,12 @@
     transition: all 0.2s ease;
     text-decoration: none;
     box-sizing: border-box;
-    gap: 6px;
+    gap: 5px;
 }
 
 .cartButton {
-    width: 108px;
-    padding: 0 12px;
+    width: 116px;
+    padding: 0 10px;
     border: none;
     background: #009966;
     color: #ffffff;
@@ -604,19 +632,32 @@
     background: #007f55;
     transform: translateY(-1px);
 }
-
+.cartButtonAdded {
+    background: #007f55;
+}
 .analyticsButton {
-    width: 114px;
-    padding: 0 10px;
+    width: 122px;
+    padding: 0 8px;
     border: 1.4px solid #009966;
     background: #ffffff;
     color: #009966;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .analyticsButton:hover {
     background: #f4fffa;
     transform: translateY(-1px);
+}
+
+.analyticsButton img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.analyticsButton span {
+    line-height: 1;
 }
 
 .pagination {
@@ -664,7 +705,7 @@
     }
 
     .productsGrid {
-        grid-template-columns: repeat(4, 262px);
+        grid-template-columns: repeat(4, 272px);
         justify-content: space-between;
     }
 }
@@ -712,10 +753,6 @@
         flex-direction: column;
         align-items: flex-start;
     }
-
-    .totalText {
-        white-space: normal;
-    }
 }
 
 @media (max-width: 640px) {
@@ -757,40 +794,4 @@
     .categoryTitle {
         font-size: 20px;
     }
-}
-.filterSearch {
-    width: 100%;
-    height: 32px;
-    margin-bottom: 9px;
-    padding: 0 10px;
-    border: 1px solid #d0d5dd;
-    border-radius: 9px;
-    background: #ffffff;
-    color: #454545;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 13px;
-    outline: none;
-    box-sizing: border-box;
-}
-
-.filterSearch:focus {
-    border-color: #009966;
-    box-shadow: 0 0 0 3px rgba(0, 153, 102, 0.1);
-}
-
-.filterEmpty {
-    margin: 4px 0 0;
-    color: #98a2b3;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 13px;
-}
-.analyticsButton img {
-    width: 13px;
-    height: 13px;
-    object-fit: contain;
-    flex-shrink: 0;
-}
-
-.analyticsButton span {
-    line-height: 1;
 }

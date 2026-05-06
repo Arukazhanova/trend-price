@@ -835,3 +835,419 @@
     height: 24px;
     object-fit: contain;
 }
+.receiptsActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.clearReceiptsButton {
+    height: 38px;
+    padding: 0 16px;
+    border: 1px solid #009966;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #009966;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.clearReceiptsButton:hover {
+    background: #f4fffa;
+}
+
+.emptyReceipts {
+    min-height: 320px;
+    border: 1px dashed #bcc5d1;
+    border-radius: 18px;
+    background: #ffffff;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.emptyReceipts img {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 18px;
+    opacity: 0.7;
+}
+
+.emptyReceipts h3 {
+    margin: 0 0 10px;
+    color: #111827;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.emptyReceipts p {
+    margin: 0 0 18px;
+    color: #98a2b3;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 16px;
+    text-align: center;
+}
+
+.receiptsCatalogButton {
+    height: 38px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: #009966;
+    color: #ffffff;
+    text-decoration: none;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.receiptItem {
+    border: 1px solid #e3e7ee;
+    border-radius: 16px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.receiptItem + .receiptItem {
+    margin-top: 12px;
+}
+
+.receiptRow {
+    width: 100%;
+    min-height: 54px;
+    padding: 0 20px;
+    border: none;
+    background: #ffffff;
+    color: #111827;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+
+.receiptRow:hover {
+    background: #f4fffa;
+}
+
+.receiptDetails {
+    padding: 16px 20px 18px;
+    border-top: 1px solid #e3e7ee;
+    background: #fbfcfd;
+}
+
+.receiptProductRow {
+    display: grid;
+    grid-template-columns: 1fr 80px 110px;
+    gap: 12px;
+    align-items: center;
+    padding: 9px 0;
+
+    color: #454545;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.receiptProductRow span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.receiptProductRow span:last-child {
+    text-align: right;
+}
+
+.receiptDetailsFooter {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #e3e7ee;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.receiptDetailsFooter b {
+    color: #111827;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 17px;
+}
+
+.receiptDetailsFooter button {
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid #ff3b30;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #ff3b30;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.receiptDetailsFooter button:hover {
+    background: #fff4f4;
+}
+
+@media (max-width: 700px) {
+    .receiptsHeader {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .receiptsActions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .receiptRow {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 12px 16px;
+    }
+
+    .receiptProductRow {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .receiptProductRow span:last-child {
+        text-align: left;
+    }
+
+    .receiptDetailsFooter {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+.preferencesCard,
+.settingsCard {
+    min-height: 675px;
+    background: #ffffff;
+    border: 1px solid #b8c0cc;
+    border-radius: 16px;
+    padding: 34px 48px;
+    box-sizing: border-box;
+}
+
+.preferenceList {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-top: 34px;
+}
+
+.preferenceItem {
+    min-height: 78px;
+    border: 1px solid #b8c0cc;
+    border-radius: 10px;
+    padding: 0 32px 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: #ffffff;
+}
+
+.preferenceIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preferenceIcon img {
+    width: 24px;
+    height: 24px;
+}
+
+.green {
+    background: #b6ffe0;
+}
+
+.yellow {
+    background: #fff6a7;
+}
+
+.pink {
+    background: #f6b1ef;
+}
+
+.gray {
+    background: #eeeeee;
+}
+
+.preferenceText {
+    flex: 1;
+}
+
+.preferenceText h3 {
+    margin: 0 0 6px;
+    color: #303030;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.preferenceText p {
+    margin: 0;
+    color: #98a2b3;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 15px;
+}
+
+.toggle {
+    width: 44px;
+    height: 24px;
+    border: none;
+    border-radius: 999px;
+    background: #c4c4c4;
+    padding: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.toggle span {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    transition: transform 0.2s ease;
+}
+
+.toggleActive {
+    background: #009966;
+}
+
+.toggleActive span {
+    transform: translateX(20px);
+}
+
+.settingsList {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-top: 34px;
+    max-width: 520px;
+}
+
+.settingsField {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.settingsField span {
+    color: #303030;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.settingsField select {
+    width: 100%;
+    height: 54px;
+    border: 1px solid #b8c0cc;
+    border-radius: 999px;
+    padding: 0 22px;
+    background: #ffffff;
+    color: #303030;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 17px;
+    outline: none;
+}
+
+.settingsField select:focus {
+    border-color: #009966;
+    box-shadow: 0 0 0 3px rgba(0, 153, 102, 0.12);
+}
+
+.saveSettingsButton {
+    height: 44px;
+    margin-top: 32px;
+    padding: 0 26px;
+    border: none;
+    border-radius: 999px;
+    background: #009966;
+    color: #ffffff;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.saveSettingsButton:hover {
+    background: #007f55;
+}
+.photoSettings {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 26px 0 34px;
+    padding: 22px 24px;
+    border: 1px solid #d0d5dd;
+    border-radius: 18px;
+    background: #f9fafb;
+}
+
+.photoSettingsText h3 {
+    margin: 0 0 8px;
+    color: #111827;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.photoSettingsText p {
+    margin: 0;
+    color: #98a2b3;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 16px;
+}
+.photoSettings {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 26px 0 34px;
+    padding: 22px 24px;
+    border: 1px solid #d0d5dd;
+    border-radius: 18px;
+    background: #f9fafb;
+}
+
+.photoSettingsText h3 {
+    margin: 0 0 8px;
+    color: #111827;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 23px;
+    font-weight: 500;
+}
+
+.photoSettingsText p {
+    margin: 0;
+    color: #98a2b3;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 16px;
+}

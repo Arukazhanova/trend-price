@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import MainHeader from '../../ components/MainHeader/MainHeader';
 import Footer from '../../ components/Footer/Footer';
+
 import styles from './PriceAnalyticsPage.module.css';
 import searchIcon from '../../assets/Search.svg';
+
 import { catalogService } from '../../services/catalogService';
+
 import type {
     CatalogProduct,
     Price,
     ProductPriceViewWithCategory,
 } from '../../types/api';
 
-const CATALOG_CITY = 'almaty';
 const CATALOG_PAGE_SIZE = 20;
 
 const periods = [
@@ -31,7 +34,11 @@ const getPriceValue = (price?: Price | null) => {
 };
 
 const formatPrice = (value: number, currency = '₸') => {
-    return `${Math.round(value || 0)}${currency}`;
+    if (!value) {
+        return 'No price';
+    }
+
+    return `${Math.round(value)}${currency}`;
 };
 
 const formatDate = (value?: string) => {
@@ -115,13 +122,12 @@ export default function PriceAnalyticsPage() {
             setError('');
 
             try {
-                const response = await catalogService.getProductsPage({
+                const pageData = await catalogService.searchProducts({
                     page: 1,
                     size: CATALOG_PAGE_SIZE,
-                    city: CATALOG_CITY,
                 });
 
-                const loadedProducts = response.content ?? [];
+                const loadedProducts = pageData.content ?? [];
                 setProducts(loadedProducts);
 
                 if (!selectedProductId && loadedProducts[0]) {
@@ -162,6 +168,7 @@ export default function PriceAnalyticsPage() {
                     activePeriod.days
                 );
 
+                console.log('CATALOG ANALYTICS RESPONSE:', response);
                 setProductData(response);
             } catch (error) {
                 console.log('CATALOG PRICE ANALYTICS LOAD ERROR:', error);
@@ -215,8 +222,8 @@ export default function PriceAnalyticsPage() {
     const priceValues = prices.map(getPriceValue);
 
     const currentPrice =
-        priceValues[priceValues.length - 1] ??
-        getPriceValue(productData?.bestPrice) ??
+        priceValues[priceValues.length - 1] ||
+        getPriceValue(productData?.bestPrice) ||
         getPriceValue(selectedProductFromList?.bestPrice);
 
     const lowestPrice = priceValues.length
@@ -344,7 +351,7 @@ export default function PriceAnalyticsPage() {
         setSelectedProductId(productId);
         navigate(`/products/${productId}/analytics`);
     };
-    console.log('CATALOG ANALYTICS RESPONSE:', response);
+
     return (
         <>
             <MainHeader />
@@ -391,7 +398,8 @@ export default function PriceAnalyticsPage() {
                                             <button
                                                 key={product.id}
                                                 className={`${styles.productItem} ${
-                                                    selectedProduct?.id === product.id
+                                                    selectedProduct?.id ===
+                                                    product.id
                                                         ? styles.productItemActive
                                                         : ''
                                                 }`}
@@ -422,7 +430,10 @@ export default function PriceAnalyticsPage() {
                                                         {discountPercent < 0
                                                             ? '▲ +'
                                                             : '▼ -'}
-                                                        {Math.abs(discountPercent)}%
+                                                        {Math.abs(
+                                                            discountPercent
+                                                        )}
+                                                        %
                                                     </span>
                                                 )}
                                             </button>
@@ -448,6 +459,20 @@ export default function PriceAnalyticsPage() {
                                                 )}
                                             </strong>
                                         </p>
+
+                                        {changePercent !== 0 && (
+                                            <p
+                                                className={
+                                                    changePercent < 0
+                                                        ? styles.greenText
+                                                        : styles.redText
+                                                }
+                                            >
+                                                {changePercent > 0 ? '+' : ''}
+                                                {changePercent}% for selected
+                                                period
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className={styles.periods}>
@@ -482,7 +507,8 @@ export default function PriceAnalyticsPage() {
                                                 const y = 35 + index * 52;
                                                 const value =
                                                     chart.max -
-                                                    ((chart.max - chart.min) / 4) *
+                                                    ((chart.max - chart.min) /
+                                                        4) *
                                                     index;
 
                                                 return (
@@ -490,7 +516,9 @@ export default function PriceAnalyticsPage() {
                                                         <text
                                                             x="42"
                                                             y={y + 5}
-                                                            className={styles.yLabel}
+                                                            className={
+                                                                styles.yLabel
+                                                            }
                                                         >
                                                             {Math.round(value)}
                                                         </text>
@@ -561,23 +589,29 @@ export default function PriceAnalyticsPage() {
                                                 />
                                             )}
 
-                                            {chart.circles.map((point, index) => (
-                                                <g key={index}>
-                                                    <circle
-                                                        cx={point.x}
-                                                        cy={point.y}
-                                                        r="5"
-                                                        className={styles.point}
-                                                    />
-                                                    <text
-                                                        x={point.x}
-                                                        y="276"
-                                                        className={styles.month}
-                                                    >
-                                                        {point.label}
-                                                    </text>
-                                                </g>
-                                            ))}
+                                            {chart.circles.map(
+                                                (point, index) => (
+                                                    <g key={index}>
+                                                        <circle
+                                                            cx={point.x}
+                                                            cy={point.y}
+                                                            r="5"
+                                                            className={
+                                                                styles.point
+                                                            }
+                                                        />
+                                                        <text
+                                                            x={point.x}
+                                                            y="276"
+                                                            className={
+                                                                styles.month
+                                                            }
+                                                        >
+                                                            {point.label}
+                                                        </text>
+                                                    </g>
+                                                )
+                                            )}
                                         </svg>
                                     ) : (
                                         <div className={styles.noChart}>

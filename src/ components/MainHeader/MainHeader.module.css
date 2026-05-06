@@ -273,3 +273,28 @@
     color: #98a2b3;
     cursor: pointer;
 }
+.cartIconWrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cartBadge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #009966;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+}

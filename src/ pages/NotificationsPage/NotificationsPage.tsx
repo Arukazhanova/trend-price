@@ -1,36 +1,74 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../auth/AuthContext";
-import MainHeader from "../../ components/MainHeader/MainHeader";
-import styles from "../ DashboardPage/DashboardPage.module.css";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import profileIcon from "../../assets/User.svg";
-import arrowLeftIcon from "../../assets/ArrowLeft.svg";
-import profileMenuIcon from "../../assets/UserCircleGrey.svg";
-import receiptIcon from "../../assets/Package.svg";
-import notificationIcon from "../../assets/BellRinging.svg";
-import settingsIcon from "../../assets/Gear.svg";
-import signOutIcon from "../../assets/SignOut.svg";
-import arrowRightIcon from "../../assets/CaretRight.svg";
-import priceDropIcon from "../../assets/ChartLineDown.svg";
-import promotionIcon from "../../assets/Star-Line.svg";
-import newProductIcon from "../../assets/PackagePurple.svg";
-import newsletterIcon from "../../assets/Envelope.svg";
+import MainHeader from '../../ components/MainHeader/MainHeader';
+import AccountSidebar from '../../ components/AccountSidebar/AccountSidebar';
+
+import styles from '../ DashboardPage/DashboardPage.module.css';
+
+import arrowLeftIcon from '../../assets/ArrowLeft.svg';
+import notificationIcon from '../../assets/BellRinging.svg';
+import chartIcon from '../../assets/ChartLine.svg';
+import starIcon from '../../assets/Star.svg';
+import packageIcon from '../../assets/Package.svg';
+import emailIcon from '../../assets/Envelope.svg';
+
+type NotificationItem = {
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    enabled: boolean;
+    variant: 'green' | 'yellow' | 'pink' | 'gray';
+};
 
 export default function NotificationsPage() {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
+    const [notifications, setNotifications] = useState<NotificationItem[]>([
+        {
+            id: 'price-drop',
+            title: 'Price Drop Alerts',
+            description: 'Get notified when prices drop on your favourites',
+            icon: chartIcon,
+            enabled: true,
+            variant: 'green',
+        },
+        {
+            id: 'promotions',
+            title: 'Promotions & Deals',
+            description: 'Special offers and exclusive discounts',
+            icon: starIcon,
+            enabled: true,
+            variant: 'yellow',
+        },
+        {
+            id: 'new-products',
+            title: 'New Products',
+            description: 'Be the first to know about new arrivals',
+            icon: packageIcon,
+            enabled: true,
+            variant: 'pink',
+        },
+        {
+            id: 'newsletter',
+            title: 'Newsletter',
+            description: 'Weekly tips on saving money on groceries',
+            icon: emailIcon,
+            enabled: false,
+            variant: 'gray',
+        },
+    ]);
 
-    const firstName = user?.firstName ?? user?.username ?? "";
-    const fullName =
-        `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() ||
-        user?.username ||
-        "User";
-
-    const role = user?.roles?.length ? user.roles.join(", ") : "Customer";
-
-    const handleLogout = () => {
-        logout();
-        navigate("/login");
+    const toggleNotification = (id: string) => {
+        setNotifications((current) =>
+            current.map((item) =>
+                item.id === id
+                    ? {
+                        ...item,
+                        enabled: !item.enabled,
+                    }
+                    : item
+            )
+        );
     };
 
     return (
@@ -46,150 +84,61 @@ export default function NotificationsPage() {
 
                     <section className={styles.hero}>
                         <div className={styles.heroIcon}>
-                            <img src={profileIcon} alt="" />
+                            <img src={notificationIcon} alt="" />
                         </div>
 
                         <div>
-                            <h1>My Account</h1>
-                            <p>Manage your profile and preferences</p>
+                            <h1>Notifications</h1>
+                            <p>Manage your notification preferences</p>
                         </div>
                     </section>
 
                     <div className={styles.layout}>
-                        <aside className={styles.sidebar}>
-                            <div className={styles.profileTop}>
-                                <div className={styles.avatar}>
-                                    {firstName?.[0]?.toUpperCase() || "U"}
-                                </div>
+                        <AccountSidebar activePage="notifications" />
 
+                        <section className={styles.preferencesCard}>
+                            <div className={styles.cardHeader}>
                                 <div>
-                                    <h2>{fullName}</h2>
-                                    <p>{role}</p>
+                                    <h2>Notification Preferences</h2>
+                                    <p>Choose what updates you want to receive</p>
                                 </div>
                             </div>
 
-                            <div className={styles.stats}>
-                                <div>
-                                    <b>12</b>
-                                    <span>Order</span>
-                                </div>
+                            <div className={styles.preferenceList}>
+                                {notifications.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        className={styles.preferenceItem}
+                                    >
+                                        <div
+                                            className={`${styles.preferenceIcon} ${
+                                                styles[item.variant]
+                                            }`}
+                                        >
+                                            <img src={item.icon} alt="" />
+                                        </div>
 
-                                <div>
-                                    <b>2</b>
-                                    <span>Saved</span>
-                                </div>
-                            </div>
+                                        <div className={styles.preferenceText}>
+                                            <h3>{item.title}</h3>
+                                            <p>{item.description}</p>
+                                        </div>
 
-                            <nav className={styles.menu}>
-                                <Link to="/dashboard" className={styles.menuItem}>
-                                    <img src={profileMenuIcon} alt="" />
-                                    <span>Profile</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/receipts" className={styles.menuItem}>
-                                    <img src={receiptIcon} alt="" />
-                                    <span>My receipts</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link
-                                    to="/notifications"
-                                    className={`${styles.menuItem} ${styles.activeItem}`}
-                                >
-                                    <img src={notificationIcon} alt="" />
-                                    <span>Notifications</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <Link to="/settings" className={styles.menuItem}>
-                                    <img src={settingsIcon} alt="" />
-                                    <span>Settings</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </Link>
-
-                                <button
-                                    type="button"
-                                    onClick={handleLogout}
-                                    className={`${styles.menuItem} ${styles.signOutItem}`}
-                                >
-                                    <img src={signOutIcon} alt="" />
-                                    <span>Sign out</span>
-                                    <img src={arrowRightIcon} alt="" className={styles.arrowIcon} />
-                                </button>
-                            </nav>
-                        </aside>
-
-                        <section className={styles.notificationsCard}>
-                            <div className={styles.notificationsHeader}>
-                                <h2>Notification Preferences</h2>
-                                <p>Choose what updates you want to receive</p>
-                            </div>
-
-                            <div className={styles.notificationList}>
-                                <div className={styles.notificationRow}>
-                                    <div className={`${styles.notificationIcon} ${styles.greenIcon}`}>
-                                        <img src={priceDropIcon} alt="" />
+                                        <button
+                                            type="button"
+                                            className={`${styles.toggle} ${
+                                                item.enabled
+                                                    ? styles.toggleActive
+                                                    : ''
+                                            }`}
+                                            onClick={() =>
+                                                toggleNotification(item.id)
+                                            }
+                                            aria-label={`Toggle ${item.title}`}
+                                        >
+                                            <span />
+                                        </button>
                                     </div>
-
-                                    <div className={styles.notificationText}>
-                                        <b>Price Drop Alerts</b>
-                                        <p>Get notified when prices drop on your favourites</p>
-                                    </div>
-
-                                    <label className={styles.switch}>
-                                        <input type="checkbox" defaultChecked />
-                                        <span></span>
-                                    </label>
-                                </div>
-
-                                <div className={styles.notificationRow}>
-                                    <div className={`${styles.notificationIcon} ${styles.yellowIcon}`}>
-                                        <img src={promotionIcon} alt="" />
-                                    </div>
-
-                                    <div className={styles.notificationText}>
-                                        <b>Promotions & Deals</b>
-                                        <p>Special offers and exclusive discounts</p>
-                                    </div>
-
-                                    <label className={styles.switch}>
-                                        <input type="checkbox" defaultChecked />
-                                        <span></span>
-                                    </label>
-                                </div>
-
-                                <div className={styles.notificationRow}>
-                                    <div className={`${styles.notificationIcon} ${styles.pinkIcon}`}>
-                                        <img src={newProductIcon} alt="" />
-                                    </div>
-
-                                    <div className={styles.notificationText}>
-                                        <b>New Products</b>
-                                        <p>Be the first to know about new arrivals</p>
-                                    </div>
-
-                                    <label className={styles.switch}>
-                                        <input type="checkbox" defaultChecked />
-                                        <span></span>
-                                    </label>
-                                </div>
-
-                                <div className={styles.notificationRow}>
-                                    <div className={`${styles.notificationIcon} ${styles.grayIcon}`}>
-                                        <img src={newsletterIcon} alt="" />
-                                    </div>
-
-                                    <div className={styles.notificationText}>
-                                        <b>Newsletter</b>
-                                        <p>Weekly tips on saving money on groceries</p>
-                                    </div>
-
-                                    <label className={styles.switch}>
-                                        <input type="checkbox" />
-                                        <span></span>
-                                    </label>
-                                </div>
+                                ))}
                             </div>
                         </section>
                     </div>

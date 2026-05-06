@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { FormEvent } from 'react';
-import { imageService } from '../../services/imageService';
+import type { FormEvent, MouseEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+
 import MainHeader from '../../ components/MainHeader/MainHeader';
 import styles from './CatalogPage.module.css';
+import { useCart } from '../../cart/useCart';
 import heartIcon from '../../assets/Heart.svg';
 import searchIcon from '../../assets/Search.svg';
 import analyticsIcon from '../../assets/ChartLine.svg';
 import filterIcon from '../../assets/FadersHorizontal.svg';
+
+import { imageService } from '../../services/imageService';
 import { productService } from '../../services/productService';
 import { catalogService } from '../../services/catalogService';
 import type { Brand, CatalogProduct, Category, Price } from '../../types/api';
@@ -146,7 +149,7 @@ export default function CatalogPage() {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
-
+    const { cartItems, addToCart } = useCart();
     const selectedCategoryTitle = useMemo(() => {
         if (selectedCategoryIds.length === 0) {
             return 'All products';
@@ -356,15 +359,6 @@ export default function CatalogPage() {
         );
     };
 
-    const openFilter = () => {
-        setDraftCategoryIds(selectedCategoryIds);
-        setDraftBrandIds(selectedBrandIds);
-        setDraftTypes(selectedTypes);
-        setCategorySearch('');
-        setBrandSearch('');
-        setIsFilterOpen((value) => !value);
-    };
-
     const applyFilter = () => {
         setSelectedCategoryIds(draftCategoryIds);
         setSelectedBrandIds(draftBrandIds);
@@ -408,27 +402,26 @@ export default function CatalogPage() {
         });
     };
 
-    const handleAddToCart = (product: CatalogProduct) => {
-        const cartRaw = localStorage.getItem('trend-price-cart');
-
-        const cart: Array<{
-            id: string;
-            title: string;
-            price: number;
-            currency: string;
-            quantity: number;
-            subtitle?: string;
-            oldPrice?: number;
-        }> = cartRaw ? JSON.parse(cartRaw) : [];
+    const handleAddToCart = (
+        event: MouseEvent<HTMLButtonElement>,
+        product: CatalogProduct
+    ) => {
+        event.preventDefault();
+        event.stopPropagation();
 
         const currentPrice = getPriceValue(product.bestPrice);
         const oldPrice = getOldPriceValue(product.bestPrice);
         const currency = product.bestPrice?.currency || '₸';
-
         const brandTitle = getBrandTitle(product.brand);
+        const imageUrl = imageService.getProductImageUrl(product.id);
+
+        const categoriesText =
+            product.categories?.map((category) => category.title).join(', ') ||
+            'No category';
 
         const subtitle = [
             brandTitle,
+            categoriesText,
             product.type,
             product.bestPrice?.unitAmount
                 ? `${product.bestPrice.unitAmount} ${product.bestPrice.unit || ''}`
@@ -437,23 +430,15 @@ export default function CatalogPage() {
             .filter(Boolean)
             .join(' · ');
 
-        const existingItem = cart.find((item) => item.id === product.id);
-
-        if (existingItem) {
-            existingItem.quantity += 1;
-        } else {
-            cart.push({
-                id: product.id,
-                title: product.title,
-                price: currentPrice,
-                currency,
-                quantity: 1,
-                subtitle,
-                oldPrice: oldPrice || undefined,
-            });
-        }
-
-        localStorage.setItem('trend-price-cart', JSON.stringify(cart));
+        addToCart({
+            id: product.id,
+            title: product.title,
+            price: currentPrice,
+            currency,
+            subtitle,
+            oldPrice: oldPrice || undefined,
+            image: imageUrl,
+        });
     };
 
     return (
@@ -515,7 +500,7 @@ export default function CatalogPage() {
                             <button
                                 type="button"
                                 className={styles.filterButton}
-                                onClick={openFilter}
+                                onClick={() => setIsFilterOpen((prev) => !prev)}
                             >
                                 <img src={filterIcon} alt="" />
                                 <span>Filter</span>
@@ -551,9 +536,13 @@ export default function CatalogPage() {
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        checked={draftCategoryIds.includes(category.id)}
+                                                        checked={draftCategoryIds.includes(
+                                                            category.id
+                                                        )}
                                                         onChange={() =>
-                                                            toggleDraftCategory(category.id)
+                                                            toggleDraftCategory(
+                                                                category.id
+                                                            )
                                                         }
                                                     />
                                                     <span>{category.title}</span>
@@ -588,8 +577,12 @@ export default function CatalogPage() {
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        checked={draftBrandIds.includes(brand.id)}
-                                                        onChange={() => toggleDraftBrand(brand.id)}
+                                                        checked={draftBrandIds.includes(
+                                                            brand.id
+                                                        )}
+                                                        onChange={() =>
+                                                            toggleDraftBrand(brand.id)
+                                                        }
                                                     />
                                                     <span>{brand.title}</span>
                                                 </label>
@@ -614,8 +607,12 @@ export default function CatalogPage() {
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        checked={draftTypes.includes(type)}
-                                                        onChange={() => toggleDraftType(type)}
+                                                        checked={draftTypes.includes(
+                                                            type
+                                                        )}
+                                                        onChange={() =>
+                                                            toggleDraftType(type)
+                                                        }
                                                     />
                                                     <span>{type}</span>
                                                 </label>
@@ -698,8 +695,9 @@ export default function CatalogPage() {
                             <div className={styles.productsGrid}>
                                 {products.map((product) => {
                                     const bestPrice = product.bestPrice;
-                                    const imageUrl = imageService.getProductImageUrl(product.id);
-
+                                    const imageUrl =
+                                        imageService.getProductImageUrl(product.id);
+                                    const isAddedToCart = cartItems.some((item) => item.id === product.id);
                                     const currentPrice = getPriceValue(bestPrice);
                                     const oldPrice = getOldPriceValue(bestPrice);
                                     const discountText = getDiscountText(bestPrice);
@@ -719,6 +717,10 @@ export default function CatalogPage() {
                                             <button
                                                 type="button"
                                                 className={styles.favoriteButton}
+                                                onClick={(event) => {
+                                                    event.preventDefault();
+                                                    event.stopPropagation();
+                                                }}
                                             >
                                                 <img src={heartIcon} alt="" />
                                             </button>
@@ -734,10 +736,29 @@ export default function CatalogPage() {
                                                         alt={product.title}
                                                         loading="lazy"
                                                         onError={(event) => {
-                                                            event.currentTarget.style.display = 'none';
+                                                            event.currentTarget.style.display =
+                                                                'none';
+
+                                                            const fallback = event
+                                                                .currentTarget
+                                                                .nextElementSibling as HTMLDivElement | null;
+
+                                                            if (fallback) {
+                                                                fallback.style.display =
+                                                                    'flex';
+                                                            }
                                                         }}
                                                     />
+
+                                                    <div
+                                                        className={
+                                                            styles.imagePlaceholder
+                                                        }
+                                                    >
+                                                        {product.title}
+                                                    </div>
                                                 </div>
+
                                                 <div className={styles.productInfo}>
                                                     <h2>{product.title}</h2>
 
@@ -797,17 +818,20 @@ export default function CatalogPage() {
                                             <div className={styles.actions}>
                                                 <button
                                                     type="button"
-                                                    className={styles.cartButton}
-                                                    onClick={() =>
-                                                        handleAddToCart(product)
-                                                    }
+                                                    className={`${styles.cartButton} ${
+                                                        isAddedToCart ? styles.cartButtonAdded : ''
+                                                    }`}
+                                                    onClick={(event) => handleAddToCart(event, product)}
                                                 >
-                                                    Add to cart
+                                                    {isAddedToCart ? 'Added' : 'Add to cart'}
                                                 </button>
 
                                                 <Link
                                                     to={`/products/${product.id}/analytics`}
                                                     className={styles.analyticsButton}
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                    }}
                                                 >
                                                     <img src={analyticsIcon} alt="" />
                                                     <span>Price analytics</span>
