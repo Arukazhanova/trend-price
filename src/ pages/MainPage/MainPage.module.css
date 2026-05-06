@@ -3,6 +3,7 @@
     background: #ffffff;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 .main {
@@ -29,4 +30,28 @@
     margin: 0 auto;
     padding: 0 32px;
     box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .heroWrap {
+        padding: 18px 16px 0;
+    }
+
+    .catalogSectionBg {
+        padding: 24px 0 32px;
+    }
+
+    .catalogSectionInner {
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .heroWrap {
+        padding: 14px 12px 0;
+    }
+
+    .catalogSectionInner {
+        padding: 0 12px;
+    }
 }

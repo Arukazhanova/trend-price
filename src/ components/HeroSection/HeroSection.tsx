@@ -1,21 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import styles from './HeroSection.module.css';
 import aiStarIcon from '../../assets/Starlinky.svg';
 import banner1 from '../../assets/banner1.svg';
 import banner2 from '../../assets/banner2.svg';
 import banner3 from '../../assets/banner3.png';
 
-const categories = [
-    'Discount',
-    'Vegetables and fruits',
-    'Milk products',
-    'Sausage and delicacies',
-    'Bread',
-    'Meat',
-    'Seafood',
-    'Water and juice',
-];
+import { productService } from '../../services/productService';
+import type { Category } from '../../types/api';
 
 const stats = [
     { id: 1, value: '3+', label: 'Stores monitored' },
@@ -41,7 +34,7 @@ const banners = [
     {
         bg: banner1,
         subtitle: 'All food prices are in one place',
-        title: <>Shop with confidence: compare store deals and make every purchase worthwhile</>,
+        title: <>compare store deals and make every purchase worthwhile</>,
         primaryButton: 'Compare now',
         secondaryButton: 'View the catalog',
     },
@@ -56,7 +49,9 @@ const banners = [
 
 export default function HeroSection() {
     const [currentBanner, setCurrentBanner] = useState(0);
+    const [categories, setCategories] = useState<Category[]>([]);
     const navigate = useNavigate();
+
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentBanner((prev) => (prev + 1) % banners.length);
@@ -65,23 +60,67 @@ export default function HeroSection() {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await productService.getAllCategories();
+                setCategories(response);
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
     const banner = banners[currentBanner];
+
+    const handleCategoryClick = (categoryId: string | number) => {
+        navigate(`/catalog?category=${categoryId}`);
+    };
+
+    const handlePrimaryButtonClick = () => {
+        if (banner.primaryButton === 'Compare now') {
+            navigate('/products/e52c04a4-7908-4120-b6e8-9ca5645d4017/analytics');
+        }
+
+        if (banner.primaryButton === 'Try AI Assistant') {
+            window.dispatchEvent(new Event('open-ai-chat'));
+        }
+    };
+
+    const handleSecondaryButtonClick = () => {
+        navigate('/catalog');
+    };
 
     return (
         <section className={styles.heroSection}>
             <div className={styles.categories}>
-                {categories.map((item) => (
-                    <button key={item} type="button" className={styles.categoryChip}>
-                        <span>{item}</span>
+                {categories.map((category) => (
+                    <button
+                        key={category.id}
+                        type="button"
+                        className={styles.categoryChip}
+                        onClick={() => handleCategoryClick(category.id)}
+                    >
+                        <span>{category.title}</span>
                     </button>
                 ))}
             </div>
 
             <div
-                className={styles.banner}
-                style={{ backgroundImage: `url(${banner.bg})` }}
+                className={`${styles.banner} ${
+                    currentBanner === 0 ? styles.aiBanner : ''
+                }`}
             >
+                <img
+                    src={banner.bg}
+                    alt=""
+                    className={styles.bannerImage}
+                />
+
                 <div className={styles.overlay} />
+
 
                 <div className={styles.bannerContent}>
                     <div className={styles.badge}>
@@ -97,20 +136,17 @@ export default function HeroSection() {
                         <button
                             type="button"
                             className={styles.primaryButton}
-                            onClick={() => {
-                                if (banner.primaryButton === 'Compare now') {
-                                    navigate('/products/1/analytics');
-                                }
-
-                                if (banner.primaryButton === 'Try AI Assistant') {
-                                    window.dispatchEvent(new Event('open-ai-chat'));
-                                }
-                            }}
+                            onClick={handlePrimaryButtonClick}
                         >
                             {banner.primaryButton}
                         </button>
+
                         {banner.secondaryButton && (
-                            <button type="button" className={styles.secondaryButton}>
+                            <button
+                                type="button"
+                                className={styles.secondaryButton}
+                                onClick={handleSecondaryButtonClick}
+                            >
                                 {banner.secondaryButton}
                             </button>
                         )}
@@ -123,6 +159,7 @@ export default function HeroSection() {
                             <div className={styles.aiIcon}>
                                 <img src={aiStarIcon} alt="" />
                             </div>
+
                             <strong>TrendPrice AI</strong>
 
                             <div className={styles.online}>
@@ -164,7 +201,9 @@ export default function HeroSection() {
                             <p className={styles.statLabel}>{item.label}</p>
                         </div>
 
-                        {index !== stats.length - 1 && <div className={styles.statDivider} />}
+                        {index !== stats.length - 1 && (
+                            <div className={styles.statDivider} />
+                        )}
                     </div>
                 ))}
             </div>

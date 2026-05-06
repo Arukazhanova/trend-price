@@ -3,8 +3,13 @@ import type { FormEvent, MouseEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
 import MainHeader from '../../ components/MainHeader/MainHeader';
+import Footer from '../../ components/Footer/Footer';
+
 import styles from './CatalogPage.module.css';
+
 import { useCart } from '../../cart/useCart';
+import { useFavourites } from '../../favourites/useFavourites';
+
 import heartIcon from '../../assets/Heart.svg';
 import searchIcon from '../../assets/Search.svg';
 import analyticsIcon from '../../assets/ChartLine.svg';
@@ -13,6 +18,7 @@ import filterIcon from '../../assets/FadersHorizontal.svg';
 import { imageService } from '../../services/imageService';
 import { productService } from '../../services/productService';
 import { catalogService } from '../../services/catalogService';
+
 import type { Brand, CatalogProduct, Category, Price } from '../../types/api';
 
 const PAGE_SIZE = 20;
@@ -112,6 +118,25 @@ const formatPrice = (value: number, currency = '₸') => {
     return `${Math.round(value)}${currency}`;
 };
 
+const buildProductSubtitle = (product: CatalogProduct) => {
+    const brandTitle = getBrandTitle(product.brand);
+
+    const categoriesText =
+        product.categories?.map((category) => category.title).join(', ') ||
+        'No category';
+
+    return [
+        brandTitle,
+        categoriesText,
+        product.type,
+        product.bestPrice?.unitAmount
+            ? `${product.bestPrice.unitAmount} ${product.bestPrice.unit || ''}`
+            : '',
+    ]
+        .filter(Boolean)
+        .join(' · ');
+};
+
 export default function CatalogPage() {
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -126,15 +151,21 @@ export default function CatalogPage() {
     const [brands, setBrands] = useState<Brand[]>([]);
 
     const [searchValue, setSearchValue] = useState(searchValueFromUrl);
+
     const [selectedCategoryIds, setSelectedCategoryIds] =
         useState<string[]>(categoryIdsFromUrl);
+
     const [selectedBrandIds, setSelectedBrandIds] =
         useState<string[]>(brandIdsFromUrl);
+
     const [selectedTypes, setSelectedTypes] = useState<string[]>(typeIdsFromUrl);
 
     const [draftCategoryIds, setDraftCategoryIds] =
         useState<string[]>(categoryIdsFromUrl);
-    const [draftBrandIds, setDraftBrandIds] = useState<string[]>(brandIdsFromUrl);
+
+    const [draftBrandIds, setDraftBrandIds] =
+        useState<string[]>(brandIdsFromUrl);
+
     const [draftTypes, setDraftTypes] = useState<string[]>(typeIdsFromUrl);
 
     const [categorySearch, setCategorySearch] = useState('');
@@ -143,13 +174,17 @@ export default function CatalogPage() {
     const [currentPage, setCurrentPage] = useState(
         Number.isFinite(pageFromUrl) && pageFromUrl > 0 ? pageFromUrl : 1
     );
+
     const [totalPages, setTotalPages] = useState(1);
     const [totalElements, setTotalElements] = useState(0);
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+
     const { cartItems, addToCart } = useCart();
+    const { toggleFavourite, isFavourite } = useFavourites();
+
     const selectedCategoryTitle = useMemo(() => {
         if (selectedCategoryIds.length === 0) {
             return 'All products';
@@ -224,8 +259,8 @@ export default function CatalogPage() {
 
                 setCategories(categoriesData);
                 setBrands(brandsData);
-            } catch (error) {
-                console.log('FILTERS LOAD ERROR:', error);
+            } catch (requestError) {
+                console.log('FILTERS LOAD ERROR:', requestError);
             }
         };
 
@@ -245,7 +280,9 @@ export default function CatalogPage() {
                     category: selectedCategoryIds.length
                         ? selectedCategoryIds
                         : undefined,
-                    brand: selectedBrandIds.length ? selectedBrandIds : undefined,
+                    brand: selectedBrandIds.length
+                        ? selectedBrandIds
+                        : undefined,
                     type: selectedTypes.length ? selectedTypes : undefined,
                 });
 
@@ -254,8 +291,8 @@ export default function CatalogPage() {
                 setProducts(nextProducts);
                 setTotalPages(pageData.totalPages || 1);
                 setTotalElements(pageData.totalElements || nextProducts.length);
-            } catch (error) {
-                console.log('CATALOG PRODUCTS SEARCH ERROR:', error);
+            } catch (requestError) {
+                console.log('CATALOG PRODUCTS SEARCH ERROR:', requestError);
                 setError('Failed to load catalog products from backend');
             } finally {
                 setIsLoading(false);
@@ -412,23 +449,8 @@ export default function CatalogPage() {
         const currentPrice = getPriceValue(product.bestPrice);
         const oldPrice = getOldPriceValue(product.bestPrice);
         const currency = product.bestPrice?.currency || '₸';
-        const brandTitle = getBrandTitle(product.brand);
         const imageUrl = imageService.getProductImageUrl(product.id);
-
-        const categoriesText =
-            product.categories?.map((category) => category.title).join(', ') ||
-            'No category';
-
-        const subtitle = [
-            brandTitle,
-            categoriesText,
-            product.type,
-            product.bestPrice?.unitAmount
-                ? `${product.bestPrice.unitAmount} ${product.bestPrice.unit || ''}`
-                : '',
-        ]
-            .filter(Boolean)
-            .join(' · ');
+        const subtitle = buildProductSubtitle(product);
 
         addToCart({
             id: product.id,
@@ -470,7 +492,9 @@ export default function CatalogPage() {
                                             ? styles.activeChip
                                             : ''
                                     }`}
-                                    onClick={() => handleCategoryClick(category.id)}
+                                    onClick={() =>
+                                        handleCategoryClick(category.id)
+                                    }
                                 >
                                     {category.title}
                                 </button>
@@ -487,11 +511,17 @@ export default function CatalogPage() {
                     </Link>
 
                     <div className={styles.toolbar}>
-                        <form className={styles.search} onSubmit={handleSearchSubmit}>
+                        <form
+                            className={styles.search}
+                            onSubmit={handleSearchSubmit}
+                        >
                             <img src={searchIcon} alt="" />
+
                             <input
                                 value={searchValue}
-                                onChange={(event) => setSearchValue(event.target.value)}
+                                onChange={(event) =>
+                                    setSearchValue(event.target.value)
+                                }
                                 placeholder="Search"
                             />
                         </form>
@@ -500,7 +530,9 @@ export default function CatalogPage() {
                             <button
                                 type="button"
                                 className={styles.filterButton}
-                                onClick={() => setIsFilterOpen((prev) => !prev)}
+                                onClick={() =>
+                                    setIsFilterOpen((prev) => !prev)
+                                }
                             >
                                 <img src={filterIcon} alt="" />
                                 <span>Filter</span>
@@ -508,10 +540,17 @@ export default function CatalogPage() {
 
                             {isFilterOpen && (
                                 <div className={styles.filterDropdown}>
-                                    <div className={styles.filterDropdownHeader}>
+                                    <div
+                                        className={
+                                            styles.filterDropdownHeader
+                                        }
+                                    >
                                         <h2>Filter</h2>
 
-                                        <button type="button" onClick={resetFilters}>
+                                        <button
+                                            type="button"
+                                            onClick={resetFilters}
+                                        >
                                             reset
                                         </button>
                                     </div>
@@ -523,34 +562,47 @@ export default function CatalogPage() {
                                             className={styles.filterSearch}
                                             value={categorySearch}
                                             onChange={(event) =>
-                                                setCategorySearch(event.target.value)
+                                                setCategorySearch(
+                                                    event.target.value
+                                                )
                                             }
                                             placeholder="Search categories..."
                                         />
 
                                         <div className={styles.filterList}>
-                                            {filteredCategories.map((category) => (
-                                                <label
-                                                    key={category.id}
-                                                    className={styles.filterOption}
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={draftCategoryIds.includes(
-                                                            category.id
-                                                        )}
-                                                        onChange={() =>
-                                                            toggleDraftCategory(
-                                                                category.id
-                                                            )
+                                            {filteredCategories.map(
+                                                (category) => (
+                                                    <label
+                                                        key={category.id}
+                                                        className={
+                                                            styles.filterOption
                                                         }
-                                                    />
-                                                    <span>{category.title}</span>
-                                                </label>
-                                            ))}
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={draftCategoryIds.includes(
+                                                                category.id
+                                                            )}
+                                                            onChange={() =>
+                                                                toggleDraftCategory(
+                                                                    category.id
+                                                                )
+                                                            }
+                                                        />
+
+                                                        <span>
+                                                            {category.title}
+                                                        </span>
+                                                    </label>
+                                                )
+                                            )}
 
                                             {filteredCategories.length === 0 && (
-                                                <p className={styles.filterEmpty}>
+                                                <p
+                                                    className={
+                                                        styles.filterEmpty
+                                                    }
+                                                >
                                                     No categories found
                                                 </p>
                                             )}
@@ -564,7 +616,9 @@ export default function CatalogPage() {
                                             className={styles.filterSearch}
                                             value={brandSearch}
                                             onChange={(event) =>
-                                                setBrandSearch(event.target.value)
+                                                setBrandSearch(
+                                                    event.target.value
+                                                )
                                             }
                                             placeholder="Search brands..."
                                         />
@@ -573,7 +627,9 @@ export default function CatalogPage() {
                                             {filteredBrands.map((brand) => (
                                                 <label
                                                     key={brand.id}
-                                                    className={styles.filterOption}
+                                                    className={
+                                                        styles.filterOption
+                                                    }
                                                 >
                                                     <input
                                                         type="checkbox"
@@ -581,15 +637,22 @@ export default function CatalogPage() {
                                                             brand.id
                                                         )}
                                                         onChange={() =>
-                                                            toggleDraftBrand(brand.id)
+                                                            toggleDraftBrand(
+                                                                brand.id
+                                                            )
                                                         }
                                                     />
+
                                                     <span>{brand.title}</span>
                                                 </label>
                                             ))}
 
                                             {filteredBrands.length === 0 && (
-                                                <p className={styles.filterEmpty}>
+                                                <p
+                                                    className={
+                                                        styles.filterEmpty
+                                                    }
+                                                >
                                                     No brands found
                                                 </p>
                                             )}
@@ -603,7 +666,9 @@ export default function CatalogPage() {
                                             {availableTypes.map((type) => (
                                                 <label
                                                     key={type}
-                                                    className={styles.filterOption}
+                                                    className={
+                                                        styles.filterOption
+                                                    }
                                                 >
                                                     <input
                                                         type="checkbox"
@@ -611,9 +676,12 @@ export default function CatalogPage() {
                                                             type
                                                         )}
                                                         onChange={() =>
-                                                            toggleDraftType(type)
+                                                            toggleDraftType(
+                                                                type
+                                                            )
                                                         }
                                                     />
+
                                                     <span>{type}</span>
                                                 </label>
                                             ))}
@@ -640,7 +708,8 @@ export default function CatalogPage() {
                                 <span key={categoryId}>
                                     Category:{' '}
                                     {categories.find(
-                                        (category) => category.id === categoryId
+                                        (category) =>
+                                            category.id === categoryId
                                     )?.title ?? categoryId}
                                 </span>
                             ))}
@@ -648,8 +717,9 @@ export default function CatalogPage() {
                             {selectedBrandIds.map((brandId) => (
                                 <span key={brandId}>
                                     Brand:{' '}
-                                    {brands.find((brand) => brand.id === brandId)
-                                        ?.title ?? brandId}
+                                    {brands.find(
+                                        (brand) => brand.id === brandId
+                                    )?.title ?? brandId}
                                 </span>
                             ))}
 
@@ -676,7 +746,8 @@ export default function CatalogPage() {
 
                     {searchValueFromUrl && (
                         <p className={styles.searchResultText}>
-                            Search results for: <strong>{searchValueFromUrl}</strong>
+                            Search results for:{' '}
+                            <strong>{searchValueFromUrl}</strong>
                         </p>
                     )}
 
@@ -696,18 +767,27 @@ export default function CatalogPage() {
                                 {products.map((product) => {
                                     const bestPrice = product.bestPrice;
                                     const imageUrl =
-                                        imageService.getProductImageUrl(product.id);
-                                    const isAddedToCart = cartItems.some((item) => item.id === product.id);
-                                    const currentPrice = getPriceValue(bestPrice);
-                                    const oldPrice = getOldPriceValue(bestPrice);
-                                    const discountText = getDiscountText(bestPrice);
+                                        imageService.getProductImageUrl(
+                                            product.id
+                                        );
 
-                                    const brandTitle = getBrandTitle(product.brand);
+                                    const isAddedToCart = cartItems.some(
+                                        (item) => item.id === product.id
+                                    );
 
-                                    const categoriesText =
-                                        product.categories
-                                            ?.map((category) => category.title)
-                                            .join(', ') || 'No category';
+                                    const favourite = isFavourite(product.id);
+
+                                    const currentPrice =
+                                        getPriceValue(bestPrice);
+
+                                    const oldPrice =
+                                        getOldPriceValue(bestPrice);
+
+                                    const discountText =
+                                        getDiscountText(bestPrice);
+
+                                    const subtitle =
+                                        buildProductSubtitle(product);
 
                                     return (
                                         <article
@@ -716,11 +796,39 @@ export default function CatalogPage() {
                                         >
                                             <button
                                                 type="button"
-                                                className={styles.favoriteButton}
+                                                className={`${
+                                                    styles.favoriteButton
+                                                } ${
+                                                    favourite
+                                                        ? styles.favoriteButtonActive
+                                                        : ''
+                                                }`}
                                                 onClick={(event) => {
                                                     event.preventDefault();
                                                     event.stopPropagation();
+
+                                                    toggleFavourite({
+                                                        id: product.id,
+                                                        title: product.title,
+                                                        subtitle,
+                                                        price: formatPrice(
+                                                            currentPrice,
+                                                            bestPrice?.currency
+                                                        ),
+                                                        oldPrice:
+                                                            oldPrice > 0
+                                                                ? formatPrice(
+                                                                    oldPrice,
+                                                                    bestPrice?.currency
+                                                                )
+                                                                : undefined,
+                                                        discount:
+                                                            discountText ||
+                                                            undefined,
+                                                        image: imageUrl,
+                                                    });
                                                 }}
+                                                aria-label="Toggle favourite"
                                             >
                                                 <img src={heartIcon} alt="" />
                                             </button>
@@ -729,9 +837,13 @@ export default function CatalogPage() {
                                                 to={`/products/${product.id}`}
                                                 className={styles.cardLink}
                                             >
-                                                <div className={styles.imageBlock}>
+                                                <div
+                                                    className={styles.imageBlock}
+                                                >
                                                     <img
-                                                        className={styles.productImage}
+                                                        className={
+                                                            styles.productImage
+                                                        }
                                                         src={imageUrl}
                                                         alt={product.title}
                                                         loading="lazy"
@@ -739,9 +851,10 @@ export default function CatalogPage() {
                                                             event.currentTarget.style.display =
                                                                 'none';
 
-                                                            const fallback = event
-                                                                .currentTarget
-                                                                .nextElementSibling as HTMLDivElement | null;
+                                                            const fallback =
+                                                                event
+                                                                    .currentTarget
+                                                                    .nextElementSibling as HTMLDivElement | null;
 
                                                             if (fallback) {
                                                                 fallback.style.display =
@@ -759,17 +872,25 @@ export default function CatalogPage() {
                                                     </div>
                                                 </div>
 
-                                                <div className={styles.productInfo}>
+                                                <div
+                                                    className={
+                                                        styles.productInfo
+                                                    }
+                                                >
                                                     <h2>{product.title}</h2>
 
-                                                    <p>
-                                                        {brandTitle
-                                                            ? `${brandTitle} · ${categoriesText}`
-                                                            : categoriesText}
-                                                    </p>
+                                                    <p>{subtitle}</p>
 
-                                                    <div className={styles.priceRow}>
-                                                        <span className={styles.price}>
+                                                    <div
+                                                        className={
+                                                            styles.priceRow
+                                                        }
+                                                    >
+                                                        <span
+                                                            className={
+                                                                styles.price
+                                                            }
+                                                        >
                                                             {formatPrice(
                                                                 currentPrice,
                                                                 bestPrice?.currency
@@ -808,6 +929,7 @@ export default function CatalogPage() {
                                                                             : styles.badgeArrowDown
                                                                     }
                                                                 />
+
                                                                 {discountText}
                                                             </span>
                                                         )}
@@ -818,23 +940,42 @@ export default function CatalogPage() {
                                             <div className={styles.actions}>
                                                 <button
                                                     type="button"
-                                                    className={`${styles.cartButton} ${
-                                                        isAddedToCart ? styles.cartButtonAdded : ''
+                                                    className={`${
+                                                        styles.cartButton
+                                                    } ${
+                                                        isAddedToCart
+                                                            ? styles.cartButtonAdded
+                                                            : ''
                                                     }`}
-                                                    onClick={(event) => handleAddToCart(event, product)}
+                                                    onClick={(event) =>
+                                                        handleAddToCart(
+                                                            event,
+                                                            product
+                                                        )
+                                                    }
                                                 >
-                                                    {isAddedToCart ? 'Added' : 'Add to cart'}
+                                                    {isAddedToCart
+                                                        ? 'Added'
+                                                        : 'Add to cart'}
                                                 </button>
 
                                                 <Link
                                                     to={`/products/${product.id}/analytics`}
-                                                    className={styles.analyticsButton}
+                                                    className={
+                                                        styles.analyticsButton
+                                                    }
                                                     onClick={(event) => {
                                                         event.stopPropagation();
                                                     }}
                                                 >
-                                                    <img src={analyticsIcon} alt="" />
-                                                    <span>Price analytics</span>
+                                                    <img
+                                                        src={analyticsIcon}
+                                                        alt=""
+                                                    />
+
+                                                    <span>
+                                                        Price analytics
+                                                    </span>
                                                 </Link>
                                             </div>
                                         </article>
@@ -867,6 +1008,8 @@ export default function CatalogPage() {
                     )}
                 </div>
             </main>
+
+            <Footer />
         </>
     );
 }

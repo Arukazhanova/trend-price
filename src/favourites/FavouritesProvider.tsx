@@ -1,4 +1,6 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+
 import {
     FavouritesContext,
     type FavouriteProduct,
@@ -20,19 +22,30 @@ export function FavouritesProvider({
         }
     });
 
+    const saveFavourites = (items: FavouriteProduct[]) => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    };
+
     const addToFavourites = (product: FavouriteProduct) => {
         setFavourites((prev) => {
             const exists = prev.some((item) => item.id === product.id);
-            const next = exists ? prev : [...prev, product];
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+
+            if (exists) {
+                return prev;
+            }
+
+            const next = [...prev, product];
+            saveFavourites(next);
+
             return next;
         });
     };
 
-    const removeFromFavourites = (id: number) => {
+    const removeFromFavourites = (id: string) => {
         setFavourites((prev) => {
             const next = prev.filter((item) => item.id !== id);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+            saveFavourites(next);
+
             return next;
         });
     };
@@ -45,12 +58,13 @@ export function FavouritesProvider({
                 ? prev.filter((item) => item.id !== product.id)
                 : [...prev, product];
 
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+            saveFavourites(next);
+
             return next;
         });
     };
 
-    const isFavourite = (id: number) => {
+    const isFavourite = (id: string) => {
         return favourites.some((item) => item.id === id);
     };
 

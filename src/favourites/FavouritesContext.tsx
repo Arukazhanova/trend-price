@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 
 export type FavouriteProduct = {
-    id: number;
+    id: string;
     title: string;
     subtitle: string;
     price: string;
@@ -13,9 +13,9 @@ export type FavouriteProduct = {
 export type FavouritesContextType = {
     favourites: FavouriteProduct[];
     addToFavourites: (product: FavouriteProduct) => void;
-    removeFromFavourites: (id: number) => void;
+    removeFromFavourites: (id: string) => void;
     toggleFavourite: (product: FavouriteProduct) => void;
-    isFavourite: (id: number) => boolean;
+    isFavourite: (id: string) => boolean;
     totalPrice: number;
 };
 

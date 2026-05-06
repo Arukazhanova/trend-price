@@ -1,286 +1,473 @@
-import styles from "./MainCatalogSection.module.css";
-import heartIcon from '../../assets/Heart.svg';
-import { useFavourites } from '../../favourites/useFavourites';
-import { useCart } from "../../cart/useCart";
-import { Link } from "react-router-dom";
-const productSections = [
-    {
-        id: 1,
-        title: 'Over and over again...',
-        products: [
-            {
-                id: 1,
-                title: 'Mileo Milk 3.2%',
-                subtitle: '1 kg Magnum',
-                price: '880₸',
-                oldPrice: '1040₸',
-                discount: '-15%',
-            },
-            {
-                id: 2,
-                title: 'Top grade QarQus egg',
-                subtitle: '10 pcs Arbuz',
-                price: '980₸',
-            },
-            {
-                id: 3,
-                title: 'Butter',
-                subtitle: '500 g Arbuz',
-                price: '3630₸',
-                oldPrice: '4040₸',
-                discount: '-5%',
-            },
-            {
-                id: 4,
-                title: 'Masterpiece sunflower oil',
-                subtitle: '1 kg Magnum',
-                price: '987₸',
-                oldPrice: '1097₸',
-                discount: '-8%',
-            },
-        ],
-    },
-    {
-        id: 2,
-        title: 'Vegetables and Fruits',
-        products: [
-            {
-                id: 5,
-                title: 'Apples',
-                subtitle: '1 kg Magnum',
-                price: '490₸',
-                oldPrice: '1040₸',
-                discount: '-15%',
-            },
-            {
-                id: 6,
-                title: 'Bananas',
-                subtitle: '1 kg Magnum',
-                price: '380₸',
-                discount: '+7.9%',
-            },
-            {
-                id: 7,
-                title: 'Broccoli fresh',
-                subtitle: '500 g Magnum',
-                price: '350₸',
-                oldPrice: '380₸',
-                discount: '-9%',
-            },
-            {
-                id: 8,
-                title: 'Cherry tomatoes',
-                subtitle: '250 g Magnum',
-                price: '290₸',
-                oldPrice: '310₸',
-                discount: '-10%',
-            },
-        ],
-    },
-];
+import { useEffect, useState } from 'react';
+import type { MouseEvent } from 'react';
+import { Link } from 'react-router-dom';
 
-const cheapestBlock = {
-    title: 'Where is it cheaper?',
-    selectedCategory: 'Milk',
-    productTitle: 'Milk 3.2% 1L',
-    rows: [
-        {
-            id: 1,
-            market: 'Magnum',
-            price: '380₸',
-            stock: 'In stock',
-            difference: '-65₸',
-            status: 'positive',
-            active: true,
-        },
-        {
-            id: 2,
-            market: 'Small',
-            price: '445₸',
-            stock: 'In stock',
-            difference: '0₸',
-            status: 'neutral',
-            active: false,
-        },
-        {
-            id: 3,
-            market: 'Arbuz',
-            price: '420₸',
-            stock: 'In stock',
-            difference: '-25₸',
-            status: 'positive',
-            active: false,
-        },
-        {
-            id: 4,
-            market: 'Galmart',
-            price: '460₸',
-            stock: 'Out of stock',
-            difference: '+15₸',
-            status: 'negative',
-            active: false,
-        },
-    ],
+import styles from './MainCatalogSection.module.css';
+import heartIcon from '../../assets/Heart.svg';
+import analyticsIcon from '../../assets/ChartLine.svg';
+
+import { useFavourites } from '../../favourites/useFavourites';
+import { useCart } from '../../cart/useCart';
+
+import { catalogService } from '../../services/catalogService';
+import { productService } from '../../services/productService';
+import { imageService } from '../../services/imageService';
+
+import type { CatalogProduct, Category, Price } from '../../types/api';
+
+type ProductSection = {
+    id: string;
+    title: string;
+    products: CatalogProduct[];
+};
+
+const PRODUCTS_PER_SECTION = 4;
+
+const getBrandTitle = (brand: CatalogProduct['brand']) => {
+    if (!brand) {
+        return '';
+    }
+
+    return typeof brand === 'string' ? brand : brand.title;
+};
+
+const getPriceValue = (price?: Price | null) => {
+    if (!price) {
+        return 0;
+    }
+
+    return Number(price.finalPrice ?? price.pricePerUnit ?? 0);
+};
+
+const getOldPriceValue = (price?: Price | null) => {
+    if (!price) {
+        return 0;
+    }
+
+    const finalPrice = Number(price.finalPrice ?? 0);
+    const pricePerUnit = Number(price.pricePerUnit ?? 0);
+
+    if (pricePerUnit > finalPrice && finalPrice > 0) {
+        return pricePerUnit;
+    }
+
+    return 0;
+};
+
+const getDiscountText = (price?: Price | null) => {
+    if (!price) {
+        return '';
+    }
+
+    const discount = Number(price.discount ?? 0);
+
+    if (discount > 0 && discount < 1) {
+        return `-${Math.round(discount * 100)}%`;
+    }
+
+    if (discount >= 1) {
+        return `-${Math.round(discount)}%`;
+    }
+
+    if (discount < 0 && discount > -1) {
+        return `+${Math.round(Math.abs(discount) * 100)}%`;
+    }
+
+    if (discount <= -1) {
+        return `+${Math.round(Math.abs(discount))}%`;
+    }
+
+    const oldPrice = getOldPriceValue(price);
+    const finalPrice = getPriceValue(price);
+
+    if (oldPrice > finalPrice && finalPrice > 0) {
+        const percent = Math.round(((oldPrice - finalPrice) / oldPrice) * 100);
+        return `-${percent}%`;
+    }
+
+    if (finalPrice > oldPrice && oldPrice > 0) {
+        const percent = Math.round(((finalPrice - oldPrice) / oldPrice) * 100);
+        return `+${percent}%`;
+    }
+
+    return '';
+};
+
+const formatPrice = (value: number, currency = '₸') => {
+    if (!value) {
+        return 'No price';
+    }
+
+    return `${Math.round(value)}${currency}`;
+};
+
+const buildSubtitle = (product: CatalogProduct) => {
+    const brandTitle = getBrandTitle(product.brand);
+
+    const categoriesText =
+        product.categories?.map((category) => category.title).join(', ') ||
+        'No category';
+
+    return brandTitle ? `${brandTitle} · ${categoriesText}` : categoriesText;
+};
+
+const findVegetablesCategory = (categories: Category[]) => {
+    return categories.find((category) => {
+        const title = category.title.toLowerCase();
+
+        return (
+            title.includes('vegetable') ||
+            title.includes('fruit') ||
+            title.includes('овощ') ||
+            title.includes('фрукт')
+        );
+    });
+};
+
+const findDrinksCategory = (categories: Category[]) => {
+    return categories.find((category) => {
+        const title = category.title.toLowerCase();
+
+        return (
+            title.includes('drink') ||
+            title.includes('water') ||
+            title.includes('juice') ||
+            title.includes('beverage') ||
+            title.includes('напит') ||
+            title.includes('вода') ||
+            title.includes('сок')
+        );
+    });
 };
 
 export default function MainCatalogSection() {
     const { toggleFavourite, isFavourite } = useFavourites();
-    const { addToCart } = useCart();
+    const { cartItems, addToCart } = useCart();
+
+    const [sections, setSections] = useState<ProductSection[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchMainProducts = async () => {
+            setIsLoading(true);
+            setError('');
+
+            try {
+                const [allProductsPage, categories] = await Promise.all([
+                    catalogService.searchProducts({
+                        page: 1,
+                        size: PRODUCTS_PER_SECTION,
+                    }),
+                    productService.getAllCategories(),
+                ]);
+
+                const vegetablesCategory = findVegetablesCategory(categories);
+                const drinksCategory = findDrinksCategory(categories);
+
+                const [vegetablesProductsPage, drinksProductsPage] =
+                    await Promise.all([
+                        vegetablesCategory
+                            ? catalogService.searchProducts({
+                                page: 1,
+                                size: PRODUCTS_PER_SECTION,
+                                category: [vegetablesCategory.id],
+                            })
+                            : Promise.resolve(null),
+
+                        drinksCategory
+                            ? catalogService.searchProducts({
+                                page: 1,
+                                size: PRODUCTS_PER_SECTION,
+                                category: [drinksCategory.id],
+                            })
+                            : Promise.resolve(null),
+                    ]);
+
+                setSections([
+                    {
+                        id: 'popular',
+                        title: 'Over and over again...',
+                        products: allProductsPage.content ?? [],
+                    },
+                    {
+                        id: vegetablesCategory?.id ?? 'vegetables-and-fruits',
+                        title: 'Vegetables and Fruits',
+                        products: vegetablesProductsPage?.content ?? [],
+                    },
+                    {
+                        id: drinksCategory?.id ?? 'drinks',
+                        title: 'Drinks',
+                        products: drinksProductsPage?.content ?? [],
+                    },
+                ]);
+            } catch (requestError) {
+                console.error('MAIN CATALOG LOAD ERROR:', requestError);
+                setError('Failed to load products from backend');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchMainProducts();
+    }, []);
+
+    const handleAddToCart = (
+        event: MouseEvent<HTMLButtonElement>,
+        product: CatalogProduct
+    ) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const bestPrice = product.bestPrice;
+        const currentPrice = getPriceValue(bestPrice);
+        const oldPrice = getOldPriceValue(bestPrice);
+        const imageUrl = imageService.getProductImageUrl(product.id);
+
+        addToCart({
+            id: product.id,
+            title: product.title,
+            price: currentPrice,
+            currency: bestPrice?.currency || '₸',
+            subtitle: buildSubtitle(product),
+            oldPrice: oldPrice || undefined,
+            image: imageUrl,
+        });
+    };
+
     return (
         <section className={styles.wrapper}>
-            {productSections.map((section) => (
-                <div key={section.id} className={styles.sectionBlock}>
-                    <div className={styles.sectionHeader}>
-                        <h2 className={styles.sectionTitle}>{section.title}</h2>
-                    </div>
+            {isLoading && (
+                <p className={styles.emptyText}>Loading products...</p>
+            )}
 
-                    <div className={styles.productsGrid}>
-                        {section.products.map((product) => {
-                            const favourite = isFavourite(product.id);
+            {error && <p className={styles.emptyText}>{error}</p>}
 
-                            return (
-                                <article key={product.id} className={styles.card}>
-                                    <button
-                                        type="button"
-                                        className={`${styles.favoriteButton} ${
-                                            favourite ? styles.favoriteButtonActive : ""
-                                        }`}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
+            {!isLoading &&
+                !error &&
+                sections.map((section) => (
+                    <div key={section.id} className={styles.sectionBlock}>
+                        <div className={styles.sectionHeader}>
+                            <h2 className={styles.sectionTitle}>
+                                {section.title}
+                            </h2>
+                        </div>
 
-                                            toggleFavourite({
-                                                id: product.id,
-                                                title: product.title,
-                                                subtitle: product.subtitle,
-                                                price: product.price,
-                                                oldPrice: product.oldPrice,
-                                                discount: product.discount,
-                                            });
-                                        }}
-                                    >
-                                        <img src={heartIcon} alt="" className={styles.favoriteIcon} />
-                                    </button>
+                        {section.products.length === 0 ? (
+                            <p className={styles.emptyText}>
+                                No products found
+                            </p>
+                        ) : (
+                            <div className={styles.productsGrid}>
+                                {section.products.map((product) => {
+                                    const bestPrice = product.bestPrice;
+                                    const imageUrl =
+                                        imageService.getProductImageUrl(
+                                            product.id
+                                        );
 
-                                    <Link to={`/products/${product.id}`} className={styles.cardLink}>
-                                        <div className={styles.cardImageWrap}>
-                                            <div className={styles.productPlaceholder}>
-                                                <span>{product.title}</span>
-                                            </div>
-                                        </div>
+                                    const isAddedToCart = cartItems.some(
+                                        (item) => item.id === product.id
+                                    );
 
-                                        <div className={styles.cardBody}>
-                                            <h3 className={styles.cardTitle}>{product.title}</h3>
-                                            <p className={styles.cardSubtitle}>{product.subtitle}</p>
+                                    const favourite = isFavourite(product.id);
+                                    const currentPrice = getPriceValue(bestPrice);
+                                    const oldPrice =
+                                        getOldPriceValue(bestPrice);
+                                    const discountText =
+                                        getDiscountText(bestPrice);
+                                    const subtitle = buildSubtitle(product);
 
-                                            <div className={styles.priceRow}>
-                                                <span className={styles.price}>{product.price}</span>
+                                    return (
+                                        <article
+                                            key={product.id}
+                                            className={styles.productCard}
+                                        >
+                                            <button
+                                                type="button"
+                                                className={`${styles.favoriteButton} ${
+                                                    favourite
+                                                        ? styles.favoriteButtonActive
+                                                        : ''
+                                                }`}
+                                                onClick={(event) => {
+                                                    event.preventDefault();
+                                                    event.stopPropagation();
 
-                                                {product.oldPrice && (
-                                                    <span className={styles.oldPrice}>
-                                {product.oldPrice}
-                            </span>
-                                                )}
+                                                    toggleFavourite({
+                                                        id: product.id,
+                                                        title: product.title,
+                                                        subtitle,
+                                                        price: formatPrice(
+                                                            currentPrice,
+                                                            bestPrice?.currency
+                                                        ),
+                                                        oldPrice:
+                                                            oldPrice > 0
+                                                                ? formatPrice(
+                                                                    oldPrice,
+                                                                    bestPrice?.currency
+                                                                )
+                                                                : undefined,
+                                                        discount:
+                                                            discountText ||
+                                                            undefined,
+                                                        image: imageUrl,
+                                                    });
+                                                }}
+                                            >
+                                                <img src={heartIcon} alt="" />
+                                            </button>
 
-                                                {product.discount && (
-                                                    <span
+                                            <Link
+                                                to={`/products/${product.id}`}
+                                                className={styles.cardLink}
+                                            >
+                                                <div
+                                                    className={styles.imageBlock}
+                                                >
+                                                    <img
                                                         className={
-                                                            product.discount.startsWith("+")
-                                                                ? styles.badgeUp
-                                                                : styles.badgeDown
+                                                            styles.productImage
+                                                        }
+                                                        src={imageUrl}
+                                                        alt={product.title}
+                                                        loading="lazy"
+                                                        onError={(event) => {
+                                                            event.currentTarget.style.display =
+                                                                'none';
+
+                                                            const fallback =
+                                                                event
+                                                                    .currentTarget
+                                                                    .nextElementSibling as HTMLDivElement | null;
+
+                                                            if (fallback) {
+                                                                fallback.style.display =
+                                                                    'flex';
+                                                            }
+                                                        }}
+                                                    />
+
+                                                    <div
+                                                        className={
+                                                            styles.imagePlaceholder
                                                         }
                                                     >
-                                {product.discount}
-                            </span>
-                                                )}
+                                                        {product.title}
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    className={
+                                                        styles.productInfo
+                                                    }
+                                                >
+                                                    <h2>{product.title}</h2>
+
+                                                    <p>{subtitle}</p>
+
+                                                    <div
+                                                        className={
+                                                            styles.priceRow
+                                                        }
+                                                    >
+                                                        <span
+                                                            className={
+                                                                styles.price
+                                                            }
+                                                        >
+                                                            {formatPrice(
+                                                                currentPrice,
+                                                                bestPrice?.currency
+                                                            )}
+                                                        </span>
+
+                                                        {oldPrice > 0 && (
+                                                            <span
+                                                                className={
+                                                                    styles.oldPrice
+                                                                }
+                                                            >
+                                                                {formatPrice(
+                                                                    oldPrice,
+                                                                    bestPrice?.currency
+                                                                )}
+                                                            </span>
+                                                        )}
+
+                                                        {discountText && (
+                                                            <span
+                                                                className={
+                                                                    discountText.startsWith(
+                                                                        '+'
+                                                                    )
+                                                                        ? styles.badgeUp
+                                                                        : styles.badgeDown
+                                                                }
+                                                            >
+                                                                <span
+                                                                    className={
+                                                                        discountText.startsWith(
+                                                                            '+'
+                                                                        )
+                                                                            ? styles.badgeArrowUp
+                                                                            : styles.badgeArrowDown
+                                                                    }
+                                                                />
+
+                                                                {discountText}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </Link>
+
+                                            <div className={styles.actions}>
+                                                <button
+                                                    type="button"
+                                                    className={`${styles.cartButton} ${
+                                                        isAddedToCart
+                                                            ? styles.cartButtonAdded
+                                                            : ''
+                                                    }`}
+                                                    onClick={(event) =>
+                                                        handleAddToCart(
+                                                            event,
+                                                            product
+                                                        )
+                                                    }
+                                                >
+                                                    {isAddedToCart
+                                                        ? 'Added'
+                                                        : 'Add to cart'}
+                                                </button>
+
+                                                <Link
+                                                    to={`/products/${product.id}/analytics`}
+                                                    className={
+                                                        styles.analyticsButton
+                                                    }
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={analyticsIcon}
+                                                        alt=""
+                                                    />
+                                                    <span>
+                                                        Price analytics
+                                                    </span>
+                                                </Link>
                                             </div>
-                                        </div>
-                                    </Link>
-
-                                    <div className={styles.cardActions}>
-                                        <button
-                                            type="button"
-                                            className={styles.cartButton}
-                                            onClick={() =>
-                                                addToCart({
-                                                    id: product.id,
-                                                    title: product.title,
-                                                    subtitle: product.subtitle,
-                                                    price: product.price,
-                                                    oldPrice: product.oldPrice,
-                                                    discount: product.discount,
-                                                })
-                                            }
-                                        >
-                                            Add to cart
-                                        </button>
-
-                                        <Link
-                                            to={`/products/${product.id}/analytics`}
-                                            className={styles.analyticsButton}
-                                        >
-                                            Price analytics
-                                        </Link>
-                                    </div>
-                                </article>
-                            );
-                        })}
-                    </div>
-                </div>
-            ))}
-
-            <div className={styles.cheapestSection}>
-                <div className={styles.cheapestHeader}>
-                    <h2 className={styles.sectionTitle}>{cheapestBlock.title}</h2>
-
-                    <button type="button" className={styles.categorySelect}>
-                        {cheapestBlock.selectedCategory}
-                        <span className={styles.categoryArrow}>⌄</span>
-                    </button>
-                </div>
-
-                <div className={styles.cheapestCard}>
-                    <h3 className={styles.cheapestProductTitle}>
-                        {cheapestBlock.productTitle}
-                    </h3>
-
-                    <div className={styles.cheapestRows}>
-                        {cheapestBlock.rows.map((row) => (
-                            <div
-                                key={row.id}
-                                className={`${styles.cheapestRow} ${
-                                    row.active ? styles.cheapestRowActive : ''
-                                }`}
-                            >
-                                <span className={styles.marketName}>{row.market}</span>
-                                <span className={styles.marketPrice}>{row.price}</span>
-
-                                <span
-                                    className={`${styles.stockStatus} ${
-                                        row.stock === 'Out of stock'
-                                            ? styles.stockOut
-                                            : styles.stockIn
-                                    }`}
-                                >
-                                    {row.stock === 'Out of stock' ? '✕' : '✓'} {row.stock}
-                                </span>
-
-                                <span
-                                    className={`${styles.difference} ${
-                                        row.status === 'negative'
-                                            ? styles.diffNegative
-                                            : row.status === 'positive'
-                                                ? styles.diffPositive
-                                                : styles.diffNeutral
-                                    }`}
-                                >
-                                    {row.difference}
-                                </span>
+                                        </article>
+                                    );
+                                })}
                             </div>
-                        ))}
+                        )}
                     </div>
-                </div>
-            </div>
+                ))}
         </section>
     );
 }
