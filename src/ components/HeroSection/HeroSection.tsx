@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import styles from './HeroSection.module.css';
@@ -8,19 +8,16 @@ import banner2 from '../../assets/banner2.svg';
 import banner3 from '../../assets/banner3.png';
 
 import { productService } from '../../services/productService';
-import type { Category } from '../../types/api';
+import { priceService } from '../../services/priceService';
+import { catalogService } from '../../services/catalogService';
 
-const stats = [
-    { id: 1, value: '3+', label: 'Stores monitored' },
-    { id: 2, value: '10 000+', label: 'Products tracked' },
-    { id: 3, value: '23%', label: 'Average savings' },
-    { id: 4, value: 'Live', label: 'Real-time updates' },
-];
+import type { Category } from '../../types/api';
 
 const banners = [
     {
         bg: banner3,
-        subtitle: 'Tell AI what you buy — it calculates where you save the most money.',
+        subtitle:
+            'Tell AI what you buy — it calculates where you save the most money.',
         title: (
             <>
                 MEET YOUR AI
@@ -47,9 +44,88 @@ const banners = [
     },
 ];
 
+type UnknownStatsResponse = {
+    totalElements?: number;
+    numberOfElements?: number;
+    total?: number;
+    count?: number;
+    size?: number;
+    content?: unknown[];
+    data?: UnknownStatsResponse | unknown[];
+    products?: unknown[];
+    stores?: unknown[];
+};
+
+const formatStatNumber = (value?: number) => {
+    if (!value) {
+        return '0';
+    }
+
+    return value.toLocaleString('en-US').replace(/,/g, ' ');
+};
+
+const getStatNumber = (data: unknown): number => {
+    if (typeof data === 'number') {
+        return data;
+    }
+
+    if (Array.isArray(data)) {
+        return data.length;
+    }
+
+    if (!data || typeof data !== 'object') {
+        return 0;
+    }
+
+    const value = data as UnknownStatsResponse;
+
+    if (typeof value.totalElements === 'number') {
+        return value.totalElements;
+    }
+
+    if (typeof value.numberOfElements === 'number') {
+        return value.numberOfElements;
+    }
+
+    if (typeof value.total === 'number') {
+        return value.total;
+    }
+
+    if (typeof value.count === 'number') {
+        return value.count;
+    }
+
+    if (typeof value.size === 'number') {
+        return value.size;
+    }
+
+    if (Array.isArray(value.content)) {
+        return value.content.length;
+    }
+
+    if (Array.isArray(value.products)) {
+        return value.products.length;
+    }
+
+    if (Array.isArray(value.stores)) {
+        return value.stores.length;
+    }
+
+    if (value.data) {
+        return getStatNumber(value.data);
+    }
+
+    return 0;
+};
+
 export default function HeroSection() {
     const [currentBanner, setCurrentBanner] = useState(0);
     const [categories, setCategories] = useState<Category[]>([]);
+
+    const [storesMonitored, setStoresMonitored] = useState('0');
+    const [productsTracked, setProductsTracked] = useState('0');
+    const [trackedToday, setTrackedToday] = useState('0');
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -73,6 +149,73 @@ export default function HeroSection() {
         fetchCategories();
     }, []);
 
+    useEffect(() => {
+        const fetchHeroStats = async () => {
+            try {
+                const [
+                    updatedProductsData,
+                    updatedStoresData,
+                    catalogProductsData,
+                ] = await Promise.all([
+                    priceService.getUpdatedProducts(),
+                    priceService.getUpdatedStores(),
+                    catalogService.searchProducts({
+                        page: 1,
+                        size: 1,
+                    }),
+                ]);
+
+                console.log('HERO UPDATED PRODUCTS DATA:', updatedProductsData);
+                console.log('HERO UPDATED STORES DATA:', updatedStoresData);
+                console.log('HERO CATALOG PRODUCTS DATA:', catalogProductsData);
+
+                const updatedProductsCount =
+                    getStatNumber(updatedProductsData);
+
+                const storesCount = getStatNumber(updatedStoresData);
+
+                const allProductsCount =
+                    typeof catalogProductsData.totalElements === 'number'
+                        ? catalogProductsData.totalElements
+                        : getStatNumber(catalogProductsData);
+
+                setStoresMonitored(formatStatNumber(storesCount));
+                setProductsTracked(formatStatNumber(allProductsCount));
+                setTrackedToday(formatStatNumber(updatedProductsCount));
+            } catch (error) {
+                console.error('Failed to load hero stats:', error);
+            }
+        };
+
+        fetchHeroStats();
+    }, []);
+
+    const stats = useMemo(
+        () => [
+            {
+                id: 1,
+                value: storesMonitored,
+                label: 'Stores monitored',
+            },
+            {
+                id: 2,
+                value: productsTracked,
+                label: 'Products tracked',
+            },
+            {
+                id: 3,
+                value: trackedToday,
+                label: 'Tracked today',
+            },
+            {
+                id: 4,
+                value: 'Live',
+                label: 'Real-time updates',
+            },
+        ],
+        [storesMonitored, productsTracked, trackedToday]
+    );
+
     const banner = banners[currentBanner];
 
     const handleCategoryClick = (categoryId: string | number) => {
@@ -81,7 +224,9 @@ export default function HeroSection() {
 
     const handlePrimaryButtonClick = () => {
         if (banner.primaryButton === 'Compare now') {
-            navigate('/products/e52c04a4-7908-4120-b6e8-9ca5645d4017/analytics');
+            navigate(
+                '/products/e52c04a4-7908-4120-b6e8-9ca5645d4017/analytics'
+            );
         }
 
         if (banner.primaryButton === 'Try AI Assistant') {
@@ -113,19 +258,14 @@ export default function HeroSection() {
                     currentBanner === 0 ? styles.aiBanner : ''
                 }`}
             >
-                <img
-                    src={banner.bg}
-                    alt=""
-                    className={styles.bannerImage}
-                />
+                <img src={banner.bg} alt="" className={styles.bannerImage} />
 
                 <div className={styles.overlay} />
-
 
                 <div className={styles.bannerContent}>
                     <div className={styles.badge}>
                         <span>Live price tracking</span>
-                        <span>3+ stores</span>
+                        <span>{storesMonitored} stores</span>
                     </div>
 
                     <p className={styles.subtitle}>{banner.subtitle}</p>

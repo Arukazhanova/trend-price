@@ -23,7 +23,7 @@
 
 .layout {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 250px 1fr;
     gap: 40px;
     align-items: start;
 }
@@ -81,13 +81,15 @@
 .productList {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     overflow-y: auto;
-    padding-right: 4px;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: #cfd4dc #f2f4f7;
 }
 
 .productList::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
 }
 
 .productList::-webkit-scrollbar-track {
@@ -100,19 +102,24 @@
     border-radius: 999px;
 }
 
+.productList::-webkit-scrollbar-thumb:hover {
+    background: #98a2b3;
+}
+
 .productItem {
     width: 100%;
-    min-height: 46px;
-    border: none;
-    border-radius: 8px;
-    background: #e8f8f1;
-    padding: 8px 10px;
-    display: flex;
-    justify-content: space-between;
+    min-height: 96px;
+    border: 1px solid #e4e7ec;
+    border-radius: 18px;
+    background: #ffffff;
+    padding: 18px 16px;
+    display: grid;
+    grid-template-columns: 20px 1fr 24px;
     align-items: center;
-    gap: 8px;
+    gap: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
+    box-sizing: border-box;
 }
 
 .productItem:hover,
@@ -551,4 +558,331 @@
     .increaseBlock {
         padding: 22px 18px;
     }
+}
+.storeText {
+    margin: 0 0 8px !important;
+    color: #98a2b3 !important;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 14px !important;
+    font-weight: 500;
+}
+.sidebar {
+    min-height: 466px;
+    height: auto;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 20px;
+    padding: 28px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
+}
+
+.sidebar h2 {
+    margin: 0 0 18px;
+    color: #101828;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.searchWrap {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.searchWrap img {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    opacity: 0.55;
+}
+
+.search {
+    width: 100%;
+    height: 44px;
+    border: 1px solid #d0d5dd;
+    border-radius: 12px;
+    padding: 0 14px 0 40px;
+    color: #344054;
+    background: #fcfcfd;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.search::placeholder {
+    color: #98a2b3;
+}
+
+.search:focus {
+    border-color: #009966;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(0, 153, 102, 0.1);
+}
+
+.selectedStoresRow {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.selectedBadge {
+    min-height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #ecfdf3;
+    color: #027a48;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.clearButton {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid #d0d5dd;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #667085;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.clearButton:hover {
+    border-color: #009966;
+    color: #009966;
+    background: #f6fffb;
+}
+
+.productList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.productList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.productList::-webkit-scrollbar-track {
+    background: #f2f4f7;
+    border-radius: 999px;
+}
+
+.productList::-webkit-scrollbar-thumb {
+    background: #d0d5dd;
+    border-radius: 999px;
+}
+
+.productItem {
+    width: 100%;
+    min-height: 74px;
+    border: 1px solid #e4e7ec;
+    border-radius: 16px;
+    background: #ffffff;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 18px 1fr 22px;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.productItem:hover {
+    border-color: #b7dfcf;
+    background: #f8fdfb;
+    transform: translateY(-1px);
+}
+
+.productItemActive {
+    border-color: #8ad1b8;
+    background: #eaf8f2;
+    box-shadow: 0 0 0 3px rgba(0, 153, 102, 0.08);
+}
+
+.storeCheckbox {
+    width: 20px;
+    height: 20px;
+    accent-color: #009966;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.storeInfo {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.storeName {
+    color: #101828 !important;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 15px !important;
+    font-weight: 700;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+.storeName {
+    color: #101828 !important;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 18px !important;
+    font-weight: 700;
+    line-height: 1.15;
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
+
+.selectedCheck {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #009966;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sideState {
+    margin: 8px 0 0;
+    color: #98a2b3;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 14px;
+}
+
+.storeText {
+    margin: 0 0 8px !important;
+    color: #98a2b3 !important;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 14px !important;
+    font-weight: 500;
+}
+.storeMeta {
+    color: #667085 !important;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 14px !important;
+    font-weight: 400;
+    line-height: 1.2;
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
+@media (max-width: 560px) {
+    .sidebar {
+        padding: 22px 16px 16px;
+        border-radius: 16px;
+    }
+
+    .selectedStoresRow {
+        flex-wrap: wrap;
+    }
+
+    .selectedBadge,
+    .clearButton {
+        min-height: 30px;
+    }
+
+    .productItem {
+        min-height: 68px;
+        border-radius: 14px;
+        padding: 12px;
+    }
+}
+@media (min-width: 1101px) {
+    .sidebar {
+        height: 466px;
+        min-height: 466px;
+        max-height: 466px;
+        overflow: hidden;
+    }
+
+    .productList {
+        flex: 1;
+        min-height: 0;
+        max-height: none;
+        overflow-y: auto;
+        padding-right: 6px;
+    }
+}
+.priceLineGreen,
+.priceLineBlue,
+.priceLineOrange,
+.priceLinePurple,
+.priceLinePink {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.priceLineGreen {
+    stroke: #009966;
+}
+
+.priceLineBlue {
+    stroke: #2563eb;
+}
+
+.priceLineOrange {
+    stroke: #f97316;
+}
+
+.priceLinePurple {
+    stroke: #7c3aed;
+}
+
+.priceLinePink {
+    stroke: #db2777;
+}
+
+.pointGreen,
+.pointBlue,
+.pointOrange,
+.pointPurple,
+.pointPink {
+    stroke: #ffffff;
+    stroke-width: 2;
+}
+
+.pointGreen {
+    fill: #009966;
+}
+
+.pointBlue {
+    fill: #2563eb;
+}
+
+.pointOrange {
+    fill: #f97316;
+}
+
+.pointPurple {
+    fill: #7c3aed;
+}
+
+.pointPink {
+    fill: #db2777;
 }

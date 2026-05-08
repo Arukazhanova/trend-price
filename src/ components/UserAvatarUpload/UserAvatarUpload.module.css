@@ -159,5 +159,37 @@
 .removeButton:disabled:hover {
     background: #ffffff;
 }
+@media (max-width: 900px) {
+    .avatarBlockActionsOnly {
+        width: 100%;
+        max-width: 100%;
+        align-items: stretch;
+    }
 
+    .avatarActions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
 
+    .changeButton,
+    .removeButton {
+        width: 100%;
+        min-width: 0;
+        height: 34px;
+        padding: 0 10px;
+        font-size: 11px;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 430px) {
+    .changeButton,
+    .removeButton {
+        height: 32px;
+        padding: 0 8px;
+        font-size: 10px;
+    }
+}

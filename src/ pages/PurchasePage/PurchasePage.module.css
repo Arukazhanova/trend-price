@@ -422,101 +422,484 @@
     background: #007f55;
 }
 
-@media (max-width: 1100px) {
+@media (min-width: 1201px) {
     .cartList {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .cartCard {
+        min-height: 238px;
+        grid-template-columns: 42% 58%;
+    }
+
+    .cardInfo {
+        padding: 22px 52px 78px 18px;
+    }
+
+    .cardInfo h2 {
+        font-size: 17px;
+        -webkit-line-clamp: 3;
+    }
+
+    .cardInfo p {
+        font-size: 13px;
+        -webkit-line-clamp: 2;
+    }
+
+    .deleteButton {
+        top: 18px;
+        right: 14px;
+        width: 38px;
+        height: 30px;
+    }
+
+    .quantity {
+        left: calc(42% + 18px);
+        bottom: 22px;
+    }
+
+    .priceBlock {
+        right: 14px;
+        bottom: 22px;
+    }
+
+    .priceBlock b {
+        font-size: 18px;
+    }
+
+    .priceBlock span {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .container {
+        width: calc(100% - 48px);
+        max-width: 920px;
+    }
+
+    .cartList {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .cartCard {
+        min-height: 250px;
+        grid-template-columns: 42% 58%;
+    }
+
+    .cardInfo {
+        padding: 22px 54px 80px 18px;
+    }
+
+    .cardInfo h2 {
+        font-size: 17px;
+    }
+
+    .cardInfo p {
+        font-size: 13px;
+    }
+
+    .deleteButton {
+        top: 18px;
+        right: 14px;
+        width: 38px;
+        height: 30px;
+    }
+
+    .quantity {
+        left: calc(42% + 18px);
+        bottom: 22px;
+    }
+
+    .priceBlock {
+        right: 14px;
+        bottom: 22px;
+    }
+
+    .priceBlock b {
+        font-size: 18px;
+    }
+
+    .priceBlock span {
+        font-size: 12px;
     }
 }
 
 @media (max-width: 900px) {
+    .page {
+        padding-bottom: 44px;
+    }
+
     .container {
-        width: calc(100% - 36px);
-    }
-
-    .receipt {
-        overflow-x: auto;
-    }
-
-    .receiptHeader,
-    .receiptRow {
-        min-width: 680px;
-    }
-}
-
-@media (max-width: 600px) {
-    .container {
-        width: calc(100% - 24px);
+        width: calc(100% - 28px);
+        max-width: 720px;
+        padding-top: 20px;
     }
 
     .topRow {
-        align-items: flex-start;
-        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+    .backLink {
+        font-size: 15px;
+    }
+
+    .clearButton {
+        height: 34px;
+        padding: 0 14px;
+        font-size: 13px;
+    }
+
+    .title {
+        margin-bottom: 18px;
+        font-size: 22px;
+    }
+
+    .cartList {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 22px;
     }
 
     .cartCard {
-        min-height: auto;
+        min-height: 292px;
         grid-template-columns: 1fr;
+        border-radius: 16px;
     }
 
     .imageBox {
-        min-height: 190px;
+        height: 126px;
+        min-height: 126px;
+    }
+
+    .imageBox span {
+        font-size: 14px;
+        padding: 12px;
     }
 
     .cardInfo {
-        padding: 18px 16px 92px;
+        padding: 12px 12px 76px;
+    }
+
+    .cardInfo h2 {
+        margin-bottom: 6px;
+        font-size: 14px;
+        line-height: 1.1;
+        -webkit-line-clamp: 2;
+    }
+
+    .cardInfo p {
+        font-size: 12px;
+        line-height: 1.2;
+        -webkit-line-clamp: 2;
     }
 
     .deleteButton {
-        top: 16px;
-        right: 16px;
+        top: 10px;
+        right: 10px;
+        width: 34px;
+        height: 30px;
+    }
+
+    .deleteButton img {
+        width: 17px;
+        height: 17px;
     }
 
     .quantity {
-        left: 16px;
-        bottom: 18px;
+        left: 10px;
+        bottom: 12px;
+        gap: 8px;
+    }
+
+    .quantity button {
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+    }
+
+    .quantity button img {
+        width: 11px;
+        height: 11px;
+    }
+
+    .quantity span {
+        font-size: 15px;
     }
 
     .priceBlock {
-        right: 16px;
-        bottom: 18px;
+        right: 10px;
+        bottom: 12px;
     }
 
-    .emptyCart,
-    .savedReceipt {
-        height: 420px;
-        padding: 0 20px;
-        text-align: center;
+    .priceBlock b {
+        font-size: 17px;
+    }
+
+    .priceBlock span {
+        margin-top: 4px;
+        font-size: 11px;
+    }
+
+    .receipt {
+        padding: 22px 18px 24px;
+        border-radius: 16px;
+        overflow: visible;
+    }
+
+    .receiptTop {
+        margin-bottom: 18px;
+    }
+
+    .receiptTop h2 {
+        font-size: 22px;
+    }
+
+    .receiptTotal b {
+        font-size: 24px;
+    }
+
+    .receiptHeader {
+        display: none;
+    }
+
+    .receiptRow {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+        padding: 14px 0;
+        border-bottom: 1px solid #edf0f3;
+        font-size: 14px;
+    }
+
+    .receiptRow span {
+        min-width: 0;
+        white-space: normal;
+    }
+
+    .receiptRow span:first-child {
+        grid-column: 1 / -1;
+        color: #111827;
+        font-weight: 700;
+        overflow: visible;
+        text-overflow: unset;
+        white-space: normal;
+    }
+
+    .receiptRow span:nth-child(2)::before {
+        content: 'Qty: ';
+        color: #98a2b3;
+        font-weight: 500;
+    }
+
+    .receiptRow span:nth-child(3)::before {
+        content: 'Price: ';
+        color: #98a2b3;
+        font-weight: 500;
+    }
+
+    .receiptRow span:nth-child(4) {
+        grid-column: 1 / -1;
+        text-align: left;
+        color: #009966;
+        font-weight: 700;
+    }
+
+    .receiptRow span:nth-child(4)::before {
+        content: 'Total: ';
+        color: #98a2b3;
+        font-weight: 500;
     }
 
     .saveButton {
         width: 100%;
     }
 }
-.savedActions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+
+@media (max-width: 560px) {
+    .container {
+        width: calc(100% - 20px);
+        padding-top: 16px;
+    }
+
+    .topRow {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .clearButton {
+        width: 100%;
+    }
+
+    .cartList {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .cartCard {
+        min-height: 276px;
+        border-radius: 15px;
+    }
+
+    .imageBox {
+        height: 116px;
+        min-height: 116px;
+    }
+
+    .cardInfo {
+        padding: 10px 10px 72px;
+    }
+
+    .cardInfo h2 {
+        margin-bottom: 5px;
+        font-size: 13px;
+    }
+
+    .cardInfo p {
+        font-size: 11px;
+    }
+
+    .deleteButton {
+        top: 8px;
+        right: 8px;
+        width: 30px;
+        height: 28px;
+    }
+
+    .deleteButton img {
+        width: 15px;
+        height: 15px;
+    }
+
+    .quantity {
+        left: 8px;
+        bottom: 10px;
+        gap: 6px;
+    }
+
+    .quantity button {
+        width: 24px;
+        height: 24px;
+    }
+
+    .quantity span {
+        font-size: 14px;
+        min-width: 14px;
+    }
+
+    .priceBlock {
+        right: 8px;
+        bottom: 10px;
+    }
+
+    .priceBlock b {
+        font-size: 15px;
+    }
+
+    .priceBlock span {
+        font-size: 10px;
+    }
+
+    .receipt {
+        padding: 18px 14px 20px;
+    }
+
+    .receiptTop {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .receiptTotal {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .receiptRow {
+        font-size: 13px;
+    }
+
+    .emptyCart,
+    .savedReceipt {
+        height: 380px;
+        padding: 0 18px;
+        text-align: center;
+    }
+
+    .emptyCart h1,
+    .savedReceipt h1 {
+        font-size: 20px;
+    }
+
+    .emptyCart p,
+    .savedReceipt p {
+        font-size: 15px;
+    }
+
+    .savedActions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .button,
+    .secondaryButton {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
-.secondaryButton {
-    height: 36px;
-    padding: 0 18px;
-    border: 1px solid #009966;
-    border-radius: 999px;
-    background: #ffffff;
-    color: #009966;
-    text-decoration: none;
+@media (max-width: 380px) {
+    .container {
+        width: calc(100% - 16px);
+    }
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    .cartList {
+        gap: 8px;
+    }
 
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1;
-}
+    .cartCard {
+        min-height: 262px;
+    }
 
-.secondaryButton:hover {
-    background: #f4fffa;
+    .imageBox {
+        height: 104px;
+        min-height: 104px;
+    }
+
+    .cardInfo {
+        padding: 9px 8px 68px;
+    }
+
+    .cardInfo h2 {
+        font-size: 12px;
+    }
+
+    .cardInfo p {
+        font-size: 10px;
+    }
+
+    .quantity button {
+        width: 22px;
+        height: 22px;
+    }
+
+    .priceBlock b {
+        font-size: 14px;
+    }
+
+    .priceBlock span {
+        display: none;
+    }
+
+    .receiptRow {
+        grid-template-columns: 1fr;
+    }
+
+    .receiptRow span:nth-child(2),
+    .receiptRow span:nth-child(3),
+    .receiptRow span:nth-child(4) {
+        grid-column: 1 / -1;
+    }
 }

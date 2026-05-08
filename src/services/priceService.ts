@@ -8,7 +8,11 @@ export interface PriceStats {
     averagePrice: number;
     pricesCount: number;
 }
-
+export interface UpdatedPricesPage {
+    totalElements?: number;
+    numberOfElements?: number;
+    content?: unknown[];
+}
 const getPriceValue = (price: Price): number => {
     return Number(price.finalPrice ?? price.pricePerUnit ?? 0);
 };
@@ -31,7 +35,21 @@ export const priceService = {
 
         return response.data;
     },
+    async getUpdatedProducts(): Promise<UpdatedPricesPage> {
+        const response = await priceApi.get<UpdatedPricesPage>(
+            '/prices/updated/products'
+        );
 
+        return response.data;
+    },
+
+    async getUpdatedStores(): Promise<UpdatedPricesPage> {
+        const response = await priceApi.get<UpdatedPricesPage>(
+            '/prices/updated/stores'
+        );
+
+        return response.data;
+    },
     async getPricesByProductIdForDays(
         productId: string,
         daysAmount = 30

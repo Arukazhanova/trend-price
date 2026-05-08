@@ -27,53 +27,77 @@ const readCartFromStorage = (): CartItem[] => {
     }
 };
 
+const saveCartToStorage = (nextCart: CartItem[]) => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(nextCart));
+};
+
 export function CartProvider({ children }: { children: ReactNode }) {
     const [cartItems, setCartItems] = useState<CartItem[]>(readCartFromStorage);
 
-    const saveCart = (nextCart: CartItem[]) => {
-        setCartItems(nextCart);
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(nextCart));
-    };
-
     const addToCart = (product: Omit<CartItem, 'quantity'>) => {
-        const existingItem = cartItems.find((item) => item.id === product.id);
+        setCartItems((prevCart) => {
+            const existingItem = prevCart.find(
+                (item) => item.id === product.id
+            );
 
-        const nextCart = existingItem
-            ? cartItems.map((item) =>
-                item.id === product.id
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
-            )
-            : [...cartItems, { ...product, quantity: 1 }];
+            const nextCart = existingItem
+                ? prevCart.map((item) =>
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
+                )
+                : [...prevCart, { ...product, quantity: 1 }];
 
-        saveCart(nextCart);
+            saveCartToStorage(nextCart);
+
+            return nextCart;
+        });
     };
 
     const removeFromCart = (id: string) => {
-        const nextCart = cartItems.filter((item) => item.id !== id);
-        saveCart(nextCart);
+        setCartItems((prevCart) => {
+            const nextCart = prevCart.filter((item) => item.id !== id);
+
+            saveCartToStorage(nextCart);
+
+            return nextCart;
+        });
     };
 
     const increaseQuantity = (id: string) => {
-        const nextCart = cartItems.map((item) =>
-            item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-        );
+        setCartItems((prevCart) => {
+            const nextCart = prevCart.map((item) =>
+                item.id === id
+                    ? { ...item, quantity: item.quantity + 1 }
+                    : item
+            );
 
-        saveCart(nextCart);
+            saveCartToStorage(nextCart);
+
+            return nextCart;
+        });
     };
 
     const decreaseQuantity = (id: string) => {
-        const nextCart = cartItems
-            .map((item) =>
-                item.id === id ? { ...item, quantity: item.quantity - 1 } : item
-            )
-            .filter((item) => item.quantity > 0);
+        setCartItems((prevCart) => {
+            const nextCart = prevCart
+                .map((item) =>
+                    item.id === id
+                        ? { ...item, quantity: item.quantity - 1 }
+                        : item
+                )
+                .filter((item) => item.quantity > 0);
 
-        saveCart(nextCart);
+            saveCartToStorage(nextCart);
+
+            return nextCart;
+        });
     };
 
     const clearCart = () => {
-        saveCart([]);
+        setCartItems([]);
+
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify([]));
     };
 
     const totalQuantity = useMemo(() => {

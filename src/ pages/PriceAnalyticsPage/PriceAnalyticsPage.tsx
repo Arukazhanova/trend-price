@@ -8,11 +8,13 @@ import styles from './PriceAnalyticsPage.module.css';
 import searchIcon from '../../assets/Search.svg';
 
 import { catalogService } from '../../services/catalogService';
+import { storeService } from '../../services/storeService';
 
 import type {
     CatalogProduct,
     Price,
     ProductPriceViewWithCategory,
+    Store,
 } from '../../types/api';
 
 const CATALOG_PAGE_SIZE = 20;
@@ -23,6 +25,30 @@ const periods = [
     { label: '3M', days: 90 },
     { label: '6M', days: 180 },
     { label: '1Y', days: 365 },
+];
+
+const lineClasses = [
+    'priceLineGreen',
+    'priceLineBlue',
+    'priceLineOrange',
+    'priceLinePurple',
+    'priceLinePink',
+];
+
+const pointClasses = [
+    'pointGreen',
+    'pointBlue',
+    'pointOrange',
+    'pointPurple',
+    'pointPink',
+];
+
+const legendClasses = [
+    'legendGreen',
+    'legendBlue',
+    'legendOrange',
+    'legendPurple',
+    'legendPink',
 ];
 
 const getPriceValue = (price?: Price | null) => {
@@ -50,6 +76,10 @@ const formatDate = (value?: string) => {
         month: 'short',
         day: 'numeric',
     });
+};
+
+const getStoreTitle = (storeId: string, stores: Store[]) => {
+    return stores.find((store) => store.id === storeId)?.title ?? 'Unknown store';
 };
 
 const getDiscountPercent = (price?: Price | null) => {
@@ -99,7 +129,23 @@ const getChangePercentFromPrices = (prices: Price[]) => {
 
     return Math.round(((last - first) / first) * 100);
 };
+const getDateKey = (value?: string) => {
+    if (!value) {
+        return '';
+    }
 
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return '';
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+};
 export default function PriceAnalyticsPage() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -109,16 +155,16 @@ export default function PriceAnalyticsPage() {
     const [productData, setProductData] =
         useState<ProductPriceViewWithCategory | null>(null);
 
-    const [search, setSearch] = useState('');
-    const [activePeriod, setActivePeriod] = useState(periods[3]);
+    const [storeSearch, setStoreSearch] = useState('');
+    const [stores, setStores] = useState<Store[]>([]);
+    const [selectedStoreIds, setSelectedStoreIds] = useState<string[]>([]);
 
-    const [isProductsLoading, setIsProductsLoading] = useState(false);
+    const [activePeriod, setActivePeriod] = useState(periods[3]);
     const [isPricesLoading, setIsPricesLoading] = useState(false);
     const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchCatalogProducts = async () => {
-            setIsProductsLoading(true);
             setError('');
 
             try {
@@ -139,8 +185,6 @@ export default function PriceAnalyticsPage() {
             } catch (error) {
                 console.log('ANALYTICS PRODUCTS LOAD ERROR:', error);
                 setError('Failed to load products for analytics');
-            } finally {
-                setIsProductsLoading(false);
             }
         };
 
@@ -182,6 +226,29 @@ export default function PriceAnalyticsPage() {
         fetchPriceAnalytics();
     }, [selectedProductId, activePeriod]);
 
+    useEffect(() => {
+        const fetchStores = async () => {
+            try {
+                const normalizedSearch = storeSearch.trim();
+
+                const loadedStores = normalizedSearch
+                    ? await storeService.searchStores(normalizedSearch)
+                    : await storeService.getAllStores();
+
+                setStores(loadedStores);
+            } catch (error) {
+                console.log('STORES LOAD ERROR:', error);
+                setStores([]);
+            }
+        };
+
+        const timeoutId = window.setTimeout(fetchStores, 300);
+
+        return () => {
+            window.clearTimeout(timeoutId);
+        };
+    }, [storeSearch]);
+
     const selectedProductFromList = useMemo(() => {
         return (
             products.find((product) => product.id === selectedProductId) ??
@@ -194,7 +261,16 @@ export default function PriceAnalyticsPage() {
     const prices = useMemo(() => {
         const rawPrices = productData?.prices ?? [];
 
-        const sorted = [...rawPrices]
+        const filteredByStores =
+            selectedStoreIds.length > 0
+                ? rawPrices.filter(
+                    (price) =>
+                        price.storeId &&
+                        selectedStoreIds.includes(price.storeId)
+                )
+                : rawPrices;
+
+        return [...filteredByStores]
             .filter((price) => getPriceValue(price) > 0)
             .sort((a, b) => {
                 const dateA = new Date(a.time ?? a.createdAt ?? 0).getTime();
@@ -202,29 +278,19 @@ export default function PriceAnalyticsPage() {
 
                 return dateA - dateB;
             });
+    }, [productData, selectedStoreIds]);
 
-        if (sorted.length > 0) {
-            return sorted;
-        }
+    const fallbackBestPrice =
+        selectedStoreIds.length === 0
+            ? productData?.bestPrice ?? selectedProductFromList?.bestPrice
+            : null;
 
-        const fallbackPrice =
-            productData?.bestPrice ?? selectedProductFromList?.bestPrice;
-
-        return fallbackPrice ? [fallbackPrice] : [];
-    }, [productData, selectedProductFromList]);
-
-    const currency =
-        productData?.bestPrice?.currency ||
-        selectedProductFromList?.bestPrice?.currency ||
-        prices[0]?.currency ||
-        '₸';
+    const currency = prices[0]?.currency || fallbackBestPrice?.currency || '₸';
 
     const priceValues = prices.map(getPriceValue);
 
     const currentPrice =
-        priceValues[priceValues.length - 1] ||
-        getPriceValue(productData?.bestPrice) ||
-        getPriceValue(selectedProductFromList?.bestPrice);
+        priceValues[priceValues.length - 1] || getPriceValue(fallbackBestPrice);
 
     const lowestPrice = priceValues.length
         ? Math.min(...priceValues)
@@ -244,21 +310,9 @@ export default function PriceAnalyticsPage() {
     const changePercent =
         prices.length > 1
             ? getChangePercentFromPrices(prices)
-            : -getDiscountPercent(
-                productData?.bestPrice ?? selectedProductFromList?.bestPrice
-            );
-
-    const filteredProducts = useMemo(() => {
-        if (!search.trim()) {
-            return products;
-        }
-
-        const normalizedSearch = search.trim().toLowerCase();
-
-        return products.filter((product) =>
-            product.title.toLowerCase().includes(normalizedSearch)
-        );
-    }, [products, search]);
+            : selectedStoreIds.length === 0
+                ? -getDiscountPercent(fallbackBestPrice)
+                : 0;
 
     const topDrops = useMemo(() => {
         return [...products]
@@ -285,18 +339,46 @@ export default function PriceAnalyticsPage() {
     const chart = useMemo(() => {
         if (prices.length === 0) {
             return {
-                points: '',
-                circles: [] as Array<{
+                storeCharts: [] as Array<{
+                    storeId: string;
+                    storeTitle: string;
+                    points: string;
+                    lineClass: string;
+                    pointClass: string;
+                    legendClass: string;
+                    circles: Array<{
+                        x: number;
+                        y: number;
+                        value: number;
+                        label: string;
+                    }>;
+                }>,
+                dateLabels: [] as Array<{
                     x: number;
-                    y: number;
-                    value: number;
                     label: string;
+                    key: string;
                 }>,
                 min: 0,
                 max: 0,
                 averageY: 0,
             };
         }
+
+        const getRawDate = (price: Price) => {
+            return price.time ?? price.createdAt ?? '';
+        };
+
+        const getNormalizedDate = (price: Price) => {
+            return getDateKey(getRawDate(price));
+        };
+
+        const allDateKeys = Array.from(
+            new Set(
+                prices
+                    .map(getNormalizedDate)
+                    .filter(Boolean)
+            )
+        ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
         const values = prices.map(getPriceValue);
 
@@ -316,40 +398,99 @@ export default function PriceAnalyticsPage() {
         const bottom = 245;
         const height = bottom - top;
 
-        const circles = prices.map((price, index) => {
-            const value = getPriceValue(price);
+        const getXByDateKey = (dateKey: string) => {
+            const index = allDateKeys.indexOf(dateKey);
 
-            const x =
-                prices.length === 1
-                    ? (left + right) / 2
-                    : left + ((right - left) / (prices.length - 1)) * index;
+            if (allDateKeys.length <= 1) {
+                return (left + right) / 2;
+            }
 
-            const y = bottom - ((value - min) / range) * height;
+            return left + ((right - left) / (allDateKeys.length - 1)) * index;
+        };
 
-            return {
-                x,
-                y,
-                value,
-                label: formatDate(price.time ?? price.createdAt),
-            };
-        });
+        const getYByValue = (value: number) => {
+            return bottom - ((value - min) / range) * height;
+        };
+
+        const pricesByStore = prices.reduce<Record<string, Price[]>>((acc, price) => {
+            if (!price.storeId) {
+                return acc;
+            }
+
+            if (!acc[price.storeId]) {
+                acc[price.storeId] = [];
+            }
+
+            acc[price.storeId].push(price);
+
+            return acc;
+        }, {});
+
+        const storeCharts = Object.entries(pricesByStore).map(
+            ([storeId, storePrices], storeIndex) => {
+                const sortedStorePrices = [...storePrices].sort((a, b) => {
+                    const dateA = new Date(getRawDate(a)).getTime();
+                    const dateB = new Date(getRawDate(b)).getTime();
+
+                    return dateA - dateB;
+                });
+
+                const circles = sortedStorePrices.map((price) => {
+                    const value = getPriceValue(price);
+                    const dateKey = getNormalizedDate(price);
+
+                    return {
+                        x: getXByDateKey(dateKey),
+                        y: getYByValue(value),
+                        value,
+                        label: formatDate(dateKey),
+                    };
+                });
+
+                const colorIndex = storeIndex % lineClasses.length;
+
+                return {
+                    storeId,
+                    storeTitle: getStoreTitle(storeId, stores),
+                    points: circles.map((point) => `${point.x},${point.y}`).join(' '),
+                    lineClass: lineClasses[colorIndex],
+                    pointClass: pointClasses[colorIndex],
+                    legendClass: legendClasses[colorIndex],
+                    circles,
+                };
+            }
+        );
 
         const average =
             values.reduce((sum, value) => sum + value, 0) / values.length;
-        const averageY = bottom - ((average - min) / range) * height;
+
+        const averageY = getYByValue(average);
+
+        const dateLabels = allDateKeys.map((dateKey) => ({
+            key: dateKey,
+            x: getXByDateKey(dateKey),
+            label: formatDate(dateKey),
+        }));
 
         return {
-            points: circles.map((point) => `${point.x},${point.y}`).join(' '),
-            circles,
+            storeCharts,
+            dateLabels,
             min,
             max,
             averageY,
         };
-    }, [prices]);
+    }, [prices, stores]);
 
-    const handleSelectProduct = (productId: string) => {
-        setSelectedProductId(productId);
-        navigate(`/products/${productId}/analytics`);
+    const toggleStore = (storeId: string) => {
+        setSelectedStoreIds((prev) =>
+            prev.includes(storeId)
+                ? prev.filter((id) => id !== storeId)
+                : [...prev, storeId]
+        );
+    };
+
+    const clearSelectedStores = () => {
+        setSelectedStoreIds([]);
     };
 
     return (
@@ -364,81 +505,98 @@ export default function PriceAnalyticsPage() {
 
                     <div className={styles.layout}>
                         <aside className={styles.sidebar}>
-                            <h2>Select Product</h2>
+                            <h2>Select Stores</h2>
 
                             <div className={styles.searchWrap}>
                                 <img src={searchIcon} alt="" />
                                 <input
                                     type="text"
-                                    placeholder="Search products..."
-                                    value={search}
+                                    placeholder="Search stores..."
+                                    value={storeSearch}
                                     onChange={(event) =>
-                                        setSearch(event.target.value)
+                                        setStoreSearch(event.target.value)
                                     }
                                     className={styles.search}
                                 />
                             </div>
 
+                            <div className={styles.selectedStoresRow}>
+                                <div className={styles.selectedBadge}>
+                                    {selectedStoreIds.length > 0
+                                        ? `${selectedStoreIds.length} selected`
+                                        : 'All stores'}
+                                </div>
+
+                                {selectedStoreIds.length > 0 && (
+                                    <button
+                                        type="button"
+                                        onClick={clearSelectedStores}
+                                        className={styles.clearButton}
+                                    >
+                                        Clear
+                                    </button>
+                                )}
+                            </div>
+
                             <div className={styles.productList}>
-                                {isProductsLoading && (
+                                {stores.map((store) => {
+                                    const isSelected =
+                                        selectedStoreIds.includes(store.id);
+
+                                    return (
+                                        <label
+                                            key={store.id}
+                                            className={`${styles.productItem} ${
+                                                isSelected
+                                                    ? styles.productItemActive
+                                                    : ''
+                                            }`}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={isSelected}
+                                                onChange={() =>
+                                                    toggleStore(store.id)
+                                                }
+                                                className={
+                                                    styles.storeCheckbox
+                                                }
+                                            />
+
+                                            <div className={styles.storeInfo}>
+                                                <span
+                                                    className={styles.storeName}
+                                                >
+                                                    {store.title}
+                                                </span>
+
+                                                <span
+                                                    className={styles.storeMeta}
+                                                >
+                                                    {store.description ||
+                                                        store.contactInfo ||
+                                                        'Store'}
+                                                </span>
+                                            </div>
+
+                                            {isSelected && (
+                                                <span
+                                                    className={
+                                                        styles.selectedCheck
+                                                    }
+                                                >
+                                                    ✓
+                                                </span>
+                                            )}
+                                        </label>
+                                    );
+                                })}
+
+                                {stores.length === 0 && (
                                     <p className={styles.sideState}>
-                                        Loading products...
+                                        No stores found
                                     </p>
                                 )}
-
-                                {!isProductsLoading &&
-                                    filteredProducts.map((product) => {
-                                        const discountPercent =
-                                            getDiscountPercent(product.bestPrice);
-                                        const productPrice = getPriceValue(
-                                            product.bestPrice
-                                        );
-
-                                        return (
-                                            <button
-                                                key={product.id}
-                                                className={`${styles.productItem} ${
-                                                    selectedProduct?.id ===
-                                                    product.id
-                                                        ? styles.productItemActive
-                                                        : ''
-                                                }`}
-                                                onClick={() =>
-                                                    handleSelectProduct(product.id)
-                                                }
-                                                type="button"
-                                            >
-                                                <div>
-                                                    <b>{product.title}</b>
-                                                    <span>
-                                                        {formatPrice(
-                                                            productPrice,
-                                                            product.bestPrice
-                                                                ?.currency
-                                                        )}
-                                                    </span>
-                                                </div>
-
-                                                {discountPercent !== 0 && (
-                                                    <span
-                                                        className={
-                                                            discountPercent < 0
-                                                                ? styles.badgeUp
-                                                                : styles.badgeDown
-                                                        }
-                                                    >
-                                                        {discountPercent < 0
-                                                            ? '▲ +'
-                                                            : '▼ -'}
-                                                        {Math.abs(
-                                                            discountPercent
-                                                        )}
-                                                        %
-                                                    </span>
-                                                )}
-                                            </button>
-                                        );
-                                    })}
                             </div>
                         </aside>
 
@@ -450,6 +608,14 @@ export default function PriceAnalyticsPage() {
                                             {selectedProduct?.title ??
                                                 'Choose product'}
                                         </h2>
+
+                                        <p className={styles.storeText}>
+                                            Stores:{' '}
+                                            {selectedStoreIds.length > 0
+                                                ? `${selectedStoreIds.length} selected`
+                                                : 'All stores'}
+                                        </p>
+
                                         <p>
                                             Current price:{' '}
                                             <strong>
@@ -503,53 +669,54 @@ export default function PriceAnalyticsPage() {
                                         </div>
                                     ) : prices.length > 0 ? (
                                         <svg viewBox="0 0 700 300">
-                                            {[0, 1, 2, 3, 4].map((_, index) => {
-                                                const y = 35 + index * 52;
-                                                const value =
-                                                    chart.max -
-                                                    ((chart.max - chart.min) /
-                                                        4) *
-                                                    index;
+                                            {[0, 1, 2, 3, 4].map(
+                                                (_, index) => {
+                                                    const y = 35 + index * 52;
+                                                    const value =
+                                                        chart.max -
+                                                        ((chart.max -
+                                                                chart.min) /
+                                                            4) *
+                                                        index;
 
-                                                return (
-                                                    <g key={index}>
-                                                        <text
-                                                            x="42"
-                                                            y={y + 5}
-                                                            className={
-                                                                styles.yLabel
-                                                            }
-                                                        >
-                                                            {Math.round(value)}
-                                                        </text>
+                                                    return (
+                                                        <g key={index}>
+                                                            <text
+                                                                x="42"
+                                                                y={y + 5}
+                                                                className={
+                                                                    styles.yLabel
+                                                                }
+                                                            >
+                                                                {Math.round(
+                                                                    value
+                                                                )}
+                                                            </text>
 
-                                                        <line
-                                                            x1="55"
-                                                            y1={y}
-                                                            x2="660"
-                                                            y2={y}
-                                                            className={
-                                                                styles.gridLine
-                                                            }
-                                                        />
-                                                    </g>
-                                                );
-                                            })}
-
-                                            {[55, 175, 295, 415, 535, 660].map(
-                                                (x) => (
-                                                    <line
-                                                        key={x}
-                                                        x1={x}
-                                                        y1="35"
-                                                        x2={x}
-                                                        y2="245"
-                                                        className={
-                                                            styles.gridLine
-                                                        }
-                                                    />
-                                                )
+                                                            <line
+                                                                x1="55"
+                                                                y1={y}
+                                                                x2="660"
+                                                                y2={y}
+                                                                className={
+                                                                    styles.gridLine
+                                                                }
+                                                            />
+                                                        </g>
+                                                    );
+                                                }
                                             )}
+
+                                            {chart.dateLabels.map((date) => (
+                                                <line
+                                                    key={date.key}
+                                                    x1={date.x}
+                                                    y1="35"
+                                                    x2={date.x}
+                                                    y2="245"
+                                                    className={styles.gridLine}
+                                                />
+                                            ))}
 
                                             <line
                                                 x1="55"
@@ -558,6 +725,7 @@ export default function PriceAnalyticsPage() {
                                                 y2="245"
                                                 className={styles.axis}
                                             />
+
                                             <line
                                                 x1="55"
                                                 y1="245"
@@ -571,60 +739,121 @@ export default function PriceAnalyticsPage() {
                                                 y1={chart.averageY}
                                                 x2="660"
                                                 y2={chart.averageY}
-                                                className={styles.averageLine}
+                                                className={
+                                                    styles.averageLine
+                                                }
                                             />
 
-                                            {chart.circles.length === 1 ? (
-                                                <line
-                                                    x1="55"
-                                                    y1={chart.circles[0].y}
-                                                    x2="660"
-                                                    y2={chart.circles[0].y}
-                                                    className={styles.priceLine}
-                                                />
-                                            ) : (
-                                                <polyline
-                                                    points={chart.points}
-                                                    className={styles.priceLine}
-                                                />
-                                            )}
+                                            {chart.storeCharts.map(
+                                                (storeChart) => (
+                                                    <g
+                                                        key={
+                                                            storeChart.storeId
+                                                        }
+                                                    >
+                                                        {storeChart.circles
+                                                            .length > 1 && (
+                                                            <polyline
+                                                                points={
+                                                                    storeChart.points
+                                                                }
+                                                                className={
+                                                                    styles[
+                                                                        storeChart
+                                                                            .lineClass
+                                                                        ]
+                                                                }
+                                                            />
+                                                        )}
 
-                                            {chart.circles.map(
-                                                (point, index) => (
-                                                    <g key={index}>
-                                                        <circle
-                                                            cx={point.x}
-                                                            cy={point.y}
-                                                            r="5"
-                                                            className={
-                                                                styles.point
-                                                            }
-                                                        />
-                                                        <text
-                                                            x={point.x}
-                                                            y="276"
-                                                            className={
-                                                                styles.month
-                                                            }
-                                                        >
-                                                            {point.label}
-                                                        </text>
+                                                        {storeChart.circles.map(
+                                                            (point, index) => (
+                                                                <g
+                                                                    key={`${storeChart.storeId}-${index}`}
+                                                                >
+                                                                    <circle
+                                                                        cx={
+                                                                            point.x
+                                                                        }
+                                                                        cy={
+                                                                            point.y
+                                                                        }
+                                                                        r="5"
+                                                                        className={
+                                                                            styles[
+                                                                                storeChart
+                                                                                    .pointClass
+                                                                                ]
+                                                                        }
+                                                                    />
+
+                                                                    <title>
+                                                                        {
+                                                                            storeChart.storeTitle
+                                                                        }
+                                                                        :{' '}
+                                                                        {formatPrice(
+                                                                            point.value,
+                                                                            currency
+                                                                        )}{' '}
+                                                                        ·{' '}
+                                                                        {
+                                                                            point.label
+                                                                        }
+                                                                    </title>
+                                                                </g>
+                                                            )
+                                                        )}
                                                     </g>
                                                 )
                                             )}
+
+                                            {chart.dateLabels.map((date) => (
+                                                <text
+                                                    key={date.key}
+                                                    x={date.x}
+                                                    y="276"
+                                                    className={styles.month}
+                                                >
+                                                    {date.label}
+                                                </text>
+                                            ))}
                                         </svg>
                                     ) : (
                                         <div className={styles.noChart}>
-                                            No price history yet
+                                            No price history for selected stores
                                         </div>
                                     )}
 
                                     <div className={styles.legend}>
-                                        <span className={styles.greenLegend}>
-                                            Actual Price
-                                        </span>
+                                        {chart.storeCharts.length > 0 ? (
+                                            chart.storeCharts.map(
+                                                (storeChart) => (
+                                                    <span
+                                                        key={
+                                                            storeChart.storeId
+                                                        }
+                                                        className={
+                                                            styles[
+                                                                storeChart
+                                                                    .legendClass
+                                                                ]
+                                                        }
+                                                    >
+                                                        {storeChart.storeTitle}
+                                                    </span>
+                                                )
+                                            )
+                                        ) : (
+                                            <span
+                                                className={styles.legendGreen}
+                                            >
+                                                Actual Price
+                                            </span>
+                                        )}
+
                                         <span className={styles.redLegend}>
-                                            Monthly Average
+                                            Average Price
                                         </span>
                                     </div>
                                 </div>
@@ -649,7 +878,9 @@ export default function PriceAnalyticsPage() {
 
                                 <div>
                                     <span>Average Price</span>
-                                    <b>{formatPrice(averagePrice, currency)}</b>
+                                    <b>
+                                        {formatPrice(averagePrice, currency)}
+                                    </b>
                                     <p>Last {activePeriod.label}</p>
                                 </div>
                             </div>

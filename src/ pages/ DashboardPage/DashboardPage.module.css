@@ -39,10 +39,11 @@
     width: 88px;
     height: 88px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #20C18B, #1ED0D9);
+    background: linear-gradient(135deg, #20c18b, #1ed0d9);
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .heroIcon img {
@@ -85,7 +86,7 @@
 .profileTop {
     height: 335px;
     padding: 48px 42px 0;
-    background: linear-gradient(135deg, #20C18B, #1ED0D9);
+    background: linear-gradient(135deg, #20c18b, #1ed0d9);
     display: grid;
     grid-template-columns: 130px 1fr;
     align-items: start;
@@ -107,6 +108,13 @@
     font-size: 48px;
     font-weight: 700;
     flex-shrink: 0;
+    overflow: hidden;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .profileTop h2 {
@@ -175,15 +183,12 @@
     background: transparent;
     color: #444444;
     text-decoration: none;
-
     display: grid;
     grid-template-columns: 32px 1fr 22px;
     align-items: center;
     gap: 16px;
-
     padding: 0 12px;
     box-sizing: border-box;
-
     font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 21px;
     cursor: pointer;
@@ -221,13 +226,39 @@
     justify-self: end;
 }
 
-.infoCard {
-    min-height: 470px;
+.infoCard,
+.preferencesCard,
+.settingsCard,
+.receiptsCard,
+.notificationsCard,
+.securityCard {
+    width: 100%;
     border: 1px solid #bcc5d1;
     border-radius: 18px;
     background: #ffffff;
-    padding: 26px 44px;
     box-sizing: border-box;
+}
+
+.infoCard {
+    min-height: 470px;
+    padding: 26px 44px;
+}
+
+.preferencesCard,
+.settingsCard {
+    min-height: 675px;
+    padding: 34px 48px;
+}
+
+.receiptsCard,
+.notificationsCard {
+    min-height: 675px;
+    padding: 36px 48px;
+}
+
+.securityCard {
+    min-height: auto;
+    padding: 28px 32px 34px;
 }
 
 .cardHeader {
@@ -237,19 +268,25 @@
     margin-bottom: 50px;
 }
 
-.cardHeader h2 {
+.cardHeader h2,
+.receiptsHeader h2,
+.notificationsHeader h2,
+.securityHeader h2 {
     margin: 0 0 8px;
     color: #111827;
-    font-family: "Museo Sans Cyril", sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 34px;
     font-weight: 700;
 }
 
-.cardHeader p {
+.cardHeader p,
+.receiptsHeader p,
+.notificationsHeader p,
+.securityHeader p {
     margin: 0;
     color: #98a2b3;
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 28px;
+    font-size: 26px;
 }
 
 .editButton {
@@ -262,7 +299,6 @@
     font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 24px;
     cursor: pointer;
-
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -271,58 +307,6 @@
 .editButton img {
     width: 28px;
     height: 28px;
-    object-fit: contain;
-}
-
-.formGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 70px;
-    margin-bottom: 24px;
-}
-
-.formGrid label,
-.fullField {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    color: #454545;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 26px;
-}
-
-.fullField {
-    margin-bottom: 24px;
-}
-
-.infoCard input {
-    width: 100%;
-    height: 58px;
-    border: 1px solid #d0d5dd;
-    border-radius: 999px;
-    padding: 0 34px;
-    color: #98a2b3;
-    background: #ffffff;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 22px;
-    outline: none;
-    box-sizing: border-box;
-}
-
-.infoCard input:not([readonly]) {
-    border-color: #20C18B;
-    color: #111827;
-}
-
-.fieldLabel {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.fieldLabel img {
-    width: 32px;
-    height: 32px;
     object-fit: contain;
 }
 
@@ -343,7 +327,7 @@
 
 .saveButton {
     border: none;
-    background: linear-gradient(135deg, #20C18B, #1ED0D9);
+    background: linear-gradient(135deg, #20c18b, #1ed0d9);
     color: #ffffff;
 }
 
@@ -353,116 +337,103 @@
     color: #444444;
 }
 
-@media (max-width: 1200px) {
-    .container {
-        max-width: 1000px;
-    }
-
-    .layout {
-        grid-template-columns: 390px 1fr;
-        gap: 40px;
-    }
-
-    .cardHeader h2 {
-        font-size: 28px;
-    }
-
-    .cardHeader p {
-        font-size: 22px;
-    }
-
-    .formGrid label,
-    .fullField {
-        font-size: 20px;
-    }
-
-    .infoCard input {
-        height: 48px;
-        font-size: 18px;
-    }
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 70px;
+    margin-bottom: 24px;
 }
 
-@media (max-width: 900px) {
-    .layout {
-        grid-template-columns: 1fr;
-    }
-
-    .sidebar {
-        width: 100%;
-        max-width: 390px;
-    }
+.formGrid label,
+.fullField,
+.securityForm label {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #454545;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 26px;
 }
 
-@media (max-width: 640px) {
-    .page {
-        padding: 24px 14px 40px;
-    }
-
-    .hero {
-        gap: 16px;
-    }
-
-    .heroIcon {
-        width: 70px;
-        height: 70px;
-    }
-
-    .layout {
-        gap: 28px;
-    }
-
-    .profileTop {
-        height: 300px;
-        padding: 38px 28px 0;
-        grid-template-columns: 100px 1fr;
-    }
-
-    .avatar {
-        width: 96px;
-        height: 96px;
-        font-size: 40px;
-    }
-
-    .profileTop h2 {
-        font-size: 26px;
-    }
-
-    .profileTop p {
-        font-size: 18px;
-    }
-
-    .stats {
-        margin-top: -120px;
-        gap: 26px;
-    }
-
-    .menu {
-        padding: 0 24px 30px;
-    }
-
-    .menuItem,
-    .menuItem span {
-        font-size: 18px;
-    }
-
-    .formGrid {
-        grid-template-columns: 1fr;
-        gap: 14px;
-    }
-
-    .cardHeader {
-        flex-direction: column;
-        gap: 16px;
-    }
+.fullField {
+    margin-bottom: 24px;
 }
-.receiptsCard {
+
+.infoCard input,
+.securityForm input,
+.settingsField select {
     width: 100%;
-    min-height: 675px;
-    border: 1px solid #bcc5d1;
-    border-radius: 18px;
+    height: 58px;
+    border: 1px solid #d0d5dd;
+    border-radius: 999px;
+    padding: 0 34px;
+    color: #111827;
     background: #ffffff;
-    padding: 36px 48px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 22px;
+    outline: none;
     box-sizing: border-box;
+}
+
+.infoCard input {
+    color: #98a2b3;
+}
+
+.infoCard input:not([readonly]) {
+    border-color: #20c18b;
+    color: #111827;
+}
+
+.securityForm input::placeholder {
+    color: #98a2b3;
+}
+
+.fieldLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fieldLabel img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.photoSettings {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 26px 0 34px;
+    padding: 22px 24px;
+    border: 1px solid #d0d5dd;
+    border-radius: 18px;
+    background: #f9fafb;
+    overflow: hidden;
+}
+
+.photoSettingsText {
+    min-width: 0;
+}
+
+.photoSettingsText h3 {
+    margin: 0 0 8px;
+    color: #111827;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 23px;
+    font-weight: 500;
+}
+
+.photoSettingsText p {
+    margin: 0;
+    color: #98a2b3;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 16px;
+}
+
+.photoSettings button {
+    flex-shrink: 0;
 }
 
 .receiptsHeader {
@@ -472,36 +443,40 @@
     margin-bottom: 36px;
 }
 
-.receiptsHeader h2 {
-    margin: 0 0 8px;
-    color: #454545;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 30px;
-    font-weight: 700;
+.receiptsActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.receiptsHeader p {
-    margin: 0;
-    color: #98a2b3;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 22px;
-}
-
-.filterButton {
+.filterButton,
+.clearReceiptsButton {
     height: 38px;
     padding: 0 18px;
-    border: 1px solid #98a2b3;
     border-radius: 999px;
     background: #ffffff;
-    color: #454545;
-
     display: inline-flex;
     align-items: center;
     gap: 8px;
-
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 19px;
+    font-family: "Museo Sans Cyrl", sans-serif;
     cursor: pointer;
+}
+
+.filterButton {
+    border: 1px solid #98a2b3;
+    color: #454545;
+    font-size: 19px;
+}
+
+.clearReceiptsButton {
+    border: 1px solid #009966;
+    color: #009966;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.clearReceiptsButton:hover {
+    background: #f4fffa;
 }
 
 .filterButton img {
@@ -515,54 +490,150 @@
     gap: 28px;
 }
 
-.receiptRow {
-    height: 70px;
-    border: 1px solid #d0d5dd;
-    border-radius: 18px;
+.receiptItem {
+    border: 1px solid #e3e7ee;
+    border-radius: 16px;
     background: #ffffff;
+    overflow: hidden;
+}
 
+.receiptItem + .receiptItem {
+    margin-top: 12px;
+}
+
+.receiptRow {
+    width: 100%;
+    min-height: 54px;
+    padding: 0 20px;
+    border: none;
+    background: #ffffff;
+    color: #111827;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
-
-    padding: 0 38px;
-    box-sizing: border-box;
-
-    color: #454545;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 21px;
-    font-weight: 400;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
 }
 
+.receiptRow:hover {
+    background: #f4fffa;
+}
 
+.receiptDetails {
+    padding: 16px 20px 18px;
+    border-top: 1px solid #e3e7ee;
+    background: #fbfcfd;
+}
 
-.notificationsCard {
-    width: 100%;
-    min-height: 675px;
-    border: 1px solid #bcc5d1;
+.receiptProductRow {
+    display: grid;
+    grid-template-columns: 1fr 80px 110px;
+    gap: 12px;
+    align-items: center;
+    padding: 9px 0;
+    color: #454545;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.receiptProductRow span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.receiptProductRow span:last-child {
+    text-align: right;
+}
+
+.receiptDetailsFooter {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #e3e7ee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.receiptDetailsFooter b {
+    color: #111827;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 17px;
+}
+
+.receiptDetailsFooter button {
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid #ff3b30;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #ff3b30;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.receiptDetailsFooter button:hover {
+    background: #fff4f4;
+}
+
+.emptyReceipts {
+    min-height: 320px;
+    border: 1px dashed #bcc5d1;
     border-radius: 18px;
     background: #ffffff;
-    padding: 36px 48px;
-    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.emptyReceipts img {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 18px;
+    opacity: 0.7;
+}
+
+.emptyReceipts h3 {
+    margin: 0 0 10px;
+    color: #111827;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.emptyReceipts p {
+    margin: 0 0 18px;
+    color: #98a2b3;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 16px;
+    text-align: center;
+}
+
+.receiptsCatalogButton {
+    height: 38px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: #009966;
+    color: #ffffff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
 }
 
 .notificationsHeader {
     margin-bottom: 36px;
-}
-
-.notificationsHeader h2 {
-    margin: 0 0 8px;
-    color: #111827;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 30px;
-    font-weight: 700;
-}
-
-.notificationsHeader p {
-    margin: 0;
-    color: #98a2b3;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 22px;
 }
 
 .notificationList {
@@ -572,17 +643,15 @@
 }
 
 .notificationRow {
-    height: 78px;
+    min-height: 78px;
     border: 1px solid #bcc5d1;
     border-radius: 12px;
     background: #ffffff;
-
     display: grid;
     grid-template-columns: 64px 1fr 54px;
     align-items: center;
     gap: 18px;
-
-    padding: 0 28px;
+    padding: 14px 28px;
     box-sizing: border-box;
 }
 
@@ -590,14 +659,37 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: #a8ffe2;
     color: #009966;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     font-size: 26px;
+}
+
+.notificationIcon img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.greenIcon,
+.green {
+    background: #a8ffe2;
+}
+
+.yellowIcon,
+.yellow {
+    background: #fffcb2;
+}
+
+.pinkIcon,
+.pink {
+    background: #ffc6f3;
+}
+
+.grayIcon,
+.gray {
+    background: #eeeeee;
 }
 
 .notificationText b {
@@ -654,399 +746,6 @@
 .switch input:checked + span::before {
     transform: translateX(20px);
 }
-.notificationIcon img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-}
-
-.greenIcon {
-    background: #a8ffe2;
-}
-
-.yellowIcon {
-    background: #fffcb2;
-}
-
-.pinkIcon {
-    background: #ffc6f3;
-}
-
-.grayIcon {
-    background: #eeeeee;
-}
-.securityCard {
-    width: 100%;
-    min-height: auto;
-    border: 1px solid #bcc5d1;
-    border-radius: 18px;
-    background: #ffffff;
-    padding: 28px 32px 34px;
-    box-sizing: border-box;
-}
-
-.securityHeader {
-    margin-bottom: 42px;
-}
-
-.securityHeader h2 {
-    margin: 0 0 10px;
-    color: #111827;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 34px;
-    font-weight: 700;
-}
-
-.securityHeader p {
-    margin: 0;
-    color: #98a2b3;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 26px;
-}
-
-.securityForm {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-}
-
-.securityForm label {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    color: #454545;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 24px;
-}
-
-.securityForm input {
-    width: 100%;
-    height: 58px;
-    border: 1px solid #d0d5dd;
-    border-radius: 999px;
-    padding: 0 34px;
-    color: #111827;
-    background: #ffffff;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 22px;
-    outline: none;
-    box-sizing: border-box;
-}
-
-.securityForm input::placeholder {
-    color: #98a2b3;
-}
-
-.updatePasswordButton {
-    width: fit-content;
-    height: 54px;
-    margin-top: 22px;
-    padding: 0 28px;
-    border: none;
-    border-radius: 999px;
-    background: #009966;
-    color: #ffffff;
-
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    cursor: pointer;
-}
-.deleteAccountBox {
-    width: 100%;
-    margin-top: 16px;
-    min-height: 82px;
-    border: 1px solid #ff4d4f;
-    border-radius: 14px;
-    background: #ffc7cb;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-
-    padding: 18px 28px;
-    box-sizing: border-box;
-}
-
-.deleteAccountBox h3 {
-    margin: 0 0 6px;
-    color: #454545;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-}
-
-.deleteAccountBox p {
-    margin: 0;
-    color: #666666;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 16px;
-}
-
-.deleteAccountButton {
-    height: 42px;
-    padding: 0 20px;
-    border: none;
-    border-radius: 999px;
-    background: #f00000;
-    color: #ffffff;
-
-    font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-
-.phoneRow select {
-    width: 180px;
-}
-
-.phoneRow input {
-    flex: 1;
-}
-.deleteAccountBox {
-    margin-top: 12px;
-}
-.passwordField {
-    position: relative;
-    width: 100%;
-}
-
-.passwordField input {
-    padding-right: 70px;
-}
-
-.eyeButton {
-    position: absolute;
-    top: 50%;
-    right: 22px;
-    transform: translateY(-50%);
-    border: none;
-    background: transparent;
-    padding: 0;
-    cursor: pointer;
-}
-
-.eyeButton img {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-}
-.receiptsActions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.clearReceiptsButton {
-    height: 38px;
-    padding: 0 16px;
-    border: 1px solid #009966;
-    border-radius: 999px;
-    background: #ffffff;
-    color: #009966;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.clearReceiptsButton:hover {
-    background: #f4fffa;
-}
-
-.emptyReceipts {
-    min-height: 320px;
-    border: 1px dashed #bcc5d1;
-    border-radius: 18px;
-    background: #ffffff;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.emptyReceipts img {
-    width: 54px;
-    height: 54px;
-    margin-bottom: 18px;
-    opacity: 0.7;
-}
-
-.emptyReceipts h3 {
-    margin: 0 0 10px;
-    color: #111827;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-}
-
-.emptyReceipts p {
-    margin: 0 0 18px;
-    color: #98a2b3;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 16px;
-    text-align: center;
-}
-
-.receiptsCatalogButton {
-    height: 38px;
-    padding: 0 18px;
-    border-radius: 999px;
-    background: #009966;
-    color: #ffffff;
-    text-decoration: none;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.receiptItem {
-    border: 1px solid #e3e7ee;
-    border-radius: 16px;
-    background: #ffffff;
-    overflow: hidden;
-}
-
-.receiptItem + .receiptItem {
-    margin-top: 12px;
-}
-
-.receiptRow {
-    width: 100%;
-    min-height: 54px;
-    padding: 0 20px;
-    border: none;
-    background: #ffffff;
-    color: #111827;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    align-items: center;
-
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-}
-
-.receiptRow:hover {
-    background: #f4fffa;
-}
-
-.receiptDetails {
-    padding: 16px 20px 18px;
-    border-top: 1px solid #e3e7ee;
-    background: #fbfcfd;
-}
-
-.receiptProductRow {
-    display: grid;
-    grid-template-columns: 1fr 80px 110px;
-    gap: 12px;
-    align-items: center;
-    padding: 9px 0;
-
-    color: #454545;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-}
-
-.receiptProductRow span:first-child {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.receiptProductRow span:last-child {
-    text-align: right;
-}
-
-.receiptDetailsFooter {
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid #e3e7ee;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-}
-
-.receiptDetailsFooter b {
-    color: #111827;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 17px;
-}
-
-.receiptDetailsFooter button {
-    height: 34px;
-    padding: 0 14px;
-    border: 1px solid #ff3b30;
-    border-radius: 999px;
-    background: #ffffff;
-    color: #ff3b30;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.receiptDetailsFooter button:hover {
-    background: #fff4f4;
-}
-
-@media (max-width: 700px) {
-    .receiptsHeader {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .receiptsActions {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .receiptRow {
-        grid-template-columns: 1fr;
-        gap: 6px;
-        padding: 12px 16px;
-    }
-
-    .receiptProductRow {
-        grid-template-columns: 1fr;
-        gap: 4px;
-    }
-
-    .receiptProductRow span:last-child {
-        text-align: left;
-    }
-
-    .receiptDetailsFooter {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-}
-.preferencesCard,
-.settingsCard {
-    min-height: 675px;
-    background: #ffffff;
-    border: 1px solid #b8c0cc;
-    border-radius: 16px;
-    padding: 34px 48px;
-    box-sizing: border-box;
-}
 
 .preferenceList {
     display: flex;
@@ -1078,22 +777,6 @@
 .preferenceIcon img {
     width: 24px;
     height: 24px;
-}
-
-.green {
-    background: #b6ffe0;
-}
-
-.yellow {
-    background: #fff6a7;
-}
-
-.pink {
-    background: #f6b1ef;
-}
-
-.gray {
-    background: #eeeeee;
 }
 
 .preferenceText {
@@ -1165,25 +848,13 @@
     font-weight: 600;
 }
 
-.settingsField select {
-    width: 100%;
-    height: 54px;
-    border: 1px solid #b8c0cc;
-    border-radius: 999px;
-    padding: 0 22px;
-    background: #ffffff;
-    color: #303030;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 17px;
-    outline: none;
-}
-
 .settingsField select:focus {
     border-color: #009966;
     box-shadow: 0 0 0 3px rgba(0, 153, 102, 0.12);
 }
 
-.saveSettingsButton {
+.saveSettingsButton,
+.updatePasswordButton {
     height: 44px;
     margin-top: 32px;
     padding: 0 26px;
@@ -1197,57 +868,1167 @@
     cursor: pointer;
 }
 
-.saveSettingsButton:hover {
+.updatePasswordButton {
+    width: fit-content;
+    height: 54px;
+    margin-top: 22px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 22px;
+}
+
+.saveSettingsButton:hover,
+.updatePasswordButton:hover {
     background: #007f55;
 }
-.photoSettings {
+
+.securityHeader {
+    margin-bottom: 42px;
+}
+
+.securityForm {
     display: flex;
-    align-items: center;
-    gap: 24px;
-    margin: 26px 0 34px;
-    padding: 22px 24px;
-    border: 1px solid #d0d5dd;
-    border-radius: 18px;
-    background: #f9fafb;
+    flex-direction: column;
+    gap: 28px;
 }
 
-.photoSettingsText h3 {
-    margin: 0 0 8px;
-    color: #111827;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 16px;
-    font-weight: 500;
+.phoneRow select {
+    width: 180px;
 }
 
-.photoSettingsText p {
-    margin: 0;
-    color: #98a2b3;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 16px;
+.phoneRow input {
+    flex: 1;
 }
-.photoSettings {
+
+.passwordField {
+    position: relative;
+    width: 100%;
+}
+
+.passwordField input {
+    padding-right: 70px;
+}
+
+.eyeButton {
+    position: absolute;
+    top: 50%;
+    right: 22px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+
+.eyeButton img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.deleteAccountBox {
+    width: 100%;
+    margin-top: 12px;
+    min-height: 82px;
+    border: 1px solid #ff4d4f;
+    border-radius: 14px;
+    background: #ffc7cb;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    margin: 26px 0 34px;
-    padding: 22px 24px;
-    border: 1px solid #d0d5dd;
-    border-radius: 18px;
-    background: #f9fafb;
+    padding: 18px 28px;
+    box-sizing: border-box;
 }
 
-.photoSettingsText h3 {
-    margin: 0 0 8px;
-    color: #111827;
-    font-family: "Museo Sans Cyrl", sans-serif;
-    font-size: 23px;
-    font-weight: 500;
+.deleteAccountBox h3 {
+    margin: 0 0 6px;
+    color: #454545;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
 }
 
-.photoSettingsText p {
+.deleteAccountBox p {
     margin: 0;
-    color: #98a2b3;
-    font-family: "Museo Sans Cyrl", sans-serif;
+    color: #666666;
+    font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 16px;
+}
+
+.deleteAccountButton {
+    height: 42px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 999px;
+    background: #f00000;
+    color: #ffffff;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1200px) {
+    .container {
+        max-width: 1000px;
+    }
+
+    .layout {
+        grid-template-columns: 320px 1fr;
+        gap: 32px;
+    }
+
+    .sidebar {
+        width: 320px;
+        border-radius: 20px;
+    }
+
+    .profileTop {
+        height: 285px;
+        padding: 34px 28px 0;
+        grid-template-columns: 92px 1fr;
+        gap: 18px;
+    }
+
+    .avatar {
+        width: 92px;
+        height: 92px;
+        font-size: 36px;
+    }
+
+    .profileTop h2 {
+        margin-top: 28px;
+        font-size: 24px;
+    }
+
+    .profileTop p {
+        font-size: 17px;
+    }
+
+    .stats {
+        gap: 22px;
+        margin-top: -112px;
+        margin-bottom: 48px;
+    }
+
+    .stats div {
+        width: 82px;
+        height: 76px;
+    }
+
+    .stats b {
+        font-size: 18px;
+    }
+
+    .stats span {
+        font-size: 15px;
+    }
+
+    .menu {
+        padding: 0 22px 28px;
+        gap: 12px;
+    }
+
+    .menuItem {
+        height: 40px;
+        grid-template-columns: 26px 1fr 18px;
+        gap: 12px;
+        border-radius: 12px;
+        font-size: 16px;
+    }
+
+    .menuItem img {
+        width: 22px;
+        height: 22px;
+    }
+
+    .menuItem span {
+        font-size: 16px;
+    }
+
+    .arrowIcon {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    .infoCard,
+    .preferencesCard,
+    .settingsCard,
+    .receiptsCard,
+    .notificationsCard,
+    .securityCard {
+        padding: 28px 30px;
+        border-radius: 16px;
+    }
+
+    .cardHeader h2,
+    .receiptsHeader h2,
+    .notificationsHeader h2,
+    .securityHeader h2 {
+        font-size: 28px;
+    }
+
+    .cardHeader p,
+    .receiptsHeader p,
+    .notificationsHeader p,
+    .securityHeader p {
+        font-size: 20px;
+    }
+
+    .formGrid {
+        gap: 24px;
+    }
+
+    .formGrid label,
+    .fullField,
+    .securityForm label {
+        font-size: 18px;
+    }
+
+    .infoCard input,
+    .securityForm input,
+    .settingsField select {
+        height: 48px;
+        padding: 0 22px;
+        font-size: 16px;
+    }
+
+    .fieldLabel img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .photoSettingsText h3 {
+        font-size: 18px;
+    }
+
+    .photoSettingsText p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 900px) {
+    .page {
+        padding: 16px 6px 40px;
+        overflow-x: hidden;
+    }
+
+    .container {
+        width: 100%;
+        max-width: none;
+    }
+
+    .hero {
+        margin-bottom: 18px;
+        gap: 12px;
+    }
+
+    .heroIcon {
+        width: 54px;
+        height: 54px;
+    }
+
+    .heroIcon img {
+        width: 26px;
+        height: 26px;
+    }
+
+    .hero h1 {
+        font-size: 22px;
+    }
+
+    .hero p {
+        font-size: 14px;
+    }
+
+    .layout {
+        display: grid;
+        grid-template-columns: 190px minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+    }
+
+    .sidebar {
+        width: 100%;
+        max-width: none;
+        border-radius: 16px;
+    }
+
+    .profileTop {
+        min-height: 150px;
+        height: auto;
+        padding: 16px 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 76px;
+        height: 76px;
+        font-size: 26px;
+    }
+
+    .profileTop h2 {
+        margin: 0;
+        font-size: 17px;
+        line-height: 1.1;
+    }
+
+    .profileTop p {
+        font-size: 11px;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+
+    .stats {
+        margin: 0;
+        padding: 10px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        background: #ffffff;
+    }
+
+    .stats div {
+        width: 100%;
+        height: 58px;
+        border-color: #d0d5dd;
+        background: #f8fafc;
+        color: #111827;
+    }
+
+    .stats b {
+        color: #009966;
+        font-size: 15px;
+    }
+
+    .stats span {
+        color: #667085;
+        font-size: 11px;
+    }
+
+    .menu {
+        padding: 0 10px 12px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .menuItem {
+        height: 38px;
+        grid-template-columns: 18px 1fr;
+        gap: 7px;
+        padding: 0 8px;
+        border-radius: 11px;
+        background: #f8fafc;
+    }
+
+    .menuItem img {
+        width: 17px;
+        height: 17px;
+    }
+
+    .menuItem span {
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .arrowIcon {
+        display: none;
+    }
+
+    .signOutItem {
+        grid-column: auto;
+    }
+
+    .infoCard,
+    .preferencesCard,
+    .settingsCard,
+    .receiptsCard,
+    .notificationsCard,
+    .securityCard {
+        min-height: auto;
+        padding: 14px 10px;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .cardHeader,
+    .receiptsHeader,
+    .notificationsHeader,
+    .securityHeader {
+        margin-bottom: 14px;
+    }
+
+    .cardHeader {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .cardHeader h2,
+    .receiptsHeader h2,
+    .notificationsHeader h2,
+    .securityHeader h2 {
+        font-size: 21px;
+        line-height: 1.05;
+    }
+
+    .cardHeader p,
+    .receiptsHeader p,
+    .notificationsHeader p,
+    .securityHeader p {
+        font-size: 13px;
+    }
+
+    .editButton {
+        width: fit-content;
+        height: 34px;
+        padding: 0 14px;
+        font-size: 13px;
+    }
+
+    .editButton img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .editActions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .saveButton,
+    .cancelButton {
+        width: 100%;
+        height: 34px;
+        padding: 0 10px;
+        font-size: 12px;
+    }
+
+    .photoSettings {
+        margin: 12px 0 16px;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        align-items: start;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .photoSettings .avatar {
+        width: 54px;
+        height: 54px;
+        font-size: 18px;
+    }
+
+    .photoSettingsText {
+        min-width: 0;
+    }
+
+    .photoSettingsText h3 {
+        margin: 0 0 4px;
+        font-size: 14px;
+        line-height: 1.15;
+    }
+
+    .photoSettingsText p {
+        margin: 0;
+        font-size: 11px;
+        line-height: 1.2;
+    }
+
+    .photoSettings button {
+        max-width: 100%;
+        min-width: 0;
+        height: 36px;
+        padding: 0 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        flex-shrink: 1;
+    }
+
+    .formGrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .formGrid label,
+    .fullField,
+    .securityForm label {
+        gap: 6px;
+        font-size: 11px;
+    }
+
+    .fullField {
+        margin-bottom: 12px;
+    }
+
+    .infoCard input,
+    .securityForm input,
+    .settingsField select {
+        height: 38px;
+        padding: 0 10px;
+        border-radius: 11px;
+        font-size: 11px;
+    }
+
+    .fieldLabel {
+        gap: 4px;
+    }
+
+    .fieldLabel img {
+        width: 15px;
+        height: 15px;
+    }
+
+    .preferenceList,
+    .settingsList,
+    .notificationList {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+    .preferenceItem,
+    .notificationRow {
+        min-height: 88px;
+        padding: 9px;
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        gap: 7px;
+        align-items: start;
+        border-radius: 12px;
+    }
+
+    .preferenceIcon,
+    .notificationIcon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .preferenceIcon img,
+    .notificationIcon img {
+        width: 15px;
+        height: 15px;
+    }
+
+    .preferenceText h3,
+    .notificationText b {
+        font-size: 11px;
+        line-height: 1.15;
+    }
+
+    .preferenceText p,
+    .notificationText p {
+        font-size: 9px;
+        line-height: 1.2;
+    }
+
+    .toggle {
+        grid-column: 1 / -1;
+        justify-self: end;
+        width: 34px;
+        height: 20px;
+    }
+
+    .toggle span {
+        width: 16px;
+        height: 16px;
+    }
+
+    .toggleActive span {
+        transform: translateX(14px);
+    }
+
+    .switch {
+        width: 36px;
+        height: 20px;
+    }
+
+    .switch span::before {
+        width: 18px;
+        height: 18px;
+    }
+
+    .switch input:checked + span::before {
+        transform: translateX(16px);
+    }
+
+    .settingsList {
+        max-width: none;
+    }
+
+    .saveSettingsButton,
+    .updatePasswordButton {
+        width: 100%;
+        height: 36px;
+        margin-top: 14px;
+        font-size: 12px;
+    }
+
+    .deleteAccountBox {
+        display: grid;
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .deleteAccountBox h3 {
+        font-size: 14px;
+    }
+
+    .deleteAccountBox p {
+        font-size: 11px;
+    }
+
+    .deleteAccountButton {
+        width: 100%;
+        height: 34px;
+        font-size: 12px;
+    }
+
+    .receiptsHeader {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .receiptsActions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .filterButton,
+    .clearReceiptsButton {
+        width: 100%;
+        height: 34px;
+        padding: 0 8px;
+        justify-content: center;
+        font-size: 11px;
+    }
+
+    .receiptRow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        padding: 10px;
+        font-size: 11px;
+    }
+
+    .receiptProductRow {
+        grid-template-columns: 1fr auto;
+        gap: 6px;
+        font-size: 11px;
+    }
+
+    .receiptProductRow span:last-child {
+        text-align: right;
+    }
+
+    .receiptDetailsFooter {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .receiptDetailsFooter b {
+        font-size: 12px;
+    }
+
+    .receiptDetailsFooter button {
+        width: 100%;
+        height: 32px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 430px) {
+    .page {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .layout {
+        grid-template-columns: 185px minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .profileTop {
+        padding: 14px 8px;
+    }
+
+    .avatar {
+        width: 64px;
+        height: 64px;
+        font-size: 22px;
+    }
+
+    .profileTop h2 {
+        font-size: 15px;
+    }
+
+    .profileTop p {
+        font-size: 10px;
+    }
+
+    .stats {
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .stats div {
+        height: 52px;
+    }
+
+    .stats b {
+        font-size: 13px;
+    }
+
+    .stats span {
+        font-size: 10px;
+    }
+
+    .menu {
+        padding: 0 8px 10px;
+        gap: 6px;
+    }
+
+    .menuItem {
+        height: 34px;
+        padding: 0 7px;
+    }
+
+    .menuItem img {
+        width: 15px;
+        height: 15px;
+    }
+
+    .menuItem span {
+        font-size: 11px;
+    }
+
+    .infoCard,
+    .preferencesCard,
+    .settingsCard,
+    .receiptsCard,
+    .notificationsCard,
+    .securityCard {
+        padding: 12px 8px;
+    }
+
+    .cardHeader h2,
+    .receiptsHeader h2,
+    .notificationsHeader h2,
+    .securityHeader h2 {
+        font-size: 20px;
+    }
+
+    .formGrid,
+    .preferenceList,
+    .settingsList,
+    .notificationList {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .photoSettings {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .photoSettingsText h3 {
+        font-size: 13px;
+    }
+
+    .photoSettingsText p {
+        font-size: 10px;
+    }
+
+    .photoSettings button {
+        height: 34px;
+        padding: 0 10px;
+        font-size: 11px;
+    }
+
+    .photoSettings .avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 16px;
+    }
+
+    .preferenceItem,
+    .notificationRow {
+        padding: 8px;
+        min-height: 82px;
+        grid-template-columns: 26px 1fr;
+    }
+
+    .preferenceIcon,
+    .notificationIcon {
+        width: 26px;
+        height: 26px;
+    }
+
+    .preferenceText h3,
+    .notificationText b {
+        font-size: 10px;
+    }
+
+    .preferenceText p,
+    .notificationText p {
+        font-size: 8px;
+    }
+}
+@media (max-width: 900px) {
+    .photoSettings {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        overflow: hidden;
+    }
+
+    .photoSettings > button,
+    .photoSettings button {
+        max-width: 100%;
+        min-width: 0;
+        height: 34px;
+        padding: 0 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        white-space: nowrap;
+        box-sizing: border-box;
+    }
+
+    .photoSettings button + button {
+        margin-left: 0;
+        margin-top: 6px;
+    }
+}
+
+@media (max-width: 430px) {
+    .photoSettings {
+        gap: 8px;
+    }
+
+    .photoSettings > button,
+    .photoSettings button {
+        height: 32px;
+        font-size: 10px;
+        padding: 0 6px;
+    }
+}
+@media (max-width: 900px) {
+    .editButton {
+        height: 30px;
+        padding: 0 10px;
+        gap: 6px;
+        font-size: 11px;
+        border-radius: 999px;
+    }
+
+    .editButton img {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+@media (max-width: 430px) {
+    .editButton {
+        height: 28px;
+        padding: 0 9px;
+        font-size: 10px;
+    }
+
+    .editButton img {
+        width: 13px;
+        height: 13px;
+    }
+}
+/* RECEIPTS RESPONSIVE FIX */
+
+@media (max-width: 900px) {
+    .receiptsCard {
+        padding: 14px 10px;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .receiptsHeader {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .receiptsHeader h2 {
+        font-size: 21px;
+        line-height: 1.05;
+        margin-bottom: 4px;
+    }
+
+    .receiptsHeader p {
+        font-size: 13px;
+        line-height: 1.2;
+    }
+
+    .receiptsActions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .filterButton,
+    .clearReceiptsButton {
+        width: 100%;
+        height: 34px;
+        padding: 0 8px;
+        justify-content: center;
+        font-size: 11px;
+        border-radius: 999px;
+        box-sizing: border-box;
+        white-space: nowrap;
+    }
+
+    .filterButton img {
+        width: 15px;
+        height: 15px;
+    }
+
+    .receiptList {
+        gap: 10px;
+    }
+
+    .receiptItem {
+        border-radius: 14px;
+    }
+
+    .receiptRow {
+        min-height: 54px;
+        padding: 10px;
+        display: grid;
+        grid-template-columns: 1fr 0.7fr;
+        gap: 6px 8px;
+        align-items: center;
+        font-size: 11px;
+        border-radius: 0;
+    }
+
+    .receiptRow span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .receiptRow span:first-child {
+        grid-column: 1 / -1;
+        font-size: 12px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .receiptDetails {
+        padding: 10px;
+    }
+
+    .receiptProductRow {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 4px 8px;
+        padding: 8px 0;
+        font-size: 11px;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+    .receiptProductRow span:first-child {
+        grid-column: 1 / -1;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .receiptProductRow span:nth-child(2)::before {
+        content: 'Qty: ';
+        color: #98a2b3;
+        font-weight: 500;
+    }
+
+    .receiptProductRow span:last-child {
+        text-align: right;
+        color: #009966;
+        font-weight: 700;
+    }
+
+    .receiptDetailsFooter {
+        margin-top: 10px;
+        padding-top: 10px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .receiptDetailsFooter b {
+        font-size: 12px;
+    }
+
+    .receiptDetailsFooter button {
+        width: 100%;
+        height: 32px;
+        font-size: 11px;
+        padding: 0 10px;
+    }
+
+    .emptyReceipts {
+        min-height: 220px;
+        padding: 24px 12px;
+        border-radius: 14px;
+    }
+
+    .emptyReceipts img {
+        width: 42px;
+        height: 42px;
+        margin-bottom: 12px;
+    }
+
+    .emptyReceipts h3 {
+        font-size: 16px;
+    }
+
+    .emptyReceipts p {
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    .receiptsCatalogButton {
+        width: 100%;
+        height: 34px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 430px) {
+    .receiptsCard {
+        padding: 12px 8px;
+        border-radius: 14px;
+    }
+
+    .receiptsHeader {
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .receiptsHeader h2 {
+        font-size: 19px;
+    }
+
+    .receiptsHeader p {
+        font-size: 11px;
+    }
+
+    .receiptsActions {
+        gap: 6px;
+    }
+
+    .filterButton,
+    .clearReceiptsButton {
+        height: 32px;
+        padding: 0 6px;
+        font-size: 10px;
+    }
+
+    .filterButton img {
+        width: 13px;
+        height: 13px;
+    }
+
+    .receiptRow {
+        padding: 9px;
+        font-size: 10px;
+        grid-template-columns: 1fr 0.8fr;
+    }
+
+    .receiptRow span:first-child {
+        font-size: 11px;
+    }
+
+    .receiptDetails {
+        padding: 9px;
+    }
+
+    .receiptProductRow {
+        font-size: 10px;
+        gap: 4px 6px;
+    }
+
+    .receiptDetailsFooter b {
+        font-size: 11px;
+    }
+
+    .receiptDetailsFooter button {
+        height: 30px;
+        font-size: 10px;
+    }
+
+    .emptyReceipts {
+        min-height: 190px;
+        padding: 20px 10px;
+    }
+
+    .emptyReceipts h3 {
+        font-size: 15px;
+    }
+
+    .emptyReceipts p {
+        font-size: 11px;
+    }
+}
+@media (max-width: 900px) {
+    .layout {
+        align-items: stretch;
+    }
+
+    .sidebar,
+    .receiptsCard {
+        height: 100%;
+        min-height: 512px;
+    }
+
+    .receiptsCard {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .emptyReceipts {
+        flex: 1;
+        min-height: 0;
+    }
+}
+
+@media (max-width: 430px) {
+    .sidebar,
+    .receiptsCard {
+        min-height: 512px;
+    }
 }
