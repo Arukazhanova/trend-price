@@ -17,7 +17,7 @@ export const productService = {
         const response = await productApi.get<PageProduct>(
             `/products/page/${pageNumber}`,
             {
-                params: { size },
+                params: { page_size: size },
             }
         );
 
@@ -30,13 +30,23 @@ export const productService = {
     },
 
     async searchProducts(params: {
+        page?: number;
+        size?: number;
         title?: string;
-        category?: string;
-        brand?: string;
-        type?: string;
-    }): Promise<Product[]> {
-        const response = await productApi.get<Product[]>('/products/search', {
-            params,
+        category?: string[];
+        brand?: string[];
+        type?: string[];
+    }): Promise<PageProduct> {
+        const response = await productApi.get<PageProduct>('/products/search', {
+            params: {
+                page_number: params.page ?? 1,
+                page_size: params.size ?? 20,
+                title: params.title || undefined,
+                category: params.category?.length ? params.category : undefined,
+                brand: params.brand?.length ? params.brand : undefined,
+                type: params.type?.length ? params.type : undefined,
+            },
+            paramsSerializer: { indexes: null },
         });
 
         return response.data;

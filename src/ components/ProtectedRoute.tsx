@@ -1,21 +1,36 @@
-import type { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext.tsx';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
 
 type ProtectedRouteProps = {
-    children: ReactNode;
+    children: JSX.Element;
+    requireAdmin?: boolean;
 };
 
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-    const { isAuthenticated, isInitializing } = useAuth();
+const normalizeRole = (role: string) => {
+    return role.replace(/^ROLE_/i, '').toUpperCase();
+};
+
+export default function ProtectedRoute({
+                                           children,
+                                           requireAdmin = false,
+                                       }: ProtectedRouteProps) {
+    const { user, isAuthenticated, isInitializing } = useAuth();
+    const location = useLocation();
 
     if (isInitializing) {
-        return <div>Loading...</div>;
+        return null;
     }
 
     if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login" replace state={{ from: location }} />;
     }
 
-    return <>{children}</>;
+    const roles = user?.roles?.map(normalizeRole) ?? [];
+    const isAdmin = roles.includes('ADMIN');
+
+    if (requireAdmin && !isAdmin) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    return children;
 }

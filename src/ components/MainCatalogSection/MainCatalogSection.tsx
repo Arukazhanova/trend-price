@@ -3,7 +3,7 @@ import type { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 
 import styles from './MainCatalogSection.module.css';
-import heartIcon from '../../assets/Heart.svg';
+import heartIcon from '../../assets/heart.svg';
 import analyticsIcon from '../../assets/ChartLine.svg';
 
 import { useFavourites } from '../../favourites/useFavourites';

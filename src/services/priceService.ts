@@ -8,13 +8,42 @@ export interface PriceStats {
     averagePrice: number;
     pricesCount: number;
 }
-export interface UpdatedPricesPage {
-    totalElements?: number;
-    numberOfElements?: number;
-    content?: unknown[];
-}
+
 const getPriceValue = (price: Price): number => {
     return Number(price.finalPrice ?? price.pricePerUnit ?? 0);
+};
+
+const normalizeNumberResponse = (value: unknown): number => {
+    if (typeof value === 'number') {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    if (value && typeof value === 'object') {
+        const data = value as {
+            totalElements?: number;
+            numberOfElements?: number;
+            content?: unknown[];
+        };
+
+        if (typeof data.totalElements === 'number') {
+            return data.totalElements;
+        }
+
+        if (typeof data.numberOfElements === 'number') {
+            return data.numberOfElements;
+        }
+
+        if (Array.isArray(data.content)) {
+            return data.content.length;
+        }
+    }
+
+    return 0;
 };
 
 export const priceService = {
@@ -35,21 +64,17 @@ export const priceService = {
 
         return response.data;
     },
-    async getUpdatedProducts(): Promise<UpdatedPricesPage> {
-        const response = await priceApi.get<UpdatedPricesPage>(
-            '/prices/updated/products'
-        );
 
-        return response.data;
+    async getUpdatedProducts(): Promise<number> {
+        const response = await priceApi.get<unknown>('/prices/updated/products');
+        return normalizeNumberResponse(response.data);
     },
 
-    async getUpdatedStores(): Promise<UpdatedPricesPage> {
-        const response = await priceApi.get<UpdatedPricesPage>(
-            '/prices/updated/stores'
-        );
-
-        return response.data;
+    async getUpdatedStores(): Promise<number> {
+        const response = await priceApi.get<unknown>('/prices/updated/stores');
+        return normalizeNumberResponse(response.data);
     },
+
     async getPricesByProductIdForDays(
         productId: string,
         daysAmount = 30

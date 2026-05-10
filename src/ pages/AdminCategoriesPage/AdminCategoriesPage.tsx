@@ -1,24 +1,62 @@
+import { useEffect, useMemo, useState } from 'react';
 import AdminSidebar from '../../ components/AdminSidebar/AdminSidebar';
 import AdminHeader from '../../ components/AdminHeader/AdminHeader';
+import { productService } from '../../services/productService';
+import type { Category, Product } from '../../types/api';
 import styles from './AdminCategoriesPage.module.css';
 
-const stats = [
-    { title: 'Total categories', value: '10' },
-    { title: 'Total Products', value: '9460' },
-    { title: 'Avg Products/Category', value: '946' },
-];
-
-const categories = [
-    { name: 'Vegetables', products: '1250 products', color: 'pink' },
-    { name: 'Milk products', products: '890 products', color: 'blue' },
-    { name: 'Sausage and delicacies', products: '1100 products', color: 'orange' },
-    { name: 'Bread', products: '560 products', color: 'yellow' },
-    { name: 'Meat', products: '780 products', color: 'green' },
-    { name: 'Seafood', products: '420 products', color: 'mint' },
-    { name: 'Water and juice', products: '670 products', color: 'purple' },
-];
+const colors = ['pink', 'blue', 'orange', 'yellow', 'green', 'mint', 'purple'];
 
 export default function AdminCategoriesPage() {
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            setError('');
+
+            try {
+                const [loadedCategories, loadedProducts] = await Promise.all([
+                    productService.getAllCategories(),
+                    productService.getAllProducts(),
+                ]);
+
+                setCategories(loadedCategories);
+                setProducts(loadedProducts);
+            } catch {
+                setError('Не удалось загрузить категории');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        void loadData();
+    }, []);
+
+    const productCountByCategoryId = useMemo(() => {
+        const map: Record<string, number> = {};
+
+        products.forEach((product) => {
+            product.categories?.forEach((category) => {
+                map[category.id] = (map[category.id] ?? 0) + 1;
+            });
+        });
+
+        return map;
+    }, [products]);
+
+    const stats = [
+        { title: 'Total categories', value: String(categories.length) },
+        { title: 'Total Products', value: String(products.length) },
+        {
+            title: 'Avg Products/Category',
+            value: categories.length ? String(Math.round(products.length / categories.length)) : '0',
+        },
+    ];
+
     return (
         <div className={styles.adminPage}>
             <AdminSidebar />
@@ -32,11 +70,9 @@ export default function AdminCategoriesPage() {
                             <h1>Categories</h1>
                             <p>Organize products into categories for easy navigation</p>
                         </div>
-
-                        <button type="button" className={styles.addButton}>
-                            + Add categories
-                        </button>
                     </div>
+
+                    {error && <p style={{ color: '#ff3b3b', marginBottom: 12 }}>{error}</p>}
 
                     <div className={styles.statsGrid}>
                         {stats.map((item) => (
@@ -50,21 +86,21 @@ export default function AdminCategoriesPage() {
                         ))}
                     </div>
 
-                    <div className={styles.categoriesGrid}>
-                        {categories.map((category) => (
-                            <div
-                                key={category.name}
-                                className={`${styles.categoryCard} ${styles[category.color]}`}
-                            >
-                                <button type="button" className={styles.moreButton}>
-                                    ...
-                                </button>
-
-                                <h3>{category.name}</h3>
-                                <p>{category.products}</p>
-                            </div>
-                        ))}
-                    </div>
+                    {loading ? (
+                        <p>Loading categories...</p>
+                    ) : (
+                        <div className={styles.categoriesGrid}>
+                            {categories.map((category, index) => (
+                                <div
+                                    key={category.id}
+                                    className={`${styles.categoryCard} ${styles[colors[index % colors.length]]}`}
+                                >
+                                    <h3>{category.title}</h3>
+                                    <p>{productCountByCategoryId[category.id] ?? 0} products</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </section>
             </main>
         </div>

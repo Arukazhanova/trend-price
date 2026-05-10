@@ -6,9 +6,8 @@ import {
     type LoginResponse,
     type MeResponse,
     type RegisterResponse,
+    type User,
 } from './AuthContext';
-
-type User = AuthContextValue['user'];
 
 type LoginPayload = {
     username: string;
@@ -21,29 +20,74 @@ type RegisterPayload = {
     password: string;
 };
 
+type BackendLoginResponse = LoginResponse & {
+    token?: string;
+};
+
+const normalizeRoles = (roles?: string[] | null) => {
+    return (roles ?? []).map((role) =>
+        role.replace(/^ROLE_/i, '').toUpperCase()
+    );
+};
+
+const makeUserFromLogin = (data: BackendLoginResponse): User => ({
+    id: data.userId,
+    userId: data.userId,
+    username: data.username,
+    email: data.email,
+    roles: normalizeRoles(data.roles),
+});
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<User>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [isInitializing, setIsInitializing] = useState(true);
-    const updateProfile = async (payload: Partial<User>) => {
-        const response = await api.put("/users/me/profile", payload);
-        setUser(response.data);
-        return response.data;
-    };
 
     useEffect(() => {
         const initializeAuth = async () => {
             const token = localStorage.getItem('token');
 
-            if (!token) {
+            if (!token || token === 'undefined') {
+                localStorage.removeItem('token');
+                localStorage.removeItem('refreshToken');
+                setUser(null);
                 setIsInitializing(false);
                 return;
             }
 
             try {
-                const { data } = await api.get<MeResponse>('/users/me/profile');
-                setUser(data);
+                const profileResponse = await api.get<MeResponse>('/users/me/profile');
+
+                let roles: string[] = [];
+
+                try {
+                    const rolesResponse = await api.get<string[]>('/users/me/roles');
+                    roles = rolesResponse.data;
+                } catch {
+                    roles = [];
+                }
+
+                const savedUser: User = {
+                    id: localStorage.getItem('userId'),
+                    userId: localStorage.getItem('userId'),
+                    username:
+                        profileResponse.data.username ??
+                        localStorage.getItem('username') ??
+                        '',
+                    email:
+                        profileResponse.data.email ??
+                        localStorage.getItem('email') ??
+                        null,
+                    roles: normalizeRoles(profileResponse.data.roles ?? roles),
+                    ...profileResponse.data,
+                };
+
+                setUser(savedUser);
             } catch {
                 localStorage.removeItem('token');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('username');
+                localStorage.removeItem('email');
                 setUser(null);
             } finally {
                 setIsInitializing(false);
@@ -54,11 +98,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const login = async (payload: LoginPayload) => {
-        const { data } = await api.post<LoginResponse>('/auth/login', payload);
-        localStorage.setItem('token', data.token);
+        const { data } = await api.post<BackendLoginResponse>('/auth/login', payload);
 
-        const me = await api.get<MeResponse>('/users/me/profile');
-        setUser(me.data);
+        console.log('LOGIN RESPONSE:', data);
+
+        const accessToken = data.accessToken ?? data.token;
+
+        if (!accessToken) {
+            throw new Error('Backend did not return accessToken');
+        }
+
+        localStorage.setItem('token', accessToken);
+
+        if (data.refreshToken) {
+            localStorage.setItem('refreshToken', data.refreshToken);
+        }
+
+        localStorage.setItem('userId', String(data.userId));
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('email', data.email);
+
+        const loginUser = makeUserFromLogin(data);
+
+        setUser(loginUser);
+
+        return loginUser;
     };
 
     const register = async (payload: RegisterPayload) => {
@@ -66,12 +130,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return data;
     };
 
-    const logout = () => {
+    const updateProfile = async (payload: Partial<User>) => {
+        const { data } = await api.put<MeResponse>('/users/me/profile', payload);
+
+        const updatedUser: User = {
+            ...user,
+            ...data,
+            username: data.username ?? user?.username ?? '',
+            email: data.email ?? user?.email ?? null,
+            roles: normalizeRoles(data.roles ?? user?.roles),
+        };
+
+        setUser(updatedUser);
+
+        return updatedUser;
+    };
+
+    const logout = async () => {
+        const refreshToken = localStorage.getItem('refreshToken');
+
+        if (refreshToken) {
+            await api.post('/auth/logout', { refreshToken }).catch(() => undefined);
+        }
+
         localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('username');
+        localStorage.removeItem('email');
+
         setUser(null);
     };
 
-    const value = useMemo(
+    const value: AuthContextValue = useMemo(
         () => ({
             user,
             isAuthenticated: Boolean(user),

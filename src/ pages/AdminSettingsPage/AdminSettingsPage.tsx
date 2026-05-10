@@ -13,12 +13,14 @@ export default function AdminSettingsPage() {
                 <section className={styles.pageContent}>
                     <div className={styles.titleBlock}>
                         <h1>Settings</h1>
-                        <p>Configure platform settings and preferences</p>
+                        <p>Platform configuration overview</p>
                     </div>
 
                     <div className={styles.card}>
                         <h2>General Settings</h2>
-                        <p className={styles.cardSubtitle}>Basic platform configuration</p>
+                        <p className={styles.cardSubtitle}>
+                            These settings are shown from frontend because backend settings API is not provided.
+                        </p>
 
                         <div className={styles.formGrid}>
                             <label>
@@ -27,15 +29,15 @@ export default function AdminSettingsPage() {
                             </label>
 
                             <label>
-                                <span>Site URL</span>
-                                <input value="https://trendprice.com" readOnly />
+                                <span>Environment</span>
+                                <input value="Development" readOnly />
                             </label>
                         </div>
 
                         <label className={styles.fullField}>
                             <span>Site Description</span>
                             <textarea
-                                value="TrendPrice is a smart platform that helps users compare product prices across different stores, find the best deals, and make cost-effective shopping decisions."
+                                value="TrendPrice helps users compare product prices across stores and find better deals."
                                 readOnly
                             />
                         </label>
@@ -44,84 +46,101 @@ export default function AdminSettingsPage() {
                             <span>Support Email</span>
                             <input value="trendprice.kz@gmail.com" readOnly />
                         </label>
-
-                        <div className={styles.divider} />
-
-                        <div className={styles.features}>
-                            <h3>Features</h3>
-
-                            <div className={styles.settingRow}>
-                                <div>
-                                    <h4>Price Alerts</h4>
-                                    <p>Allow users to set price drop alerts</p>
-                                </div>
-
-                                <label className={styles.switch}>
-                                    <input type="checkbox" defaultChecked />
-                                    <span />
-                                </label>
-                            </div>
-
-                            <div className={styles.settingRow}>
-                                <div>
-                                    <h4>Price History</h4>
-                                    <p>Show historical price charts</p>
-                                </div>
-
-                                <label className={styles.switch}>
-                                    <input type="checkbox" defaultChecked />
-                                    <span />
-                                </label>
-                            </div>
-                        </div>
                     </div>
 
                     <div className={styles.card}>
-                        <h2>Password Policy</h2>
-                        <p className={styles.cardSubtitle}>Configure password requirements for users</p>
-
-                        <div className={styles.formGrid}>
-                            <label>
-                                <span>Minimum Length</span>
-                                <select defaultValue="8">
-                                    <option value="6">6 characters</option>
-                                    <option value="8">8 characters</option>
-                                    <option value="10">10 characters</option>
-                                    <option value="12">12 characters</option>
-                                </select>
-                            </label>
-
-                            <label>
-                                <span>Password Expiry</span>
-                                <select defaultValue="90">
-                                    <option value="30">30 days</option>
-                                    <option value="60">60 days</option>
-                                    <option value="90">90 days</option>
-                                    <option value="never">Never</option>
-                                </select>
-                            </label>
-                        </div>
+                        <h2>Available Backend Modules</h2>
+                        <p className={styles.cardSubtitle}>
+                            These modules are connected to real API endpoints.
+                        </p>
 
                         <div className={styles.settingRow}>
                             <div>
-                                <h4>Require Special Characters</h4>
-                                <p>Passwords must include special characters</p>
+                                <h4>Authentication</h4>
+                                <p>Login, register, logout, refresh token, email verification</p>
                             </div>
 
                             <label className={styles.switch}>
-                                <input type="checkbox" defaultChecked />
+                                <input type="checkbox" checked readOnly />
                                 <span />
                             </label>
                         </div>
 
                         <div className={styles.settingRow}>
                             <div>
-                                <h4>Two-Factor Authentication</h4>
-                                <p>Require 2FA for admin accounts</p>
+                                <h4>Admin Users</h4>
+                                <p>Users list, block, unblock, role changing</p>
                             </div>
 
                             <label className={styles.switch}>
-                                <input type="checkbox" defaultChecked />
+                                <input type="checkbox" checked readOnly />
+                                <span />
+                            </label>
+                        </div>
+
+                        <div className={styles.settingRow}>
+                            <div>
+                                <h4>Products and Categories</h4>
+                                <p>Products, brands, categories, product search</p>
+                            </div>
+
+                            <label className={styles.switch}>
+                                <input type="checkbox" checked readOnly />
+                                <span />
+                            </label>
+                        </div>
+
+                        <div className={styles.settingRow}>
+                            <div>
+                                <h4>Prices</h4>
+                                <p>Price listings, best price, price history by product</p>
+                            </div>
+
+                            <label className={styles.switch}>
+                                <input type="checkbox" checked readOnly />
+                                <span />
+                            </label>
+                        </div>
+
+                        <div className={styles.settingRow}>
+                            <div>
+                                <h4>Promotions</h4>
+                                <p>Disabled because promotions API endpoint is not provided</p>
+                            </div>
+
+                            <label className={styles.switch}>
+                                <input type="checkbox" readOnly />
+                                <span />
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className={styles.card}>
+                        <h2>Password Policy</h2>
+                        <p className={styles.cardSubtitle}>
+                            Based on auth API validation rules.
+                        </p>
+
+                        <div className={styles.formGrid}>
+                            <label>
+                                <span>Register password minimum length</span>
+                                <input value="8 characters" readOnly />
+                            </label>
+
+                            <label>
+                                <span>Change password minimum length</span>
+                                <input value="6 characters" readOnly />
+                            </label>
+                        </div>
+
+                        <div className={styles.settingRow}>
+                            <div>
+                                <h4>Require uppercase, lowercase and digit</h4>
+                                <p>Required for registration and password reset</p>
+                            </div>
+
+                            <label className={styles.switch}>
+                                <input type="checkbox" checked readOnly />
                                 <span />
                             </label>
                         </div>

@@ -1,26 +1,43 @@
+import { useEffect, useMemo, useState } from 'react';
 import AdminSidebar from '../../ components/AdminSidebar/AdminSidebar';
 import AdminHeader from '../../ components/AdminHeader/AdminHeader';
+import { storeService } from '../../services/storeService';
+import type { Store } from '../../types/api';
 import styles from './AdminStoresPage.module.css';
 
-const stats = [
-    { title: 'Total stories', value: '8' },
-    { title: 'Active', value: '6' },
-    { title: 'Inactive', value: '1' },
-    { title: 'Pending', value: '1' },
-];
-
-const stores = [
-    { store: 'Magnum', category: 'Supermarket', website: 'www.store.com', products: '5468', priceLevel: 'Low', status: 'Active', updated: '2026-01-17' },
-    { store: 'Small', category: 'Supermarket', website: 'www.store.com', products: '4568', priceLevel: 'Medium', status: 'Active', updated: '2026-01-17' },
-    { store: 'Arbuz', category: 'Online market', website: 'www.store.com', products: '8795', priceLevel: 'High', status: 'Active', updated: '2026-01-17' },
-    { store: 'Galmart', category: 'Supermarket', website: 'www.store.com', products: '4568', priceLevel: 'Low', status: 'Active', updated: '2026-01-17' },
-    { store: 'Metro', category: 'Supermarket', website: 'www.store.com', products: '124488', priceLevel: 'Medium', status: 'Active', updated: '2026-01-17' },
-    { store: 'Name', category: 'Store', website: 'www.store.com', products: '2145', priceLevel: 'Low', status: 'Active', updated: '2026-01-16' },
-    { store: 'Name', category: 'Store', website: 'www.store.com', products: '1458', priceLevel: 'Low', status: 'Inactive', updated: '2026-01-15' },
-    { store: 'Name', category: 'Store', website: 'www.store.com', products: '4698', priceLevel: 'High', status: 'Pending', updated: '2026-01-11' },
-];
-
 export default function AdminStoresPage() {
+    const [stores, setStores] = useState<Store[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    const loadStores = async () => {
+        setLoading(true);
+        setError('');
+
+        try {
+            const data = await storeService.getAllStores();
+            setStores(data);
+        } catch {
+            setError('Не удалось загрузить магазины');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        void loadStores();
+    }, []);
+
+    const stats = useMemo(
+        () => [
+            { title: 'Total stores', value: String(stores.length) },
+            { title: 'Active', value: String(stores.length) },
+            { title: 'Inactive', value: '0' },
+            { title: 'Pending', value: '0' },
+        ],
+        [stores]
+    );
+
     return (
         <div className={styles.adminPage}>
             <AdminSidebar />
@@ -35,10 +52,12 @@ export default function AdminStoresPage() {
                             <p>Manage partner stores and their product listings</p>
                         </div>
 
-                        <button type="button" className={styles.addButton}>
-                            + Add Store
+                        <button type="button" className={styles.addButton} onClick={loadStores}>
+                            Refresh
                         </button>
                     </div>
+
+                    {error && <p style={{ color: '#ff3b3b', marginTop: 12 }}>{error}</p>}
 
                     <div className={styles.statsGrid}>
                         {stats.map((item) => (
@@ -53,51 +72,46 @@ export default function AdminStoresPage() {
                     </div>
 
                     <div className={styles.tableCard}>
-                        <table className={styles.table}>
-                            <thead>
-                            <tr>
-                                <th>Store</th>
-                                <th>Category</th>
-                                <th>Website</th>
-                                <th>Products</th>
-                                <th>Price Level</th>
-                                <th>Status</th>
-                                <th>Last Updated</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            {stores.map((store, index) => (
-                                <tr key={`${store.store}-${index}`}>
-                                    <td>{store.store}</td>
-                                    <td>{store.category}</td>
-                                    <td>{store.website}</td>
-                                    <td>{store.products}</td>
-                                    <td>
-                                            <span className={`${styles.badge} ${styles[store.priceLevel.toLowerCase()]}`}>
-                                                {store.priceLevel}
-                                            </span>
-                                    </td>
-                                    <td>
-                                            <span className={`${styles.status} ${styles[store.status.toLowerCase()]}`}>
-                                                {store.status}
-                                            </span>
-                                    </td>
-                                    <td>{store.updated}</td>
-                                    <td className={styles.actions}>...</td>
+                        {loading ? (
+                            <p>Loading stores...</p>
+                        ) : (
+                            <table className={styles.table}>
+                                <thead>
+                                <tr>
+                                    <th>Store</th>
+                                    <th>Description</th>
+                                    <th>Contact</th>
+                                    <th>Status</th>
+                                    <th>Last Updated</th>
+                                    <th>Actions</th>
                                 </tr>
-                            ))}
-                            </tbody>
-                        </table>
+                                </thead>
+
+                                <tbody>
+                                {stores.map((store) => (
+                                    <tr key={store.id}>
+                                        <td>{store.title}</td>
+                                        <td>{store.description || '-'}</td>
+                                        <td>{store.contactInfo || '-'}</td>
+                                        <td>
+                                                <span className={`${styles.status} ${styles.active}`}>
+                                                    Active
+                                                </span>
+                                        </td>
+                                        <td>
+                                            {store.updatedAt
+                                                ? new Date(store.updatedAt).toLocaleString('ru-RU')
+                                                : '-'}
+                                        </td>
+                                        <td className={styles.actions}>...</td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        )}
 
                         <div className={styles.pagination}>
-                            <span>Showing 8 of 8 stores</span>
-
-                            <div>
-                                <button type="button">Previous</button>
-                                <button type="button">Next</button>
-                            </div>
+                            <span>Showing {stores.length} of {stores.length} stores</span>
                         </div>
                     </div>
                 </section>

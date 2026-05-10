@@ -8,7 +8,7 @@ import { useCart } from '../../cart/useCart';
 
 import styles from './FavouritesPage.module.css';
 
-import heartIcon from '../../assets/Heart.svg';
+import heartIcon from '../../assets/heart.svg';
 import purchaseIcon from '../../assets/ShoppingCartSimpleWhite.svg';
 import trashIcon from '../../assets/Trash.svg';
 

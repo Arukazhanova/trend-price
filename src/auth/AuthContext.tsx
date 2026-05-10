@@ -1,8 +1,8 @@
 import { createContext, useContext } from 'react';
 
 export type User = {
-    id?: string | null;
-    userId?: string | null;
+    id?: string | number | null;
+    userId?: string | number | null;
     uuid?: string | null;
     username: string;
     email: string | null;
@@ -12,6 +12,7 @@ export type User = {
     phoneNumber?: string | null;
     dateOfBirth?: string | null;
 };
+
 type LoginPayload = {
     username: string;
     password: string;
@@ -24,25 +25,28 @@ type RegisterPayload = {
 };
 
 export type LoginResponse = {
-    token: string;
+    accessToken: string;
+    refreshToken: string;
     type: string;
+    userId: number;
+    username: string;
+    email: string;
+    roles: string[];
 };
 
 export type RegisterResponse = {
     message: string;
-    verificationToken: string;
-    verificationUrl: string;
 };
 
-export type MeResponse = User;
+export type MeResponse = Partial<User>;
 
 export type AuthContextValue = {
     user: User | null;
     isAuthenticated: boolean;
     isInitializing: boolean;
-    login: (payload: LoginPayload) => Promise<void>;
+    login: (payload: LoginPayload) => Promise<User>;
     register: (payload: RegisterPayload) => Promise<RegisterResponse>;
-    logout: () => void;
+    logout: () => Promise<void> | void;
     updateProfile: (payload: Partial<User>) => Promise<User>;
 };
 

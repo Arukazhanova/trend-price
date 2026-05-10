@@ -1,83 +1,74 @@
+import { useEffect, useMemo, useState } from 'react';
 import AdminSidebar from '../../ components/AdminSidebar/AdminSidebar';
 import AdminHeader from '../../ components/AdminHeader/AdminHeader';
+import { priceService } from '../../services/priceService';
+import { productService } from '../../services/productService';
+import { storeService } from '../../services/storeService';
+import type { Price, Product, Store } from '../../types/api';
 import styles from './AdminPriceListingsPage.module.css';
 
-const priceListings = [
-    {
-        product: 'products',
-        store: 'Name',
-        currentPrice: '2300₸',
-        previousPrice: '2670₸',
-        change: '-13%',
-        lowestMarket: '2100₸',
-        updated: '2026-01-15 09:30',
-    },
-    {
-        product: 'products',
-        store: 'Name',
-        currentPrice: '2300₸',
-        previousPrice: '2670₸',
-        change: '-13%',
-        lowestMarket: '2100₸',
-        updated: '2026-01-15 08:15',
-    },
-    {
-        product: 'products',
-        store: 'Name',
-        currentPrice: '2300₸',
-        previousPrice: '2670₸',
-        change: '-13%',
-        lowestMarket: '2100₸',
-        updated: '2026-01-15 10:00',
-    },
-    {
-        product: 'products',
-        store: 'Name',
-        currentPrice: '2300₸',
-        previousPrice: '2670₸',
-        change: '-13%',
-        lowestMarket: '2100₸',
-        updated: '2026-01-15 07:45',
-    },
-    {
-        product: 'products',
-        store: 'Name',
-        currentPrice: '2670₸',
-        previousPrice: '2300₸',
-        change: '+13%',
-        lowestMarket: '2100₸',
-        updated: '2026-01-14 16:20',
-    },
-    {
-        product: 'products',
-        store: 'Name',
-        currentPrice: '2300₸',
-        previousPrice: '2300₸',
-        change: '0%',
-        lowestMarket: '2100₸',
-        updated: '2026-01-15 11:00',
-    },
-    {
-        product: 'products',
-        store: 'Name',
-        currentPrice: '2300₸',
-        previousPrice: '2670₸',
-        change: '-13%',
-        lowestMarket: '2100₸',
-        updated: '2026-01-15 07:45',
-    },
-    {
-        product: 'products',
-        store: 'Name',
-        currentPrice: '2300₸',
-        previousPrice: '2670₸',
-        change: '-13%',
-        lowestMarket: '2100₸',
-        updated: '2026-01-15 10:00',
-    },
-];
+const formatPrice = (value?: number) => {
+    return Number.isFinite(Number(value))
+        ? `${Math.round(Number(value)).toLocaleString('ru-RU')}₸`
+        : '-';
+};
 
 export default function AdminPriceListingsPage() {
+    const [prices, setPrices] = useState<Price[]>([]);
+    const [products, setProducts] = useState<Record<string, Product>>({});
+    const [stores, setStores] = useState<Record<string, Store>>({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            setError('');
+
+            try {
+                const [loadedPrices, loadedProducts, loadedStores] = await Promise.all([
+                    priceService.getAllPrices(),
+                    productService.getAllProducts(),
+                    storeService.getAllStores(),
+                ]);
+
+                setPrices(loadedPrices);
+
+                setProducts(
+                    Object.fromEntries(
+                        loadedProducts.map((product) => [product.id, product])
+                    )
+                );
+
+                setStores(
+                    Object.fromEntries(
+                        loadedStores.map((store) => [store.id, store])
+                    )
+                );
+            } catch {
+                setError('Не удалось загрузить цены');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        void loadData();
+    }, []);
+
+    const lowestByProduct = useMemo(() => {
+        const map: Record<string, number> = {};
+
+        prices.forEach((price) => {
+            const value = Number(price.finalPrice ?? price.pricePerUnit ?? 0);
+
+            if (!Number.isFinite(value) || value <= 0) return;
+
+            map[price.productId] = Math.min(map[price.productId] ?? value, value);
+        });
+
+        return map;
+    }, [prices]);
+
     return (
         <div className={styles.adminPage}>
             <AdminSidebar />
@@ -91,63 +82,67 @@ export default function AdminPriceListingsPage() {
                             <h1>Price Listings</h1>
                             <p>Track and manage price comparisons across all stores</p>
                         </div>
-
-                        <div className={styles.filters}>
-                            <button type="button">All categories⌄</button>
-                            <button type="button">All status⌄</button>
-                        </div>
                     </div>
 
-                    <div className={styles.tableCard}>
-                        <table className={styles.table}>
-                            <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Stores</th>
-                                <th>Current Price</th>
-                                <th>Previous Price</th>
-                                <th>Change</th>
-                                <th>Lowest Market</th>
-                                <th>Updated</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
+                    {error && <p style={{ color: '#ff3b3b', marginBottom: 12 }}>{error}</p>}
 
-                            <tbody>
-                            {priceListings.map((item, index) => (
-                                <tr key={`${item.product}-${index}`}>
-                                    <td>{item.product}</td>
-                                    <td>{item.store}</td>
-                                    <td>{item.currentPrice}</td>
-                                    <td>{item.previousPrice}</td>
-                                    <td>
-                                            <span
-                                                className={`${styles.change} ${
-                                                    item.change.startsWith('+')
-                                                        ? styles.up
-                                                        : item.change.startsWith('-')
-                                                            ? styles.down
-                                                            : styles.neutral
-                                                }`}
-                                            >
-                                                {item.change}
-                                            </span>
-                                    </td>
-                                    <td>{item.lowestMarket}</td>
-                                    <td>{item.updated}</td>
-                                    <td className={styles.actions}>...</td>
+                    <div className={styles.tableCard}>
+                        {loading ? (
+                            <p>Loading prices...</p>
+                        ) : (
+                            <table className={styles.table}>
+                                <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Store</th>
+                                    <th>Current Price</th>
+                                    <th>Discount</th>
+                                    <th>Lowest Market</th>
+                                    <th>City</th>
+                                    <th>Updated</th>
+                                    <th>Actions</th>
                                 </tr>
-                            ))}
-                            </tbody>
-                        </table>
+                                </thead>
+
+                                <tbody>
+                                {prices.map((item) => {
+                                    const current = Number(item.finalPrice ?? item.pricePerUnit ?? 0);
+                                    const lowest = lowestByProduct[item.productId];
+                                    const isLowest = lowest && current === lowest;
+
+                                    return (
+                                        <tr key={item.id}>
+                                            <td>{products[item.productId]?.title ?? item.productId}</td>
+                                            <td>{stores[item.storeId]?.title ?? item.storeId}</td>
+                                            <td>{formatPrice(current)}</td>
+                                            <td>
+                                                    <span
+                                                        className={`${styles.change} ${
+                                                            Number(item.discount) > 0
+                                                                ? styles.down
+                                                                : styles.neutral
+                                                        }`}
+                                                    >
+                                                        {item.discount ? `${item.discount}%` : '0%'}
+                                                    </span>
+                                            </td>
+                                            <td>{isLowest ? 'Best' : formatPrice(lowest)}</td>
+                                            <td>{item.city || '-'}</td>
+                                            <td>
+                                                {item.updatedAt
+                                                    ? new Date(item.updatedAt).toLocaleString('ru-RU')
+                                                    : '-'}
+                                            </td>
+                                            <td className={styles.actions}>...</td>
+                                        </tr>
+                                    );
+                                })}
+                                </tbody>
+                            </table>
+                        )}
 
                         <div className={styles.pagination}>
-                            <span>Showing 8 of 8 stores</span>
-
-                            <div>
-                                <button type="button">Previous</button>
-                                <button type="button">Next</button>
-                            </div>
+                            <span>Showing {prices.length} prices</span>
                         </div>
                     </div>
                 </section>

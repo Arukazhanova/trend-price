@@ -5,12 +5,22 @@
     border-right: 1px solid #d9e1e1;
     padding: 34px 32px;
     flex-shrink: 0;
+    transition:
+            width 0.25s ease,
+            padding 0.25s ease,
+            box-shadow 0.25s ease;
+    overflow: hidden;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    z-index: 30;
 }
 
 .top {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
     margin-bottom: 34px;
 }
 
@@ -19,6 +29,8 @@
     font-size: 22px;
     font-weight: 700;
     color: #0f172a;
+    white-space: nowrap;
+    transition: opacity 0.2s ease, width 0.2s ease;
 }
 
 .logo span {
@@ -26,10 +38,21 @@
 }
 
 .menuButton {
+    width: 36px;
+    height: 36px;
     border: none;
+    border-radius: 10px;
     background: transparent;
     padding: 0;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.menuButton:hover {
+    background: #f1f5f2;
 }
 
 .menuButton img {
@@ -45,6 +68,7 @@
 
 .menuItem,
 .logout {
+    width: 100%;
     height: 36px;
     display: flex;
     align-items: center;
@@ -57,6 +81,13 @@
     font-size: 15px;
     text-decoration: none;
     cursor: pointer;
+    box-sizing: border-box;
+    white-space: nowrap;
+    transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            justify-content 0.2s ease,
+            padding 0.2s ease;
 }
 
 .menuItem img,
@@ -66,12 +97,243 @@
     flex-shrink: 0;
 }
 
+.menuItem span,
+.logout span {
+    transition: opacity 0.18s ease;
+}
+
 .active {
     background: #d4fae8;
+    color: #009966;
+}
+
+.menuItem:hover {
+    background: #eefaf5;
     color: #009966;
 }
 
 .logout {
     color: #ff3030;
     margin-top: 8px;
+}
+
+.logout:hover {
+    background: #fff1f1;
+}
+
+.collapsed {
+    width: 86px;
+    padding: 34px 20px;
+}
+
+.collapsed .top {
+    justify-content: center;
+}
+
+.collapsed .logo {
+    width: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.collapsed .menuItem,
+.collapsed .logout {
+    justify-content: center;
+    padding: 0;
+}
+
+.collapsed .menuItem span,
+.collapsed .logout span {
+    display: none;
+}
+
+.collapsed .menuButton {
+    background: #f1f5f2;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 250px;
+        padding: 24px 20px;
+    }
+
+    .collapsed {
+        width: 76px;
+        padding: 24px 14px;
+    }
+
+    .logo {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: 100vh;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 40;
+    }
+
+    .expanded {
+        width: min(280px, 82vw);
+        padding: 24px 20px;
+        box-shadow: 18px 0 40px rgba(15, 23, 42, 0.16);
+    }
+
+    .collapsed {
+        width: 70px;
+        padding: 24px 10px;
+    }
+
+    .menuItem,
+    .logout {
+        height: 42px;
+        border-radius: 12px;
+    }
+
+    .menuItem img,
+    .logout img {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+@media (max-width: 420px) {
+    .expanded {
+        width: min(260px, 84vw);
+    }
+
+    .collapsed {
+        width: 64px;
+        padding: 20px 8px;
+    }
+
+    .menuButton {
+        width: 34px;
+        height: 34px;
+    }
+
+    .menuItem,
+    .logout {
+        height: 40px;
+    }
+}
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+        height: 100vh;
+        min-height: 100vh;
+        background: #ffffff;
+        border-right: 1px solid #e5ecea;
+        box-shadow: 6px 0 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .collapsed {
+        width: 56px;
+        padding: 14px 8px;
+    }
+
+    .expanded {
+        width: min(280px, 86vw);
+        padding: 18px 16px;
+        box-shadow: 18px 0 50px rgba(15, 23, 42, 0.22);
+    }
+
+    .top {
+        margin-bottom: 22px;
+    }
+
+    .collapsed .top {
+        justify-content: center;
+    }
+
+    .expanded .top {
+        justify-content: space-between;
+    }
+
+    .logo {
+        font-size: 21px;
+    }
+
+    .collapsed .logo {
+        display: none;
+    }
+
+    .menu {
+        gap: 10px;
+    }
+
+    .menuButton {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: #f1f5f2;
+    }
+
+    .menuButton img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .menuItem,
+    .logout {
+        height: 40px;
+        border-radius: 12px;
+        padding: 0 12px;
+        font-size: 14px;
+    }
+
+    .collapsed .menuItem,
+    .collapsed .logout {
+        width: 40px;
+        padding: 0;
+        justify-content: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .collapsed .menuItem span,
+    .collapsed .logout span {
+        display: none;
+    }
+
+    .menuItem img,
+    .logout img {
+        width: 19px;
+        height: 19px;
+    }
+
+    .active {
+        background: #d7fae8;
+        color: #009966;
+    }
+}
+
+@media (max-width: 480px) {
+    .collapsed {
+        width: 52px;
+        padding: 12px 6px;
+    }
+
+    .expanded {
+        width: min(260px, 88vw);
+    }
+
+    .collapsed .menuItem,
+    .collapsed .logout {
+        width: 38px;
+        height: 38px;
+    }
+
+    .menuButton {
+        width: 36px;
+        height: 36px;
+    }
 }

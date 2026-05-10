@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import styles from './MainHeader.module.css';
 
-import favouritesIcon from '../../assets/Heart.svg';
+import favouritesIcon from '../../assets/heart.svg';
 import compareIcon from '../../assets/compare-icon 1.svg';
 import purchaseIcon from '../../assets/ShoppingCartSimple.svg';
 import userCircleIcon from '../../assets/UserCircle.svg';

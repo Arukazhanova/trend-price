@@ -10,7 +10,7 @@ import styles from './CatalogPage.module.css';
 import { useCart } from '../../cart/useCart';
 import { useFavourites } from '../../favourites/useFavourites';
 
-import heartIcon from '../../assets/Heart.svg';
+import heartIcon from '../../assets/heart.svg';
 import searchIcon from '../../assets/Search.svg';
 import analyticsIcon from '../../assets/ChartLine.svg';
 import filterIcon from '../../assets/FadersHorizontal.svg';
