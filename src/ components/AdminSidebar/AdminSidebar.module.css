@@ -337,3 +337,15 @@
         height: 36px;
     }
 }
+.menuItem img {
+    transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.menuItem.active img,
+.active img {
+    filter: brightness(0) saturate(100%) invert(39%) sepia(96%) saturate(946%) hue-rotate(126deg) brightness(91%) contrast(101%);
+}
+
+.menuItem:hover img {
+    filter: brightness(0) saturate(100%) invert(39%) sepia(96%) saturate(946%) hue-rotate(126deg) brightness(91%) contrast(101%);
+}

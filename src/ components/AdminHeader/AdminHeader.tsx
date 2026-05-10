@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import styles from './AdminHeader.module.css';
@@ -46,65 +46,15 @@ export default function AdminHeader() {
     const navigate = useNavigate();
     const { user } = useAuth();
 
-    const [searchValue, setSearchValue] = useState('');
-
     const displayName = useMemo(() => getDisplayName(user), [user]);
     const initials = useMemo(() => getInitials(user), [user]);
 
-    const handleSearch = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        const query = searchValue.trim();
-
-        if (!query) {
-            navigate('/catalog');
-            return;
-        }
-
-        navigate(`/catalog?search=${encodeURIComponent(query)}`);
-    };
-
     return (
         <header className={styles.header}>
-            <form className={styles.searchBlock} onSubmit={handleSearch}>
-                <div className={styles.searchInputWrap}>
-                    <svg
-                        className={styles.searchIcon}
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                    >
-                        <circle
-                            cx="9"
-                            cy="9"
-                            r="5.75"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                        />
-                        <path
-                            d="M13.5 13.5L16.75 16.75"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                        />
-                    </svg>
-
-                    <input
-                        type="text"
-                        className={styles.searchInput}
-                        placeholder="I want to find"
-                        value={searchValue}
-                        onChange={(event) => setSearchValue(event.target.value)}
-                    />
-                </div>
-
-                <button type="submit" className={styles.searchButton}>
-                    Search
-                </button>
-            </form>
+            <div />
 
             <div className={styles.rightSide}>
+
                 <button
                     type="button"
                     className={styles.profile}

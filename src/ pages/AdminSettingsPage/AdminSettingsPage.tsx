@@ -49,76 +49,9 @@ export default function AdminSettingsPage() {
                     </div>
 
                     <div className={styles.card}>
-                        <h2>Available Backend Modules</h2>
-                        <p className={styles.cardSubtitle}>
-                            These modules are connected to real API endpoints.
-                        </p>
-
-                        <div className={styles.settingRow}>
-                            <div>
-                                <h4>Authentication</h4>
-                                <p>Login, register, logout, refresh token, email verification</p>
-                            </div>
-
-                            <label className={styles.switch}>
-                                <input type="checkbox" checked readOnly />
-                                <span />
-                            </label>
-                        </div>
-
-                        <div className={styles.settingRow}>
-                            <div>
-                                <h4>Admin Users</h4>
-                                <p>Users list, block, unblock, role changing</p>
-                            </div>
-
-                            <label className={styles.switch}>
-                                <input type="checkbox" checked readOnly />
-                                <span />
-                            </label>
-                        </div>
-
-                        <div className={styles.settingRow}>
-                            <div>
-                                <h4>Products and Categories</h4>
-                                <p>Products, brands, categories, product search</p>
-                            </div>
-
-                            <label className={styles.switch}>
-                                <input type="checkbox" checked readOnly />
-                                <span />
-                            </label>
-                        </div>
-
-                        <div className={styles.settingRow}>
-                            <div>
-                                <h4>Prices</h4>
-                                <p>Price listings, best price, price history by product</p>
-                            </div>
-
-                            <label className={styles.switch}>
-                                <input type="checkbox" checked readOnly />
-                                <span />
-                            </label>
-                        </div>
-
-                        <div className={styles.settingRow}>
-                            <div>
-                                <h4>Promotions</h4>
-                                <p>Disabled because promotions API endpoint is not provided</p>
-                            </div>
-
-                            <label className={styles.switch}>
-                                <input type="checkbox" readOnly />
-                                <span />
-                            </label>
-                        </div>
-                    </div>
-
-                    <div className={styles.card}>
                         <h2>Password Policy</h2>
                         <p className={styles.cardSubtitle}>
-                            Based on auth API validation rules.
+                            Basic password validation used by authentication endpoints.
                         </p>
 
                         <div className={styles.formGrid}>
@@ -130,18 +63,6 @@ export default function AdminSettingsPage() {
                             <label>
                                 <span>Change password minimum length</span>
                                 <input value="6 characters" readOnly />
-                            </label>
-                        </div>
-
-                        <div className={styles.settingRow}>
-                            <div>
-                                <h4>Require uppercase, lowercase and digit</h4>
-                                <p>Required for registration and password reset</p>
-                            </div>
-
-                            <label className={styles.switch}>
-                                <input type="checkbox" checked readOnly />
-                                <span />
                             </label>
                         </div>
                     </div>

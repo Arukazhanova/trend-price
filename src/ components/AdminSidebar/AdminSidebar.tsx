@@ -3,12 +3,12 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import styles from './AdminSidebar.module.css';
 
-import dashboardIcon from '../../assets/SquaresFour.svg';
-import storesIcon from '../../assets/Storefront.svg';
+import dashboardIcon from '../../assets/SquaresFourGrey.svg';
+import storesIcon from '../../assets/StorefrontGrey.svg';
 import productsIcon from '../../assets/Package.svg';
 import priceIcon from '../../assets/CurrencyDollar.svg';
 import categoriesIcon from '../../assets/Categories.svg';
-import usersIcon from '../../assets/Users-green.svg';
+import usersIcon from '../../assets/UsersGrey.svg';
 import settingsIcon from '../../assets/Gear.svg';
 import logoutIcon from '../../assets/SignOut-Red.svg';
 import menuIcon from '../../assets/List.svg';

@@ -4,6 +4,10 @@ import AdminHeader from '../../ components/AdminHeader/AdminHeader';
 import { productService } from '../../services/productService';
 import type { Category, Product } from '../../types/api';
 import styles from './AdminCategoriesPage.module.css';
+import totalCategoriesIcon from '../../assets/diagram (1) 1.svg';
+import totalProductsIcon from '../../assets/StorefrontGreen.svg';
+import averageIcon from '../../assets/StorefrontGreen.svg';
+
 
 const colors = ['pink', 'blue', 'orange', 'yellow', 'green', 'mint', 'purple'];
 
@@ -49,11 +53,20 @@ export default function AdminCategoriesPage() {
     }, [products]);
 
     const stats = [
-        { title: 'Total categories', value: String(categories.length) },
-        { title: 'Total Products', value: String(products.length) },
+        {
+            title: 'Total categories',
+            value: String(categories.length),
+            icon: totalCategoriesIcon,
+        },
+        {
+            title: 'Total Products',
+            value: String(products.length),
+            icon: totalProductsIcon,
+        },
         {
             title: 'Avg Products/Category',
             value: categories.length ? String(Math.round(products.length / categories.length)) : '0',
+            icon: averageIcon,
         },
     ];
 
@@ -77,7 +90,9 @@ export default function AdminCategoriesPage() {
                     <div className={styles.statsGrid}>
                         {stats.map((item) => (
                             <div key={item.title} className={styles.statCard}>
-                                <div className={styles.statIcon} />
+                                <div className={styles.statIcon}>
+                                    <img src={item.icon} alt="" />
+                                </div>
                                 <div>
                                     <p>{item.title}</p>
                                     <h3>{item.value}</h3>

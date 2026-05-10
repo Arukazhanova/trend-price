@@ -147,3 +147,400 @@
 .purple {
     background: #f6dcff;
 }
+/* ===== Categories responsive ===== */
+
+@media (max-width: 1280px) {
+    .pageContent {
+        padding: 26px 28px 42px;
+    }
+
+    .statsGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .categoriesGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .titleRow h1 {
+        font-size: 28px;
+    }
+
+    .titleRow p {
+        font-size: 16px;
+    }
+
+    .statsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .categoriesGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .adminPage {
+        display: block;
+    }
+
+    .content {
+        width: 100%;
+        min-width: 0;
+        padding-left: 64px;
+        box-sizing: border-box;
+    }
+
+    .pageContent {
+        padding: 16px 10px 28px;
+    }
+
+    .titleRow {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .titleRow h1 {
+        font-size: 23px;
+        line-height: 1.2;
+    }
+
+    .titleRow p {
+        font-size: 13px;
+        line-height: 1.35;
+        margin-top: 4px;
+    }
+
+    .statsGrid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+        margin-bottom: 14px;
+    }
+
+    .statCard {
+        min-height: 74px;
+        padding: 8px 5px;
+        border-radius: 12px;
+        gap: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .statIcon {
+        width: 24px;
+        height: 24px;
+        font-size: 9px;
+    }
+
+    .statCard p {
+        margin: 0;
+        font-size: 8px;
+        line-height: 1.15;
+        text-align: center;
+        white-space: normal;
+    }
+
+    .statCard h3 {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.1;
+        text-align: center;
+    }
+
+    .categoriesGrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .categoryCard {
+        min-height: 108px;
+        padding: 14px 12px;
+        border-radius: 16px;
+        box-sizing: border-box;
+    }
+
+    .categoryCard h3 {
+        font-size: 15px;
+        line-height: 1.25;
+        margin-bottom: 8px;
+        overflow-wrap: anywhere;
+    }
+
+    .categoryCard p {
+        font-size: 12px;
+        line-height: 1.3;
+    }
+}
+
+@media (max-width: 520px) {
+    .content {
+        padding-left: 56px;
+    }
+
+    .pageContent {
+        padding: 12px 8px 24px;
+    }
+
+    .titleRow h1 {
+        font-size: 21px;
+    }
+
+    .statsGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .statCard {
+        min-height: 70px;
+        padding: 7px 4px;
+    }
+
+    .statIcon {
+        width: 22px;
+        height: 22px;
+        font-size: 8px;
+    }
+
+    .statCard p {
+        font-size: 7px;
+    }
+
+    .statCard h3 {
+        font-size: 13px;
+    }
+
+    .categoriesGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .categoryCard {
+        min-height: 100px;
+        padding: 12px 10px;
+        border-radius: 14px;
+    }
+
+    .categoryCard h3 {
+        font-size: 13px;
+    }
+
+    .categoryCard p {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 380px) {
+    .content {
+        padding-left: 52px;
+    }
+
+    .pageContent {
+        padding: 10px 6px 20px;
+    }
+
+    .statsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    .statCard {
+        min-height: 70px;
+    }
+
+    .categoriesGrid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .categoryCard {
+        min-height: 92px;
+    }
+}
+/* ===== Categories mobile final fix ===== */
+
+@media (max-width: 768px) {
+    .categoriesGrid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .categoryCard {
+        min-height: 92px;
+        padding: 16px 14px;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .categoryCard h3 {
+        margin: 0 0 8px;
+        font-size: 17px;
+        line-height: 1.25;
+        font-weight: 600;
+        color: #111827;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .categoryCard p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.3;
+        color: #4b5563;
+    }
+
+    .statsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .statCard {
+        min-height: 96px;
+        padding: 12px 10px;
+        border-radius: 14px;
+    }
+
+    .statCard p {
+        font-size: 10px;
+    }
+
+    .statCard h3 {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 520px) {
+    .categoriesGrid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+    }
+
+    .categoryCard {
+        min-height: 88px;
+        padding: 15px 13px;
+        border-radius: 15px;
+    }
+
+    .categoryCard h3 {
+        font-size: 16px;
+    }
+
+    .categoryCard p {
+        font-size: 13px;
+    }
+
+    .statsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+}
+
+@media (max-width: 380px) {
+    .categoryCard {
+        min-height: 82px;
+        padding: 13px 12px;
+    }
+
+    .categoryCard h3 {
+        font-size: 15px;
+    }
+
+    .categoryCard p {
+        font-size: 12px;
+    }
+}
+.statIcon img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .statIcon img {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+@media (max-width: 520px) {
+    .statIcon img {
+        width: 13px;
+        height: 13px;
+    }
+}
+/* ===== Categories stat icons alignment final ===== */
+
+.statCard {
+    display: flex;
+    align-items: center;
+}
+
+.statIcon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 50%;
+    background: #d9fff0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.statIcon img {
+    width: 22px;
+    height: 22px;
+    display: block;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .statCard {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .statIcon {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+    }
+
+    .statIcon img {
+        width: 17px;
+        height: 17px;
+    }
+}
+
+@media (max-width: 520px) {
+    .statIcon {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+    }
+
+    .statIcon img {
+        width: 16px;
+        height: 16px;
+    }
+}
