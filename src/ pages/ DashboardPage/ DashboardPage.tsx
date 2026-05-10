@@ -84,10 +84,7 @@ const readReceiptsFromStorage = (): SavedReceipt[] => {
 export default function DashboardPage() {
     const { user, updateProfile } = useAuth();
 
-    const fullName =
-        `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() ||
-        user?.username ||
-        'User';
+
 
     const firstName = user?.firstName ?? user?.username ?? '';
 
@@ -98,7 +95,6 @@ export default function DashboardPage() {
         getUserIdFromToken();
 
     const email = user?.email ?? '';
-    const role = user?.roles?.length ? user.roles.join(', ') : 'Customer';
 
     const [isEditing, setIsEditing] = useState(false);
 

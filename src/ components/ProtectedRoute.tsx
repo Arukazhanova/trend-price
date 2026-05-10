@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
 type ProtectedRouteProps = {
-    children: JSX.Element;
+    children: ReactNode;
     requireAdmin?: boolean;
 };
 
@@ -32,5 +33,5 @@ export default function ProtectedRoute({
         return <Navigate to="/dashboard" replace />;
     }
 
-    return children;
+    return <>{children}</>;
 }
