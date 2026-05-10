@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../auth/AuthContext';
@@ -8,17 +10,19 @@ import styles from '../../ pages/ DashboardPage/DashboardPage.module.css';
 
 import profileMenuIcon from '../../assets/UserCircleGrey.svg';
 import receiptIcon from '../../assets/Package.svg';
-import notificationIcon from '../../assets/BellRinging.svg';
 import settingsIcon from '../../assets/Gear.svg';
 import signOutIcon from '../../assets/SignOut.svg';
 import arrowRightIcon from '../../assets/CaretRight.svg';
 
+type AccountPage = 'profile' | 'receipts' | 'settings';
+
 type AccountSidebarProps = {
-    activePage: 'profile' | 'receipts' | 'notifications' | 'settings';
+    activePage: AccountPage;
     orderCount?: number;
     savedCount?: number;
     receiptsCount?: number;
     productsCount?: number;
+    mobileContents?: Partial<Record<AccountPage, ReactNode>>;
 };
 
 export default function AccountSidebar({
@@ -27,9 +31,29 @@ export default function AccountSidebar({
                                            savedCount = 2,
                                            receiptsCount,
                                            productsCount,
+                                           mobileContents,
                                        }: AccountSidebarProps) {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+
+    const [isMobile, setIsMobile] = useState(false);
+    const [openedMobilePages, setOpenedMobilePages] = useState<AccountPage[]>([]);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 900px)');
+
+        const handleChange = () => {
+            setIsMobile(mediaQuery.matches);
+        };
+
+        handleChange();
+
+        mediaQuery.addEventListener('change', handleChange);
+
+        return () => {
+            mediaQuery.removeEventListener('change', handleChange);
+        };
+    }, []);
 
     const firstName = user?.firstName ?? user?.username ?? '';
 
@@ -57,6 +81,50 @@ export default function AccountSidebar({
     const secondStatValue = productsCount ?? savedCount;
     const secondStatLabel = productsCount !== undefined ? 'Products' : 'Saved';
 
+    const handleMenuClick = (
+        event: React.MouseEvent<HTMLAnchorElement>,
+        page: AccountPage
+    ) => {
+        const hasMobileContent = Boolean(mobileContents?.[page]);
+
+        if (!isMobile || !hasMobileContent) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        setOpenedMobilePages((current) => {
+            if (current.includes(page)) {
+                return current.filter((item) => item !== page);
+            }
+
+            return [...current, page];
+        });
+    };
+
+    const getMenuItemClassName = (page: AccountPage) => {
+        const isOpened = openedMobilePages.includes(page);
+
+        return `${styles.menuItem} ${activePage === page ? styles.activeItem : ''} ${
+            isOpened ? styles.openedMobileItem : ''
+        }`;
+    };
+
+    const renderMobileContent = (page: AccountPage) => {
+        const content = mobileContents?.[page];
+
+        if (!isMobile || !openedMobilePages.includes(page) || !content) {
+            return null;
+        }
+
+        return (
+            <div className={styles.mobileAccordionContent}>
+                {content}
+            </div>
+        );
+    };
+
     return (
         <aside className={styles.sidebar}>
             <div className={styles.profileTop}>
@@ -83,9 +151,8 @@ export default function AccountSidebar({
             <nav className={styles.menu}>
                 <Link
                     to="/dashboard"
-                    className={`${styles.menuItem} ${
-                        activePage === 'profile' ? styles.activeItem : ''
-                    }`}
+                    onClick={(event) => handleMenuClick(event, 'profile')}
+                    className={getMenuItemClassName('profile')}
                 >
                     <img src={profileMenuIcon} alt="" />
                     <span>Profile</span>
@@ -96,11 +163,12 @@ export default function AccountSidebar({
                     />
                 </Link>
 
+                {renderMobileContent('profile')}
+
                 <Link
                     to="/receipts"
-                    className={`${styles.menuItem} ${
-                        activePage === 'receipts' ? styles.activeItem : ''
-                    }`}
+                    onClick={(event) => handleMenuClick(event, 'receipts')}
+                    className={getMenuItemClassName('receipts')}
                 >
                     <img src={receiptIcon} alt="" />
                     <span>My receipts</span>
@@ -111,26 +179,12 @@ export default function AccountSidebar({
                     />
                 </Link>
 
-                <Link
-                    to="/notifications"
-                    className={`${styles.menuItem} ${
-                        activePage === 'notifications' ? styles.activeItem : ''
-                    }`}
-                >
-                    <img src={notificationIcon} alt="" />
-                    <span>Notifications</span>
-                    <img
-                        src={arrowRightIcon}
-                        alt=""
-                        className={styles.arrowIcon}
-                    />
-                </Link>
+                {renderMobileContent('receipts')}
 
                 <Link
                     to="/settings"
-                    className={`${styles.menuItem} ${
-                        activePage === 'settings' ? styles.activeItem : ''
-                    }`}
+                    onClick={(event) => handleMenuClick(event, 'settings')}
+                    className={getMenuItemClassName('settings')}
                 >
                     <img src={settingsIcon} alt="" />
                     <span>Settings</span>
@@ -140,6 +194,8 @@ export default function AccountSidebar({
                         className={styles.arrowIcon}
                     />
                 </Link>
+
+                {renderMobileContent('settings')}
 
                 <button
                     type="button"

@@ -9,6 +9,7 @@ import styles from '../ DashboardPage/DashboardPage.module.css';
 import arrowLeftIcon from '../../assets/ArrowLeft.svg';
 import receiptIcon from '../../assets/Package.svg';
 import filterIcon from '../../assets/Funnel.svg';
+import Footer from "../../ components/Footer/Footer.tsx";
 
 type ReceiptItem = {
     id: string;
@@ -286,6 +287,7 @@ export default function ReceiptsPage() {
                     </div>
                 </div>
             </main>
+            <Footer/>
         </>
     );
 }

@@ -10,6 +10,7 @@ interface UserAvatarUploadProps {
     size?: 'small' | 'large';
     showPreview?: boolean;
     disabled?: boolean;
+    refreshKey?: number;
 }
 
 export default function UserAvatarUpload({
@@ -18,6 +19,7 @@ export default function UserAvatarUpload({
                                              size = 'small',
                                              showPreview = true,
                                              disabled = false,
+                                             refreshKey,
                                          }: UserAvatarUploadProps) {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -36,7 +38,12 @@ export default function UserAvatarUpload({
     useEffect(() => {
         setIsImageError(false);
         setImageVersion(Date.now());
-    }, [normalizedUserId]);
+    }, [normalizedUserId, refreshKey]);
+
+    const refreshAvatar = () => {
+        setIsImageError(false);
+        setImageVersion(Date.now());
+    };
 
     const openFilePicker = () => {
         if (!normalizedUserId || isUploading || disabled) {
@@ -62,8 +69,8 @@ export default function UserAvatarUpload({
 
         try {
             await imageService.uploadUserImage(normalizedUserId, file);
-            setIsImageError(false);
-            setImageVersion(Date.now());
+
+            refreshAvatar();
         } catch (error) {
             console.log('USER AVATAR UPLOAD ERROR:', error);
         } finally {
@@ -81,6 +88,7 @@ export default function UserAvatarUpload({
 
         try {
             await imageService.deleteUserImage(normalizedUserId);
+
             setIsImageError(true);
             setImageVersion(Date.now());
         } catch (error) {
@@ -102,7 +110,9 @@ export default function UserAvatarUpload({
                 <button
                     type="button"
                     className={`${styles.avatar} ${
-                        size === 'large' ? styles.avatarLarge : styles.avatarSmall
+                        size === 'large'
+                            ? styles.avatarLarge
+                            : styles.avatarSmall
                     }`}
                     onClick={openFilePicker}
                     disabled={!normalizedUserId || isUploading || disabled}

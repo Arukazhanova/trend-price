@@ -840,6 +840,7 @@
 
     .savedActions {
         width: 100%;
+        display: flex;
         flex-direction: column;
     }
 
@@ -847,6 +848,7 @@
     .secondaryButton {
         width: 100%;
         justify-content: center;
+        font-size: 18px;
     }
 }
 
@@ -901,5 +903,42 @@
     .receiptRow span:nth-child(3),
     .receiptRow span:nth-child(4) {
         grid-column: 1 / -1;
+    }
+}
+/* SAVED RECEIPT ACTIONS FIX */
+
+.savedActions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.savedActions .button {
+    min-width: 202px;
+    justify-content: center;
+}
+
+.secondaryButton {
+    color: #111827;
+    text-decoration: underline;
+    font-family: "Museo Sans Cyrl", sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1;
+    text-decoration: none;
+}
+
+@media (max-width: 560px) {
+    .savedActions {
+        width: 100%;
+    }
+
+    .savedActions .button,
+    .savedActions .secondaryButton {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        text-decoration: none;
     }
 }

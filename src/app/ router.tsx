@@ -11,7 +11,6 @@ import ProductPage from "../ pages/ProductPage/ProductPage.tsx";
 import PriceAnalyticsPage from "../ pages/PriceAnalyticsPage/PriceAnalyticsPage.tsx";
 import PurchasePage from "../ pages/PurchasePage/PurchasePage.tsx";
 import ReceiptsPage from "../ pages/ReceiptsPage/ReceiptsPage";
-import NotificationsPage from "../ pages/NotificationsPage/NotificationsPage";
 import SettingsPage from "../ pages/SettingsPage/SettingsPage";
 import AdminDashboardPage from "../ pages/AdminDashboardPage/AdminDashboardPage";
 import AdminStoresPage from "../ pages/AdminStoresPage/AdminStoresPage";
@@ -55,14 +54,7 @@ export default function AppRouter() {
                         </ProtectedRoute>
                     }
                 />
-                <Route
-                    path="/notifications"
-                    element={
-                        <ProtectedRoute>
-                            <NotificationsPage />
-                        </ProtectedRoute>
-                    }
-                />
+
                 <Route
                     path="/settings"
                     element={

@@ -2032,3 +2032,1328 @@
         min-height: 512px;
     }
 }
+/* MOBILE PROFILE/ACCOUNT ACCORDION */
+
+.desktopContent {
+    width: 100%;
+}
+
+.mobileAccordionContent {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .page {
+        padding: 18px 12px 40px;
+    }
+
+    .backLink {
+        margin-bottom: 16px;
+        font-size: 16px;
+    }
+
+    /* После Home убираем верхний блок с фото */
+    .hero {
+        display: none;
+    }
+
+    .layout {
+        display: block;
+    }
+
+    /* Правый блок на мобилке не показываем отдельно */
+    .desktopContent {
+        display: none;
+    }
+
+    /* Левый бок делаем одним полным рядом */
+    .sidebar {
+        width: 100%;
+        min-height: 0 !important;
+        border-radius: 20px;
+    }
+
+    .profileTop {
+        height: auto;
+        min-height: 96px;
+        padding: 18px;
+        display: grid;
+        grid-template-columns: 64px 1fr;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .profileTop > div:first-child,
+    .profileTop [class*='avatar'],
+    .profileTop img {
+        width: 64px;
+        height: 64px;
+    }
+
+    .profileTop h2 {
+        margin: 0 0 4px;
+        font-size: 22px;
+        line-height: 1.15;
+    }
+
+    .profileTop p {
+        font-size: 14px;
+    }
+
+    /* Order / Saved убираем в мобильной версии */
+    .stats {
+        display: none;
+    }
+
+    .menu {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .menuItem {
+        width: 100%;
+        min-height: 54px;
+        height: auto;
+        grid-template-columns: 28px 1fr 20px;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid #e3e7ee;
+        border-radius: 16px;
+        background: #ffffff;
+        font-size: 16px;
+    }
+
+    .menuItem span {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .menuItem img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .activeItem {
+        background: #d6f8e9;
+        border-color: #bcebd7;
+    }
+
+    .arrowIcon {
+        transition: transform 0.2s ease;
+    }
+
+    .openedMobileItem .arrowIcon {
+        transform: rotate(90deg);
+    }
+
+    /* Контент открывается снизу под Profile / Receipts */
+    .mobileAccordionContent {
+        display: block;
+        margin: -2px 0 6px;
+    }
+
+    .mobileAccordionContent .infoCard,
+    .mobileAccordionContent .receiptsCard,
+    .mobileAccordionContent .preferencesCard,
+    .mobileAccordionContent .settingsCard,
+    .mobileAccordionContent .securityCard,
+    .mobileAccordionContent .notificationsCard {
+        min-height: 0;
+        padding: 16px 12px;
+        border-radius: 16px;
+        border-color: #e3e7ee;
+    }
+
+    /* Фото внутри Personal Information тоже убираем на мобилке */
+    .mobileAccordionContent .photoSettings {
+        display: none;
+    }
+
+    .cardHeader,
+    .receiptsHeader,
+    .notificationsHeader,
+    .securityHeader {
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .cardHeader h2,
+    .receiptsHeader h2,
+    .notificationsHeader h2,
+    .securityHeader h2 {
+        font-size: 21px;
+    }
+
+    .cardHeader p,
+    .receiptsHeader p,
+    .notificationsHeader p,
+    .securityHeader p {
+        font-size: 13px;
+        line-height: 1.3;
+    }
+
+    .editButton,
+    .saveButton,
+    .cancelButton {
+        height: 34px;
+        padding: 0 12px;
+        font-size: 13px;
+    }
+
+    .editButton img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .formGrid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    .formGrid label,
+    .fullField,
+    .securityForm label {
+        gap: 7px;
+        font-size: 14px;
+    }
+
+    .fullField {
+        margin-bottom: 14px;
+    }
+
+    .infoCard input,
+    .securityForm input,
+    .settingsField select {
+        height: 44px;
+        padding: 0 16px;
+        font-size: 14px;
+    }
+
+    .fieldLabel img {
+        width: 20px;
+        height: 20px;
+    }
+}
+@media (max-width: 900px) {
+    /* ===== MOBILE ACCORDION TEXT SIZE FIX ===== */
+
+    .mobileAccordionContent .receiptsCard,
+    .mobileAccordionContent .preferencesCard,
+    .mobileAccordionContent .settingsCard,
+    .mobileAccordionContent .infoCard {
+        padding: 18px 16px;
+    }
+
+    .mobileAccordionContent .receiptsHeader h2,
+    .mobileAccordionContent .cardHeader h2 {
+        font-size: 22px;
+        line-height: 1.2;
+    }
+
+    .mobileAccordionContent .receiptsHeader p,
+    .mobileAccordionContent .cardHeader p,
+    .mobileAccordionContent .emptyReceipts p,
+    .mobileAccordionContent .preferenceText p {
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    .mobileAccordionContent .clearReceiptsButton,
+    .mobileAccordionContent .filterButton,
+    .mobileAccordionContent .saveSettingsButton,
+    .mobileAccordionContent .receiptsCatalogButton {
+        min-height: 44px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .mobileAccordionContent .receiptRow {
+        padding: 16px 18px;
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    .mobileAccordionContent .receiptRow span {
+        font-size: 16px;
+        line-height: 1.4;
+        font-weight: 600;
+    }
+
+    .mobileAccordionContent .receiptDetails {
+        padding: 14px 16px;
+    }
+
+    .mobileAccordionContent .receiptProductRow {
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+    .mobileAccordionContent .receiptProductRow span {
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+    .mobileAccordionContent .receiptDetailsFooter b,
+    .mobileAccordionContent .receiptDetailsFooter button {
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+    .mobileAccordionContent .emptyReceipts h3,
+    .mobileAccordionContent .preferenceText h3 {
+        font-size: 18px;
+        line-height: 1.3;
+    }
+
+    .mobileAccordionContent .settingsField span,
+    .mobileAccordionContent .settingsField select {
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    .mobileAccordionContent .menuItem span {
+        font-size: 16px;
+    }
+}
+/* SETTINGS PASSWORD PAGE */
+
+.securityMessage {
+    margin: -8px 0 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.securityMessageSuccess {
+    color: #009966;
+}
+
+.securityMessageError {
+    color: #e11d48;
+}
+
+.updatePasswordButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+    .mobileAccordionContent .securityCard {
+        padding: 18px 16px 22px;
+        border-radius: 18px;
+    }
+
+    .mobileAccordionContent .securityHeader {
+        margin-bottom: 22px;
+    }
+
+    .mobileAccordionContent .securityHeader h2 {
+        font-size: 22px;
+        line-height: 1.2;
+    }
+
+    .mobileAccordionContent .securityHeader p {
+        font-size: 16px;
+        line-height: 1.4;
+    }
+
+    .mobileAccordionContent .securityForm {
+        gap: 16px;
+    }
+
+    .mobileAccordionContent .securityForm label {
+        gap: 8px;
+        font-size: 16px;
+        line-height: 1.3;
+    }
+
+    .mobileAccordionContent .securityForm input {
+        height: 44px;
+        padding: 0 18px;
+        font-size: 15px;
+    }
+
+    .mobileAccordionContent .updatePasswordButton {
+        width: fit-content;
+        height: 44px;
+        margin-top: 10px;
+        padding: 0 22px;
+        border: none;
+        border-radius: 999px;
+        background: #009966;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .mobileAccordionContent .securityMessage {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+}
+.securityForm input[readonly] {
+    cursor: default;
+    background: #ffffff;
+    color: #8b94a7;
+}
+
+.passwordActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.cancelPasswordButton {
+    height: 44px;
+    padding: 0 22px;
+    border: 1px solid #d5dce8;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #111827;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cancelPasswordButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+    .mobileAccordionContent .passwordActions {
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .mobileAccordionContent .cancelPasswordButton {
+        height: 44px;
+        padding: 0 22px;
+        font-size: 15px;
+    }
+}
+/* PASSWORD BUTTONS ONE ROW FIX */
+
+.securityForm .passwordActions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    margin-top: 22px !important;
+}
+
+.securityForm .passwordActions button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 128px !important;
+    height: 44px !important;
+    padding: 0 24px !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+}
+
+.securityForm .updatePasswordButton {
+    border: none !important;
+    border-radius: 999px !important;
+    background: #009966 !important;
+    color: #ffffff !important;
+}
+
+.securityForm .cancelPasswordButton {
+    border: 1px solid #d5dce8 !important;
+    border-radius: 999px !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+@media (max-width: 900px) {
+    .mobileAccordionContent .securityForm .passwordActions {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    .mobileAccordionContent .securityForm .passwordActions button {
+        height: 40px !important;
+        min-width: 0 !important;
+        padding: 0 18px !important;
+        font-size: 14px !important;
+    }
+}
+@media (max-width: 900px) {
+    /* RECEIPTS BUTTONS LIKE EDIT BUTTON */
+
+    .mobileAccordionContent .receiptsActions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        margin-top: 14px;
+        flex-wrap: nowrap;
+    }
+
+    .mobileAccordionContent .clearReceiptsButton,
+    .mobileAccordionContent .filterButton {
+        width: fit-content !important;
+        min-width: 86px !important;
+        height: 38px !important;
+        padding: 0 16px !important;
+        border-radius: 999px !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        line-height: 1 !important;
+    }
+
+    .mobileAccordionContent .filterButton {
+        gap: 7px;
+    }
+
+    .mobileAccordionContent .filterButton img {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}
+/* FINAL MOBILE ACCOUNT FIX */
+
+@media (max-width: 900px) {
+    .layout {
+        display: block !important;
+        grid-template-columns: none !important;
+        gap: 0 !important;
+    }
+
+    .sidebar {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 20px !important;
+    }
+
+    .hero {
+        display: none !important;
+    }
+
+    .desktopContent {
+        display: none !important;
+    }
+
+    .profileTop {
+        min-height: 96px !important;
+        height: auto !important;
+        padding: 18px !important;
+        display: grid !important;
+        grid-template-columns: 64px 1fr !important;
+        align-items: center !important;
+        justify-content: initial !important;
+        text-align: left !important;
+        gap: 14px !important;
+    }
+
+    .profileTop h2 {
+        margin: 0 0 4px !important;
+        font-size: 22px !important;
+        line-height: 1.15 !important;
+    }
+
+    .profileTop p {
+        font-size: 14px !important;
+    }
+
+    .stats {
+        display: none !important;
+    }
+
+    .menu {
+        padding: 14px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .menuItem {
+        width: 100% !important;
+        min-height: 54px !important;
+        height: auto !important;
+        display: grid !important;
+        grid-template-columns: 28px 1fr 20px !important;
+        gap: 12px !important;
+        padding: 12px 14px !important;
+        border: 1px solid #e3e7ee !important;
+        border-radius: 16px !important;
+        background: #ffffff !important;
+        font-size: 16px !important;
+    }
+
+    .menuItem img {
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    .menuItem span {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+    }
+
+    .arrowIcon {
+        display: block !important;
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .activeItem {
+        background: #d6f8e9 !important;
+        border-color: #bcebd7 !important;
+    }
+
+    .openedMobileItem .arrowIcon {
+        transform: rotate(90deg);
+    }
+
+    .mobileAccordionContent {
+        display: block !important;
+        margin: -2px 0 6px !important;
+    }
+
+    .mobileAccordionContent .infoCard,
+    .mobileAccordionContent .receiptsCard,
+    .mobileAccordionContent .securityCard {
+        padding: 18px 16px 22px !important;
+        border-radius: 18px !important;
+    }
+
+    .mobileAccordionContent .settingsCard,
+    .mobileAccordionContent .settingsList,
+    .mobileAccordionContent .settingsField,
+    .mobileAccordionContent .saveSettingsButton {
+        display: none !important;
+    }
+
+    .mobileAccordionContent .securityHeader {
+        margin-bottom: 22px !important;
+    }
+
+    .mobileAccordionContent .securityHeader h2,
+    .mobileAccordionContent .cardHeader h2,
+    .mobileAccordionContent .receiptsHeader h2 {
+        font-size: 22px !important;
+        line-height: 1.2 !important;
+    }
+
+    .mobileAccordionContent .securityHeader p,
+    .mobileAccordionContent .cardHeader p,
+    .mobileAccordionContent .receiptsHeader p {
+        font-size: 16px !important;
+        line-height: 1.4 !important;
+    }
+
+    .mobileAccordionContent .securityForm {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+
+    .mobileAccordionContent .securityForm label {
+        font-size: 16px !important;
+        gap: 8px !important;
+    }
+
+    .mobileAccordionContent .securityForm input {
+        height: 44px !important;
+        padding: 0 18px !important;
+        border-radius: 999px !important;
+        font-size: 15px !important;
+    }
+
+    .mobileAccordionContent .passwordActions {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 10px !important;
+        margin-top: 12px !important;
+    }
+
+    .mobileAccordionContent .passwordActions button {
+        width: auto !important;
+        min-width: 0 !important;
+        height: 40px !important;
+        margin: 0 !important;
+        padding: 0 18px !important;
+        border-radius: 999px !important;
+        font-size: 14px !important;
+        white-space: nowrap !important;
+    }
+}
+@media (max-width: 900px) {
+    .menuItem {
+        position: relative !important;
+        z-index: 2 !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+
+    .menuItem * {
+        pointer-events: none !important;
+    }
+
+    .mobileAccordionContent {
+        position: relative !important;
+        z-index: 1 !important;
+    }
+
+    .mobileAccordionContent * {
+        pointer-events: auto !important;
+    }
+}
+/* ACCOUNT HERO ICON */
+
+.accountHeroIcon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(125.24deg, #20c18b 4.35%, #1ed0d9 218.25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.accountHeroIcon img {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+@media (max-width: 900px) {
+    .accountHeroIcon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .accountHeroIcon img {
+        width: 38px;
+        height: 38px;
+    }
+}
+/* ===== RECEIPTS PAGE FINAL UI FIX ===== */
+
+.receiptsCard {
+    width: 100%;
+    min-height: auto;
+    padding: 32px 36px 34px;
+    border: 1px solid #dbe2ea;
+    border-radius: 28px;
+    background: #ffffff;
+}
+
+.receiptsHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.receiptsHeader h2 {
+    margin: 0 0 8px;
+    color: #0b1b3f;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.receiptsHeader p {
+    max-width: 380px;
+    margin: 0;
+    color: #98a2b3;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.receiptsActions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.clearReceiptsButton,
+.filterButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: auto;
+    min-width: 104px;
+    height: 44px;
+    padding: 0 22px;
+    border-radius: 999px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.clearReceiptsButton {
+    border: 1px solid #12b981;
+    background: #ffffff;
+    color: #12b981;
+}
+
+.filterButton {
+    border: 1px solid #b8c1d1;
+    background: #ffffff;
+    color: #4a5568;
+}
+
+.filterButton img {
+    width: 18px;
+    height: 18px;
+}
+
+.receiptList {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.receiptItem {
+    width: 100%;
+}
+
+.receiptRow {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    gap: 16px;
+    padding: 0 26px;
+    min-height: 70px;
+    border: 1px solid #dbe2ea;
+    border-radius: 22px;
+    background: #ffffff;
+    text-align: left;
+    cursor: pointer;
+}
+
+.receiptRow span {
+    color: #3f3f46;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.receiptDetails {
+    margin-top: 10px;
+    padding: 18px 22px;
+    border: 1px solid #e6ebf2;
+    border-radius: 18px;
+    background: #fafbfd;
+}
+
+.receiptProductRow {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eef2f7;
+    color: #4b5563;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+.receiptProductRow:last-child {
+    border-bottom: none;
+}
+
+.receiptDetailsFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #eef2f7;
+}
+
+.receiptDetailsFooter b {
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.receiptDetailsFooter button {
+    border: none;
+    background: transparent;
+    color: #ef4444;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.emptyReceipts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px 24px;
+    text-align: center;
+}
+
+.emptyReceipts h3 {
+    margin: 14px 0 8px;
+    color: #0b1b3f;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.emptyReceipts p {
+    max-width: 360px;
+    margin: 0 0 18px;
+    color: #98a2b3;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+/* ===== TABLET ===== */
+@media (max-width: 1100px) {
+    .receiptsCard {
+        padding: 26px 24px 28px;
+    }
+
+    .receiptsHeader h2 {
+        font-size: 24px;
+    }
+
+    .receiptsHeader p {
+        font-size: 16px;
+    }
+
+    .receiptRow {
+        padding: 0 20px;
+        min-height: 64px;
+    }
+
+    .receiptRow span {
+        font-size: 16px;
+    }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 900px) {
+    .receiptsCard,
+    .mobileAccordionContent .receiptsCard {
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 20px 18px 22px !important;
+        border-radius: 22px !important;
+    }
+
+    .receiptsHeader,
+    .mobileAccordionContent .receiptsHeader {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+        gap: 12px !important;
+        margin-bottom: 18px !important;
+    }
+
+    .receiptsHeader h2,
+    .mobileAccordionContent .receiptsHeader h2 {
+        margin: 0 0 6px !important;
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        line-height: 1.15 !important;
+    }
+
+    .receiptsHeader p,
+    .mobileAccordionContent .receiptsHeader p {
+        max-width: 240px !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        line-height: 1.3 !important;
+        color: #98a2b3 !important;
+    }
+
+    .receiptsActions,
+    .mobileAccordionContent .receiptsActions {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 10px !important;
+        flex-shrink: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* как на втором фото — в мобилке можно оставить только Filter */
+    .clearReceiptsButton,
+    .mobileAccordionContent .clearReceiptsButton {
+        display: none !important;
+    }
+
+    .filterButton,
+    .mobileAccordionContent .filterButton {
+        min-width: 0 !important;
+        height: 36px !important;
+        padding: 0 14px !important;
+        border-radius: 14px !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        color: #4b5563 !important;
+        gap: 6px !important;
+    }
+
+    .filterButton img,
+    .mobileAccordionContent .filterButton img {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .receiptList,
+    .mobileAccordionContent .receiptList {
+        gap: 14px !important;
+    }
+
+    .receiptRow,
+    .mobileAccordionContent .receiptRow {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
+        align-items: center !important;
+        gap: 10px !important;
+        min-height: 82px !important;
+        padding: 0 16px !important;
+        border-radius: 22px !important;
+        text-align: left !important;
+    }
+
+    .receiptRow span,
+    .mobileAccordionContent .receiptRow span {
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        line-height: 1.25 !important;
+        color: #4a4a4a !important;
+        white-space: nowrap !important;
+    }
+
+    .receiptDetails,
+    .mobileAccordionContent .receiptDetails {
+        margin-top: 8px !important;
+        padding: 14px 16px !important;
+        border-radius: 16px !important;
+    }
+
+    .receiptProductRow,
+    .mobileAccordionContent .receiptProductRow {
+        grid-template-columns: 1fr auto auto !important;
+        font-size: 14px !important;
+        line-height: 1.35 !important;
+    }
+
+    .receiptDetailsFooter,
+    .mobileAccordionContent .receiptDetailsFooter {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+
+    .receiptDetailsFooter b,
+    .mobileAccordionContent .receiptDetailsFooter b {
+        font-size: 14px !important;
+    }
+
+    .receiptDetailsFooter button,
+    .mobileAccordionContent .receiptDetailsFooter button {
+        font-size: 13px !important;
+    }
+}
+/* FILTER BUTTON SAME AS EDIT */
+
+.filterButton {
+    height: 42px !important;
+    padding: 0 22px !important;
+    border: 1px solid #98a2b3 !important;
+    border-radius: 999px !important;
+    background: #ffffff !important;
+    color: #444444 !important;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    line-height: 1 !important;
+}
+
+.filterButton img {
+    width: 28px !important;
+    height: 28px !important;
+    object-fit: contain !important;
+}
+
+@media (max-width: 900px) {
+    .filterButton,
+    .mobileAccordionContent .filterButton {
+        width: fit-content !important;
+        min-width: 92px !important;
+        height: 34px !important;
+        padding: 0 14px !important;
+        border-radius: 999px !important;
+        font-size: 13px !important;
+        gap: 6px !important;
+    }
+
+    .filterButton img,
+    .mobileAccordionContent .filterButton img {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}
+/* MY RECEIPTS MOBILE IMAGE/CARD FIX */
+
+@media (max-width: 900px) {
+    .mobileAccordionContent .receiptsCard {
+        overflow: hidden !important;
+    }
+
+    .mobileAccordionContent .receiptList {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 14px !important;
+    }
+
+    .mobileAccordionContent .receiptItem {
+        width: 100% !important;
+        overflow: hidden !important;
+        border-radius: 18px !important;
+    }
+
+    .mobileAccordionContent .receiptDetails {
+        width: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .mobileAccordionContent .receiptProductRow {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr auto auto !important;
+        align-items: center !important;
+        gap: 8px !important;
+        box-sizing: border-box !important;
+    }
+
+    .mobileAccordionContent .receiptProductRow img,
+    .mobileAccordionContent .receiptDetails img,
+    .mobileAccordionContent .receiptItem img {
+        max-width: 64px !important;
+        width: 64px !important;
+        height: 64px !important;
+        object-fit: contain !important;
+        border-radius: 12px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .mobileAccordionContent .receiptProductRow span,
+    .mobileAccordionContent .receiptProductRow p,
+    .mobileAccordionContent .receiptProductRow h3 {
+        min-width: 0 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+}
+/* RECEIPTS MOBILE HEADER FIX */
+
+@media (max-width: 900px) {
+    .mobileAccordionContent .receiptsHeader,
+    .receiptsHeader {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 12px !important;
+        margin-bottom: 18px !important;
+    }
+
+    .mobileAccordionContent .receiptsHeader > div:first-child,
+    .receiptsHeader > div:first-child {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .mobileAccordionContent .receiptsHeader h2,
+    .receiptsHeader h2 {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 6px !important;
+        font-size: 22px !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+    }
+
+    .mobileAccordionContent .receiptsHeader p,
+    .receiptsHeader p {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        font-size: 15px !important;
+        line-height: 1.35 !important;
+        white-space: normal !important;
+    }
+
+    .mobileAccordionContent .receiptsActions,
+    .receiptsActions {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        gap: 10px !important;
+        margin-top: 2px !important;
+    }
+
+    .mobileAccordionContent .filterButton,
+    .filterButton {
+        width: fit-content !important;
+        min-width: 70px !important;
+        height: 10px !important;
+        padding: 0 10px !important;
+        border-radius: 999px !important;
+        font-size: 13px !important;
+    }
+
+    .mobileAccordionContent .clearReceiptsButton,
+    .clearReceiptsButton {
+        width: fit-content !important;
+        min-width: 70px !important;
+        height: 10px !important;
+        padding: 0 10px !important;
+        border-radius: 999px !important;
+        font-size: 13px !important;
+    }
+}
+/* FILTER = EDIT SIZE ON MOBILE */
+
+@media (max-width: 900px) {
+    .receiptsHeader .filterButton,
+    .mobileAccordionContent .receiptsHeader .filterButton {
+        width: fit-content !important;
+        min-width: 0 !important;
+        height: 30px !important;
+        padding: 0 10px !important;
+        border: 1px solid #98a2b3 !important;
+        border-radius: 999px !important;
+        background: #ffffff !important;
+        color: #444444 !important;
+        font-family: "Plus Jakarta Sans", sans-serif !important;
+        font-size: 15px !important;
+        font-weight: 400 !important;
+        line-height: 1 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+    }
+
+    .receiptsHeader .filterButton img,
+    .mobileAccordionContent .receiptsHeader .filterButton img {
+        width: 20px !important;
+        height: 20px !important;
+    }
+}
+
+@media (max-width: 430px) {
+    .receiptsHeader .filterButton,
+    .mobileAccordionContent .receiptsHeader .filterButton {
+        height: 25px !important;
+        padding: 0 10px !important;
+        font-size: 15px !important;
+    }
+
+    .receiptsHeader .filterButton img,
+    .mobileAccordionContent .receiptsHeader .filterButton img {
+        width: 15px !important;
+        height: 10px !important;
+    }
+}
+/* MOBILE FILTER EXACTLY LIKE EDIT */
+
+@media (max-width: 900px) {
+    .receiptsHeader .filterButton,
+    .mobileAccordionContent .receiptsHeader .filterButton {
+        width: fit-content !important;
+        min-width: 0 !important;
+        height: 30px !important;
+        padding: 0 10px !important;
+        border: 1px solid #98a2b3 !important;
+        border-radius: 999px !important;
+        background: #ffffff !important;
+        color: #444444 !important;
+        font-family: "Plus Jakarta Sans", sans-serif !important;
+        font-size: 11px !important;
+        font-weight: 400 !important;
+        line-height: 1 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        vertical-align: middle !important;
+    }
+
+    .receiptsHeader .filterButton img,
+    .mobileAccordionContent .receiptsHeader .filterButton img {
+        width: 14px !important;
+        height: 14px !important;
+        object-fit: contain !important;
+        flex-shrink: 0 !important;
+        display: block !important;
+        margin: 0 !important;
+    }
+
+    .receiptsHeader .filterButton span,
+    .mobileAccordionContent .receiptsHeader .filterButton span {
+        display: block !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+    }
+}
+
+@media (max-width: 430px) {
+    .receiptsHeader .filterButton,
+    .mobileAccordionContent .receiptsHeader .filterButton {
+        height: 30px !important;
+        padding: 0 15px !important;
+        font-size: 14px !important;
+        gap: 6px !important;
+    }
+
+    .receiptsHeader .filterButton img,
+    .mobileAccordionContent .receiptsHeader .filterButton img {
+        width: 15px !important;
+        height: 15px !important;
+    }
+}
