@@ -1,4 +1,5 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import FloatingAIButton from '../ components/FloatingAIButton/FloatingAIButton';
 import ProtectedRoute from '../ components/ProtectedRoute.tsx';
 import LoginPage from '../ pages/LoginPage/LoginPage.tsx';
 import RegisterPage from '../ pages/RegisterPage/ RegisterPage.tsx';
@@ -22,6 +23,24 @@ import AdminSettingsPage from '../ pages/AdminSettingsPage/AdminSettingsPage';
 import AdminProfilePage from '../ pages/AdminProfilePage/AdminProfilePage';
 import CatalogPage from '../ pages/CatalogPage/CatalogPage';
 
+function FloatingAIButtonVisibility() {
+    const location = useLocation();
+
+    const hiddenPaths = [
+        '/login',
+        '/register',
+        '/verify-email',
+    ];
+
+    const isAuthPage = hiddenPaths.includes(location.pathname);
+    const isAdminPage = location.pathname.startsWith('/admin');
+
+    if (isAuthPage || isAdminPage) {
+        return null;
+    }
+
+    return <FloatingAIButton />;
+}
 export default function AppRouter() {
     return (
         <BrowserRouter>
@@ -138,6 +157,7 @@ export default function AppRouter() {
 
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
+            <FloatingAIButtonVisibility />
         </BrowserRouter>
     );
 }
