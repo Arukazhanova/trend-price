@@ -2,6 +2,7 @@ import { createContext } from 'react';
 
 export type FavouriteProduct = {
     id: string;
+    priceId?: string;
     title: string;
     subtitle: string;
     price: string;

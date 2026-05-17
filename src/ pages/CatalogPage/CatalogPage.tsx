@@ -454,6 +454,7 @@ export default function CatalogPage() {
 
         addToCart({
             id: product.id,
+            priceId: product.bestPrice?.id,
             title: product.title,
             price: currentPrice,
             currency,
@@ -809,6 +810,7 @@ export default function CatalogPage() {
 
                                                     toggleFavourite({
                                                         id: product.id,
+                                                        priceId: bestPrice?.id,
                                                         title: product.title,
                                                         subtitle,
                                                         price: formatPrice(

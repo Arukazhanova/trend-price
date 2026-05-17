@@ -39,6 +39,7 @@ export default function FavouritesPage() {
     const getCartProduct = (product: (typeof favourites)[number]) => {
         return {
             id: product.id,
+            priceId: product.priceId,
             title: product.title,
             subtitle: product.subtitle,
             price: getNumericPrice(product.price),

@@ -108,3 +108,40 @@ export interface CatalogProductsPage {
     first: boolean;
     last: boolean;
 }
+export interface Purchase {
+    id?: ID;
+    productId: ID;
+    priceId?: ID;
+    priceValue: number;
+    purchaseDate?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface Receipt {
+    id?: ID;
+    purchases: Purchase[];
+    userId: number;
+    priceValue: number;
+    receiptDate?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface Like {
+    id: ID;
+    productId: ID;
+    userId: number;
+}
+
+export interface PageReceipt {
+    totalElements: number;
+    totalPages: number;
+    first: boolean;
+    last: boolean;
+    size: number;
+    content: Receipt[];
+    number: number;
+    numberOfElements: number;
+    empty: boolean;
+}

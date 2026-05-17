@@ -1,37 +1,21 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import MainHeader from '../../ components/MainHeader/MainHeader';
 import AccountSidebar from '../../ components/AccountSidebar/AccountSidebar';
+import Footer from '../../ components/Footer/Footer';
+
+import { useAuth } from '../../auth/AuthContext';
+import { purchaseService } from '../../services/purchaseService';
+import { productService } from '../../services/productService';
+
+import type { Receipt } from '../../types/api';
 
 import styles from '../ DashboardPage/DashboardPage.module.css';
 
 import arrowLeftIcon from '../../assets/ArrowLeft.svg';
 import receiptIcon from '../../assets/Package.svg';
 import filterIcon from '../../assets/Funnel.svg';
-import Footer from "../../ components/Footer/Footer.tsx";
-
-type ReceiptItem = {
-    id: string;
-    title: string;
-    price: number;
-    currency: string;
-    quantity: number;
-    subtitle?: string;
-    oldPrice?: number;
-    image?: string;
-};
-
-type SavedReceipt = {
-    id: string;
-    createdAt: string;
-    items: ReceiptItem[];
-    totalQuantity: number;
-    total: number;
-    currency: string;
-};
-
-const RECEIPTS_STORAGE_KEY = 'trend-price-receipts';
 
 const formatPrice = (value: number, currency = '₸') => {
     if (!value) {
@@ -41,7 +25,11 @@ const formatPrice = (value: number, currency = '₸') => {
     return `${Math.round(value)}${currency}`;
 };
 
-const formatDate = (value: string) => {
+const formatDate = (value?: string) => {
+    if (!value) {
+        return '—';
+    }
+
     const date = new Date(value);
 
     if (Number.isNaN(date.getTime())) {
@@ -51,55 +39,205 @@ const formatDate = (value: string) => {
     return date.toLocaleDateString('ru-RU');
 };
 
-const readReceiptsFromStorage = (): SavedReceipt[] => {
-    try {
-        const rawReceipts = localStorage.getItem(RECEIPTS_STORAGE_KEY);
-
-        if (!rawReceipts) {
-            return [];
-        }
-
-        const parsedReceipts = JSON.parse(rawReceipts);
-
-        if (!Array.isArray(parsedReceipts)) {
-            return [];
-        }
-
-        return parsedReceipts;
-    } catch (error) {
-        console.log('RECEIPTS READ ERROR:', error);
-        return [];
-    }
-};
-
 export default function ReceiptsPage() {
-    const [receipts, setReceipts] = useState<SavedReceipt[]>(
-        readReceiptsFromStorage
-    );
+    const { user } = useAuth();
+
+    const [receipts, setReceipts] = useState<Receipt[]>([]);
     const [openedReceiptId, setOpenedReceiptId] = useState<string | null>(null);
+    const [productTitles, setProductTitles] = useState<Record<string, string>>({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const userId = useMemo(() => {
+        const rawUserId =
+            user?.userId ?? user?.id ?? localStorage.getItem('userId');
+
+        const numericUserId = Number(rawUserId);
+
+        return Number.isFinite(numericUserId) && numericUserId > 0
+            ? numericUserId
+            : null;
+    }, [user?.id, user?.userId]);
+
+    useEffect(() => {
+        const fetchReceipts = async () => {
+            if (!userId) {
+                setReceipts([]);
+                setError('User is not found. Please login again.');
+                return;
+            }
+
+            setIsLoading(true);
+            setError('');
+
+            try {
+                const data = await purchaseService.getReceiptsByUserId(userId);
+                setReceipts(data);
+            } catch (requestError) {
+                console.log('RECEIPTS LOAD ERROR:', requestError);
+                setError('Failed to load receipts from backend');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        void fetchReceipts();
+    }, [userId]);
+
+    useEffect(() => {
+        const productIds = Array.from(
+            new Set(
+                receipts.flatMap((receipt) =>
+                    receipt.purchases?.map((purchase) => purchase.productId) ?? []
+                )
+            )
+        ).filter(Boolean);
+
+        const missingProductIds = productIds.filter(
+            (productId) => !productTitles[productId]
+        );
+
+        if (missingProductIds.length === 0) {
+            return;
+        }
+
+        let isCancelled = false;
+
+        const fetchProductTitles = async () => {
+            try {
+                const entries = await Promise.all(
+                    missingProductIds.map(async (productId) => {
+                        try {
+                            const product = await productService.getProductById(
+                                productId
+                            );
+
+                            return [productId, product.title] as const;
+                        } catch {
+                            return [productId, productId] as const;
+                        }
+                    })
+                );
+
+                if (!isCancelled) {
+                    setProductTitles((prev) => ({
+                        ...prev,
+                        ...Object.fromEntries(entries),
+                    }));
+                }
+            } catch (requestError) {
+                console.log('PRODUCT TITLES LOAD ERROR:', requestError);
+            }
+        };
+
+        void fetchProductTitles();
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [receipts, productTitles]);
 
     const totalSavedProducts = useMemo(() => {
         return receipts.reduce((sum, receipt) => {
-            return sum + receipt.totalQuantity;
+            return sum + (receipt.purchases?.length ?? 0);
         }, 0);
     }, [receipts]);
 
-    const handleDeleteReceipt = (receiptId: string) => {
-        const nextReceipts = receipts.filter(
-            (receipt) => receipt.id !== receiptId
-        );
+    const getReceiptTotal = (receipt: Receipt) => {
+        if (receipt.priceValue) {
+            return receipt.priceValue;
+        }
 
-        setReceipts(nextReceipts);
-        localStorage.setItem(
-            RECEIPTS_STORAGE_KEY,
-            JSON.stringify(nextReceipts)
+        return (
+            receipt.purchases?.reduce((sum, purchase) => {
+                return sum + Number(purchase.priceValue ?? 0);
+            }, 0) ?? 0
         );
     };
 
-    const handleClearReceipts = () => {
-        setReceipts([]);
-        localStorage.setItem(RECEIPTS_STORAGE_KEY, JSON.stringify([]));
-        setOpenedReceiptId(null);
+    const getReceiptDate = (receipt: Receipt) => {
+        return receipt.receiptDate ?? receipt.createdAt;
+    };
+
+    const getGroupedPurchases = (receipt: Receipt) => {
+        const groupedPurchases = new Map<
+            string,
+            {
+                productId: string;
+                title: string;
+                quantity: number;
+                total: number;
+            }
+        >();
+
+        receipt.purchases?.forEach((purchase) => {
+            const productId = purchase.productId;
+            const currentItem = groupedPurchases.get(productId);
+
+            if (currentItem) {
+                groupedPurchases.set(productId, {
+                    ...currentItem,
+                    quantity: currentItem.quantity + 1,
+                    total: currentItem.total + Number(purchase.priceValue ?? 0),
+                });
+
+                return;
+            }
+
+            groupedPurchases.set(productId, {
+                productId,
+                title: productTitles[productId] ?? productId,
+                quantity: 1,
+                total: Number(purchase.priceValue ?? 0),
+            });
+        });
+
+        return Array.from(groupedPurchases.values());
+    };
+
+    const handleDeleteReceipt = async (receiptId?: string) => {
+        if (!receiptId) {
+            return;
+        }
+
+        try {
+            await purchaseService.deleteReceipt(receiptId);
+
+            setReceipts((prevReceipts) =>
+                prevReceipts.filter((receipt) => receipt.id !== receiptId)
+            );
+
+            if (openedReceiptId === receiptId) {
+                setOpenedReceiptId(null);
+            }
+        } catch (requestError) {
+            console.log('RECEIPT DELETE ERROR:', requestError);
+            setError('Failed to delete receipt');
+        }
+    };
+
+    const handleClearReceipts = async () => {
+        const receiptIds = receipts
+            .map((receipt) => receipt.id)
+            .filter((id): id is string => Boolean(id));
+
+        if (receiptIds.length === 0) {
+            return;
+        }
+
+        try {
+            await Promise.all(
+                receiptIds.map((receiptId) =>
+                    purchaseService.deleteReceipt(receiptId)
+                )
+            );
+
+            setReceipts([]);
+            setOpenedReceiptId(null);
+        } catch (requestError) {
+            console.log('RECEIPTS CLEAR ERROR:', requestError);
+            setError('Failed to clear receipts');
+        }
     };
 
     return (
@@ -159,7 +297,17 @@ export default function ReceiptsPage() {
                                 </div>
                             </div>
 
-                            {receipts.length === 0 ? (
+                            {isLoading ? (
+                                <div className={styles.emptyReceipts}>
+                                    <img src={receiptIcon} alt="" />
+                                    <h3>Loading receipts...</h3>
+                                </div>
+                            ) : error ? (
+                                <div className={styles.emptyReceipts}>
+                                    <img src={receiptIcon} alt="" />
+                                    <h3>{error}</h3>
+                                </div>
+                            ) : receipts.length === 0 ? (
                                 <div className={styles.emptyReceipts}>
                                     <img src={receiptIcon} alt="" />
                                     <h3>No receipts yet</h3>
@@ -177,13 +325,19 @@ export default function ReceiptsPage() {
                                 </div>
                             ) : (
                                 <div className={styles.receiptList}>
-                                    {receipts.map((receipt) => {
+                                    {receipts.map((receipt, index) => {
+                                        const receiptId =
+                                            receipt.id ?? String(index);
+
                                         const isOpen =
-                                            openedReceiptId === receipt.id;
+                                            openedReceiptId === receiptId;
+
+                                        const groupedPurchases =
+                                            getGroupedPurchases(receipt);
 
                                         return (
                                             <article
-                                                key={receipt.id}
+                                                key={receiptId}
                                                 className={styles.receiptItem}
                                             >
                                                 <button
@@ -193,27 +347,27 @@ export default function ReceiptsPage() {
                                                         setOpenedReceiptId(
                                                             isOpen
                                                                 ? null
-                                                                : receipt.id
+                                                                : receiptId
                                                         )
                                                     }
                                                 >
                                                     <span>
                                                         Date:{' '}
                                                         {formatDate(
-                                                            receipt.createdAt
+                                                            getReceiptDate(receipt)
                                                         )}
                                                     </span>
 
                                                     <span>
                                                         Quantity:{' '}
-                                                        {receipt.totalQuantity}
+                                                        {receipt.purchases?.length ??
+                                                            0}
                                                     </span>
 
                                                     <span>
                                                         Sum:{' '}
                                                         {formatPrice(
-                                                            receipt.total,
-                                                            receipt.currency
+                                                            getReceiptTotal(receipt)
                                                         )}
                                                     </span>
                                                 </button>
@@ -224,10 +378,12 @@ export default function ReceiptsPage() {
                                                             styles.receiptDetails
                                                         }
                                                     >
-                                                        {receipt.items.map(
+                                                        {groupedPurchases.map(
                                                             (item) => (
                                                                 <div
-                                                                    key={item.id}
+                                                                    key={
+                                                                        item.productId
+                                                                    }
                                                                     className={
                                                                         styles.receiptProductRow
                                                                     }
@@ -235,17 +391,17 @@ export default function ReceiptsPage() {
                                                                     <span>
                                                                         {item.title}
                                                                     </span>
+
                                                                     <span>
                                                                         x
                                                                         {
                                                                             item.quantity
                                                                         }
                                                                     </span>
+
                                                                     <span>
                                                                         {formatPrice(
-                                                                            item.price *
-                                                                            item.quantity,
-                                                                            item.currency
+                                                                            item.total
                                                                         )}
                                                                     </span>
                                                                 </div>
@@ -260,8 +416,9 @@ export default function ReceiptsPage() {
                                                             <b>
                                                                 Total:{' '}
                                                                 {formatPrice(
-                                                                    receipt.total,
-                                                                    receipt.currency
+                                                                    getReceiptTotal(
+                                                                        receipt
+                                                                    )
                                                                 )}
                                                             </b>
 
@@ -287,7 +444,8 @@ export default function ReceiptsPage() {
                     </div>
                 </div>
             </main>
-            <Footer/>
+
+            <Footer />
         </>
     );
 }

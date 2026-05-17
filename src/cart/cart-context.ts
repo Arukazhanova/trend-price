@@ -2,6 +2,7 @@ import { createContext } from 'react';
 
 export type CartItem = {
     id: string;
+    priceId?: string;
     title: string;
     price: number;
     currency: string;

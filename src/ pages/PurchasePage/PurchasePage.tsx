@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { purchaseService } from '../../services/purchaseService';
+import { useAuth } from '../../auth/AuthContext';
 import MainHeader from '../../ components/MainHeader/MainHeader';
 import Footer from '../../ components/Footer/Footer';
 
@@ -26,43 +28,64 @@ export default function PurchasePage() {
         decreaseQuantity,
         clearCart,
     } = useCart();
-
+    const { user } = useAuth();
     const [isReceiptSaved, setIsReceiptSaved] = useState(false);
-
+    const [isSavingReceipt, setIsSavingReceipt] = useState(false);
+    const [saveError, setSaveError] = useState('');
     const isCartEmpty = cartItems.length === 0;
 
     const totalCurrent = cartItems.reduce((sum, item) => {
         return sum + item.price * item.quantity;
     }, 0);
 
-    const totalQuantity = cartItems.reduce((sum, item) => {
-        return sum + item.quantity;
-    }, 0);
+
 
     const currency = cartItems[0]?.currency || '₸';
 
-    const handleSaveReceipt = () => {
-        const savedReceiptsRaw = localStorage.getItem('trend-price-receipts');
-        const savedReceipts = savedReceiptsRaw
-            ? JSON.parse(savedReceiptsRaw)
-            : [];
+    const handleSaveReceipt = async () => {
+        const token = localStorage.getItem('token');
 
-        const newReceipt = {
-            id: crypto.randomUUID(),
-            createdAt: new Date().toISOString(),
-            items: cartItems,
-            totalQuantity,
-            total: totalCurrent,
-            currency,
-        };
+        if (!token || token === 'undefined' || token === 'null') {
+            setSaveError('You need to login before saving receipt.');
+            return;
+        }
 
-        localStorage.setItem(
-            'trend-price-receipts',
-            JSON.stringify([newReceipt, ...savedReceipts])
-        );
+        const rawUserId = user?.userId ?? user?.id ?? localStorage.getItem('userId');
+        const userId = Number(rawUserId);
 
-        clearCart();
-        setIsReceiptSaved(true);
+        if (!Number.isFinite(userId) || userId <= 0) {
+            setSaveError('User is not found. Please login again.');
+            return;
+        }
+
+        const receiptDate = new Date().toISOString();
+
+        setIsSavingReceipt(true);
+        setSaveError('');
+
+        try {
+            await purchaseService.createReceipt({
+                userId,
+                priceValue: totalCurrent,
+                receiptDate,
+                purchases: cartItems.flatMap((item) =>
+                    Array.from({ length: item.quantity }, () => ({
+                        productId: item.id,
+                        priceId: item.priceId,
+                        priceValue: item.price,
+                        purchaseDate: receiptDate,
+                    }))
+                ),
+            });
+
+            clearCart();
+            setIsReceiptSaved(true);
+        } catch (error) {
+            console.log('RECEIPT SAVE ERROR:', error);
+            setSaveError('Failed to save receipt. Please try again.');
+        } finally {
+            setIsSavingReceipt(false);
+        }
     };
 
     return (
@@ -278,12 +301,19 @@ export default function PurchasePage() {
                                     </div>
                                 ))}
 
+                                {saveError && (
+                                    <p style={{ marginTop: '16px', color: '#dc2626' }}>
+                                        {saveError}
+                                    </p>
+                                )}
+
                                 <button
                                     type="button"
                                     className={styles.saveButton}
                                     onClick={handleSaveReceipt}
+                                    disabled={isSavingReceipt}
                                 >
-                                    Save receipt
+                                    {isSavingReceipt ? 'Saving...' : 'Save receipt'}
                                 </button>
                             </section>
                         </>
